@@ -41,10 +41,10 @@ public class Member {
 
     private LocalDateTime registrationDate; // 등록일
 
-    @OneToMany(mappedBy = "memberId")
+    @OneToMany(mappedBy = "member")
     private List<Product> productList= new ArrayList<>();
 
-    @OneToMany(mappedBy = "memberId")
+    @OneToMany(mappedBy = "member")
     private List<Post> postList = new ArrayList<>();
 
     // 기타 필드들 (옵션에 따라 생년월일, 프로필 사진 등 추가 가능)

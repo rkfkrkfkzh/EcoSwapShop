@@ -5,30 +5,27 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Getter
 @Setter
-public class Post {
+public class Comment {
 
     @Id
     @GeneratedValue
-    @Column
-    private Long id; // 게시글 아이디
+    @Column(name = "comment_id")
+    private Long id; // 댓글 아이디
 
     @ManyToOne
     @JoinColumn(name = "member_id")
     private Member member; // 작성자 아이디
 
-    private String title; // 게시글 제목
-
-    private String content; // 게시글 내용
+    private String content; // 댓글 내용
 
     private LocalDateTime creationDate; // 작성일
 
-    @OneToMany(mappedBy = "post")
-    private List<Comment> commentList = new ArrayList<>();
-}
+    @ManyToOne
+    @JoinColumn(name = "post_id")
+    private Post post; // 해당 게시글 아이디
 
+}

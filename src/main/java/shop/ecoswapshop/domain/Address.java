@@ -1,7 +1,6 @@
 package shop.ecoswapshop.domain;
 
 import jakarta.persistence.Embeddable;
-import jakarta.persistence.Entity;
 import lombok.Getter;
 
 @Embeddable
