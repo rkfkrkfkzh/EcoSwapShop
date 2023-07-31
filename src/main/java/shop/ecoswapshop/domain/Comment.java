@@ -6,6 +6,8 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 
+import static jakarta.persistence.FetchType.LAZY;
+
 @Entity
 @Getter
 @Setter
@@ -16,7 +18,7 @@ public class Comment {
     @Column(name = "comment_id")
     private Long id; // 댓글 아이디
 
-    @ManyToOne
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "member_id")
     private Member member; // 작성자 아이디
 
@@ -24,7 +26,7 @@ public class Comment {
 
     private LocalDateTime creationDate; // 작성일
 
-    @ManyToOne
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "post_id")
     private Post post; // 해당 게시글 아이디
 
