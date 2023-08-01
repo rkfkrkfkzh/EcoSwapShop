@@ -37,7 +37,7 @@ public class Member {
     private Address address; // 주소
 
     @Enumerated(EnumType.STRING)
-    private UserRole role; // 회원 타입
+    private UserRole role; // 회원 타입(운영자, 고객)
 
     private LocalDateTime registrationDate; // 등록일
 
@@ -46,6 +46,10 @@ public class Member {
 
     @OneToMany(mappedBy = "member")
     private List<Post> postList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member")
+    private List<Comment> commentList = new ArrayList<>();
+
 
     // 기타 필드들 (옵션에 따라 생년월일, 프로필 사진 등 추가 가능)
 

@@ -45,4 +45,21 @@ public class Product {
     @OneToMany(mappedBy = "product")
     private List<Photo> photoList = new ArrayList<>();
 
+    // ==연관관계 메서드==
+    public void setMember(Member member) {
+        this.member  = member;
+        member.getProductList().add(this);
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+        category.getProductList().add(this);
+    }
+
+    public void addPhoto(Photo photo) {
+        photoList.add(photo);
+        photo.setProduct(this);
+    }
+
+
 }

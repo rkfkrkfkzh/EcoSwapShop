@@ -32,5 +32,11 @@ public class Post {
 
     @OneToMany(mappedBy = "post")
     private List<Comment> commentList = new ArrayList<>();
+
+    // ==연관관계 메서드==
+    public void addComment(Comment comment) {
+        commentList.add(comment);
+        comment.setPost(this);
+    }
 }
 
