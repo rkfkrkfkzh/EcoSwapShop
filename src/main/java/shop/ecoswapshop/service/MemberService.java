@@ -19,7 +19,7 @@ public class MemberService {
     private final MemberRepository memberRepository;
 
     // 회원 가입
-    @Transactional(readOnly = false) //회원 가입은 읽기 전용이 아닌 트랜잭션에서 실행
+    @Transactional(readOnly = false) // 회원 가입은 읽기 전용이 아닌 트랜잭션에서 실행
     public Long registerMember(Member member) { // 회원 객체를 저장하고 생성된 회원의 ID를 반환
         validateDuplicateMember(member); //중복 회원 검출
         memberRepository.save(member);
