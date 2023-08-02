@@ -12,9 +12,9 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-@Transactional(readOnly = true)
-@RequiredArgsConstructor
-public class MemberService{
+@Transactional(readOnly = true) //조회만 하고 수정은 하지 않는다는 의미
+@RequiredArgsConstructor // final이나 @NonNull이 붙은 필드들을 갖는 생성자가 자동으로 생성 AllArgsConstructor보다 나은듯
+public class MemberService {
 
     private final MemberRepository memberRepository;
 
@@ -32,6 +32,7 @@ public class MemberService{
             throw new IllegalStateException("이미 존재하는 회원입니다.");
         }
     }
+
     // 회원 조회
     public Member findMemberById(Long memberId) {
         return memberRepository.findById(memberId);

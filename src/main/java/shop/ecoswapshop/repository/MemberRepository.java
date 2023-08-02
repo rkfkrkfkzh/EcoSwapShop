@@ -4,7 +4,6 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 import shop.ecoswapshop.domain.Member;
 import shop.ecoswapshop.domain.UserType;
 
@@ -13,7 +12,6 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-@Transactional(readOnly = true) //조회만 하고 수정은 하지 않는다는 의미
 @RequiredArgsConstructor
 public class MemberRepository {
 
