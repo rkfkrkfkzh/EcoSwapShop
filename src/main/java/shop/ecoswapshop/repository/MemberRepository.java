@@ -4,6 +4,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import shop.ecoswapshop.domain.Member;
 import shop.ecoswapshop.domain.UserType;
 
@@ -12,6 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
+@Transactional(readOnly = true) //조회만 하고 수정은 하지 않는다는 의미
 @RequiredArgsConstructor
 public class MemberRepository {
 
@@ -34,9 +36,9 @@ public class MemberRepository {
     }
 
     // 회원 이름으로 조회
-    public List<Member> findByName(String username) {
-        return em.createQuery("select m from Member m where m.username = :username", Member.class)
-                .setParameter("username", username)
+    public List<Member> findByFullName(String fullName) {
+        return em.createQuery("select m from Member m where m.fullName = :fullName", Member.class)
+                .setParameter("fullName", fullName)
                 .getResultList();
     }
 
