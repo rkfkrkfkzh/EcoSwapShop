@@ -9,7 +9,7 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 import shop.ecoswapshop.domain.Member;
-import shop.ecoswapshop.domain.UserRole;
+import shop.ecoswapshop.domain.UserType;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -26,13 +26,13 @@ public class MemberRepositoryTest {
         Member member = new Member();
         member.setUsername("memberA");
         member.setPassword("111");
-        member.setRole(UserRole.ROLE_ADMIN);
+        member.setType(UserType.ROLE_ADMIN);
         member.setEmail("123123@saf");
         member.setFullName("ieieidj");
 
         //when
-        Long saveId = memberRepository.save(member);
-        Member findMember = memberRepository.findOne(saveId);
+        memberRepository.save(member);
+        Member findMember = memberRepository.findOne(member.getId());
 
         //then
         Assertions.assertThat(findMember.getId()).isEqualTo(member.getId());

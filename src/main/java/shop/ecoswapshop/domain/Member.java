@@ -37,7 +37,7 @@ public class Member {
     private Address address; // 주소
 
     @Enumerated(EnumType.STRING)
-    private UserRole role; // 회원 타입(운영자, 고객)
+    private UserType type; // 회원 타입(운영자, 고객)
 
     private LocalDateTime registrationDate; // 등록일
 
