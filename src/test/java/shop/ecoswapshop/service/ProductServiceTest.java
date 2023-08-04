@@ -66,6 +66,7 @@ public class ProductServiceTest {
 
         productService.deleteAllProducts();
         foundProduct = productService.findProductById(productId);
+
         // Then
         assertFalse(foundProduct.isPresent());
     }

@@ -13,47 +13,33 @@ import java.util.Optional;
 @Transactional(readOnly = true)
 public class ProductService {
 
+    private final ProductRepository productRepository;
+    private final MemberRepository memberRepository;
+
     public ProductService(ProductRepository productRepository, MemberRepository memberRepository) {
         this.productRepository = productRepository;
         this.memberRepository = memberRepository;
     }
 
-    private final ProductRepository productRepository;
-    private final MemberRepository memberRepository;
-
-
     // 상품 등록
     @Transactional
     public Long registerProduct(Product product) {
-        // 상품 등록 로직
-        // ...
-
-        // 상품을 저장하고 생성된 상품의 ID를 반환
         return productRepository.save(product).getId();
     }
 
     // 상품 조회
     public Optional<Product> findProductById(Long productId) {
-        // 상품 ID로 상품 조회 로직
-        // ...
-
         return productRepository.findById(productId);
     }
 
     // 전체 상품 조회
     public List<Product> findAllProducts() {
-        // 모든 상품 조회 로직
-        // ...
-
         return productRepository.findAll();
     }
 
     // 상품 삭제
     @Transactional
     public void deleteProductById(Long productId) {
-        // 상품 삭제 로직
-        // ...
-
         productRepository.deleteById(productId);
     }
 
