@@ -1,7 +1,5 @@
 package shop.ecoswapshop.service;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import shop.ecoswapshop.domain.Product;
@@ -22,7 +20,6 @@ public class ProductService {
 
     private final ProductRepository productRepository;
     private final MemberRepository memberRepository;
-
 
 
     // 상품 등록
@@ -60,6 +57,10 @@ public class ProductService {
         productRepository.deleteById(productId);
     }
 
+    @Transactional
+    public void deleteAllProducts() {
+        productRepository.deleteAll();
+    }
     // 기타 필요한 상품 조회 메서드들을 추가로 정의할 수 있습니다.
 }
 

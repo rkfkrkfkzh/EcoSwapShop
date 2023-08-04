@@ -1,7 +1,6 @@
 package shop.ecoswapshop.service;
 
 import org.junit.Test;
-import org.junit.jupiter.api.Assertions;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -15,6 +14,8 @@ import shop.ecoswapshop.repository.MemberRepository;
 
 import java.time.LocalDateTime;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @Transactional
@@ -22,6 +23,7 @@ public class MemberServiceTest {
 
     @Autowired
     MemberService memberService;
+
     @Autowired
     MemberRepository memberRepository;
 
@@ -42,13 +44,13 @@ public class MemberServiceTest {
         Long memberId = memberService.registerMember(member);
 
         //then
-        Assertions.assertNotNull(memberId);
-        Assertions.assertTrue(memberId > 0);
+        assertNotNull(memberId);
+        assertTrue(memberId > 0);
 
-        Member savedMember = memberRepository.findById(memberId);
-        Assertions.assertNotNull(savedMember);
-        Assertions.assertEquals(member.getUsername(), savedMember.getUsername());
-        Assertions.assertEquals(member.getEmail(), savedMember.getEmail());
+        Member saveId = memberRepository.findById(memberId).orElse(null);
+        assertNotNull(saveId);
+        assertEquals(member.getUsername(), saveId.getUsername());
+        assertEquals(member.getEmail(), saveId.getEmail());
     }
 
     @Test
@@ -78,7 +80,7 @@ public class MemberServiceTest {
         memberService.registerMember(member1);
 
         //then
-        Assertions.assertThrows(IllegalStateException.class, () -> memberService.registerMember(member2));
+        assertThrows(IllegalStateException.class, () -> memberService.registerMember(member2));
     }
 
     @Test
@@ -94,15 +96,16 @@ public class MemberServiceTest {
         member.setType(UserType.TYPE_USER);
         member.setRegistrationDate(LocalDateTime.now());
 
+
         //when
         Long memberId = memberService.registerMember(member);
 
         //then
-        Assertions.assertNotNull(memberId);
+        assertNotNull(memberId);
 
         memberService.deleteMemberById(memberId);
 
         Member deleteMember = memberService.findMemberById(memberId);
-        Assertions.assertNull(deleteMember);
+        assertNull(deleteMember);
     }
 }

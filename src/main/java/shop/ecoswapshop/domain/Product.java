@@ -45,6 +45,13 @@ public class Product {
     @OneToMany(mappedBy = "product")
     private List<Photo> photoList = new ArrayList<>();
 
+    // test 용
+    public Product(long id, String productName, int price) {
+    }
+
+    public Product() {
+    }
+
     // ==연관관계 메서드==
     public void setMember(Member member) {
         this.member  = member;

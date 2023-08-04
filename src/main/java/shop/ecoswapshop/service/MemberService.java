@@ -1,6 +1,5 @@
 package shop.ecoswapshop.service;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import shop.ecoswapshop.domain.Member;
@@ -13,10 +12,13 @@ import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true) //조회만 하고 수정은 하지 않는다는 의미
-@RequiredArgsConstructor // final이나 @NonNull이 붙은 필드들을 갖는 생성자가 자동으로 생성 AllArgsConstructor보다 나은듯
 public class MemberService {
 
     private final MemberRepository memberRepository;
+
+    public MemberService(MemberRepository memberRepository) {
+        this.memberRepository = memberRepository;
+    }
 
     // 회원 가입
     @Transactional(readOnly = false) // 회원 가입은 읽기 전용이 아닌 트랜잭션에서 실행
@@ -35,7 +37,7 @@ public class MemberService {
 
     // 회원 조회
     public Member findMemberById(Long memberId) {
-        return memberRepository.findById(memberId);
+        return memberRepository.findById(memberId).orElse(null);
     }
 
     // 전체 회원 조회
@@ -75,7 +77,7 @@ public class MemberService {
 
     // 회원 등록일과 등급, 이름으로 복합 조건으로 조회
     public List<Member> findMembersRegisteredAfterAndTypeAndName(LocalDateTime registrationDate, UserType type, String fullName) {
-        return memberRepository.findByRegistrationDateAfterAndTypeAndName(registrationDate, type, fullName);
+        return memberRepository.findByRegistrationDateAfterAndTypeAndFullName(registrationDate, type, fullName);
     }
 
     // 회원 삭제
@@ -85,7 +87,7 @@ public class MemberService {
     }
 
     // 로그인 기능 - 이메일과 비밀번호로 회원 조회
-    public Optional<Member> findMemberByEmailAndPassword(String email, String password) {
+    public Optional<Member> findByEmailAndPassword(String email, String password) {
         return memberRepository.findByEmailAndPassword(email, password);
     }
 }
