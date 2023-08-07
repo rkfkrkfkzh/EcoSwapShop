@@ -8,6 +8,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import static jakarta.persistence.CascadeType.ALL;
+
 @Entity
 @Getter
 @Setter
@@ -41,13 +43,13 @@ public class Member {
 
     private LocalDateTime registrationDate; // 등록일
 
-    @OneToMany(mappedBy = "member")
-    private List<Product> productList= new ArrayList<>();
+    @OneToMany(mappedBy = "member", cascade = ALL)
+    private List<Product> productList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "member")
+    @OneToMany(mappedBy = "member", cascade = ALL)
     private List<Post> postList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "member")
+    @OneToMany(mappedBy = "member", cascade = ALL)
     private List<Comment> commentList = new ArrayList<>();
 
 
