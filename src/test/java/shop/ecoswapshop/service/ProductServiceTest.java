@@ -61,14 +61,14 @@ public class ProductServiceTest {
         // When
         Optional<Product> foundProduct = productService.findProductById(saveProduct.getId());
         // Then
-        assertTrue(foundProduct.isPresent());
+        assertTrue(foundProduct.isPresent()); // 객체 값이 있을 경우 true 반환(Optional -> isPresent 정의)
         assertEquals(saveProduct, foundProduct.get());
 
         productService.deleteAllProducts();
         foundProduct = productService.findProductById(productId);
 
         // Then
-        assertFalse(foundProduct.isPresent());
+        assertFalse(foundProduct.isPresent()); // 객체 값이 없을 경우 false 반환(Optional isPresent 정의)
     }
 
     @Test
@@ -85,7 +85,7 @@ public class ProductServiceTest {
         List<Product> foundProducts = productService.findAllProducts();
 
         // Then
-        assertFalse(foundProducts.isEmpty());
+        assertFalse(foundProducts.isEmpty()); // 컬렉션 요소가 없을경우 true 반환 현재는 요소가 존재해서 false
         assertEquals(productList.size(), foundProducts.size());
         assertEquals(productList, foundProducts);
 
