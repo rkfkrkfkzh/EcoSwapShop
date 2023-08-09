@@ -7,6 +7,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
+import shop.ecoswapshop.domain.Photo;
 import shop.ecoswapshop.domain.Product;
 import shop.ecoswapshop.repository.MemberRepository;
 import shop.ecoswapshop.repository.ProductRepository;
@@ -112,6 +113,51 @@ public class ProductServiceTest {
         // Then
         Optional<Product> foundProduct = productService.findProductById(productId);
         assertFalse(foundProduct.isPresent());
+    }
+
+    @Test
+    public void 특정상품_사진추가() {
+        // Given
+        Product product = new Product(); // 상품 생성 로직에 맞게 조정해야 함.
+        Long productId = productRepository.save(product).getId();
+
+        // When
+        Photo photo = new Photo();
+        Long photoId = productService.addPhotoToProduct(productId, photo);
+
+        // Then
+        assertNotNull(photoId);
+        assertEquals(1, productService.getPhotoByProductId(productId).size());
+    }
+
+    @Test
+    public void 특정상품_모든사진조회() {
+        // Given
+        Product product = new Product(); // 상품 생성 로직에 맞게 조정해야 함.
+        Long productId = productRepository.save(product).getId();
+        Photo photo = new Photo();
+        productService.addPhotoToProduct(productId, photo);
+
+        // When
+        List<Photo> photos = productService.getPhotoByProductId(productId);
+
+        // Then
+        assertEquals(1, photos.size());
+    }
+
+    @Test
+    public void 특정상품_사진제거() {
+        // Given
+        Product product = new Product(); // 상품 생성 로직에 맞게 조정해야 함.
+        Long productId = productRepository.save(product).getId();
+        Photo photo = new Photo();
+        Long photoId = productService.addPhotoToProduct(productId, photo);
+
+        // When
+        productService.removePhotoFromProduct(productId, photoId);
+
+        // Then
+        assertEquals(0, productService.getPhotoByProductId(productId).size());
     }
 
 }

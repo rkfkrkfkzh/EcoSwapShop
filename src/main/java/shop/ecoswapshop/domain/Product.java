@@ -67,6 +67,4 @@ public class Product {
         photoList.add(photo);
         photo.setProduct(this);
     }
-
-
 }
