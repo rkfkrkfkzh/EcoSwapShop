@@ -16,6 +16,7 @@ import shop.ecoswapshop.repository.PostRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -158,7 +159,8 @@ public class CommentServiceTest {
         commentService.deleteCommentById(registerComment);
 
         //then
-        List<Comment> commentsByMemberId = commentService.getCommentsByMemberId(comment.getId());
-        assertTrue(commentsByMemberId.isEmpty());
+        Optional<Comment> byId = commentRepository.findById(registerComment);
+        assertFalse(byId.isPresent());
+
     }
 }

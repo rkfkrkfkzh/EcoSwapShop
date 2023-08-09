@@ -36,9 +36,15 @@ public class Post {
 
     // ==연관관계 메서드==
     public void setMember(Member member) {
-        this.member=member;
-        member.getPostList().add(this);
+        if (this.member != null) { // 현재 Post의 Member 체크
+            this.member.getPostList().remove(this);
+        }
+        this.member = member; // 새로운 Member 설정
+        if (member != null) { // 새로운 Member의 postList에 현재 Post 추가
+            member.getPostList().add(this);
+        }
     }
+
     public void addComment(Comment comment) {
         commentList.add(comment);
         comment.setPost(this);

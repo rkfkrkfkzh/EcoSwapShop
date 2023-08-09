@@ -49,6 +49,8 @@ public class PostService {
     // 게시글 삭제
     @Transactional
     public void deletePostById(Long postId) {
+        Post post = postRepository.findById(postId).orElseThrow();
+        post.setMember(null);
         postRepository.deleteById(postId);
     }
 }

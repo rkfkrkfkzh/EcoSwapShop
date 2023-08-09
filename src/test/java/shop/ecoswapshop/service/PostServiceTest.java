@@ -1,5 +1,7 @@
 package shop.ecoswapshop.service;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +16,7 @@ import shop.ecoswapshop.repository.PostRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.Assert.*;
 
@@ -28,6 +31,8 @@ public class PostServiceTest {
     PostRepository postRepository;
     @Autowired
     MemberRepository memberRepository;
+    @PersistenceContext
+    EntityManager em;
 
     @Test
     @Rollback(value = false)
@@ -112,8 +117,7 @@ public class PostServiceTest {
         postService.deletePostById(post1);
 
         //then
-
-
+        Optional<Post> byId = postRepository.findById(post1);
+        assertFalse(byId.isPresent());
     }
-
 }

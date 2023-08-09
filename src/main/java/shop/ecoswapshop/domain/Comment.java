@@ -32,8 +32,13 @@ public class Comment {
 
     // ==연관관계 메서드==
     public void setMember(Member member) {
+        if (this.member != null) {
+            this.member.getCommentList().remove(this);
+        }
         this.member = member;
-        member.getCommentList().add(this);
+        if (this.member != null) {
+            member.getCommentList().add(this);
+        }
     }
 
     public void setPost(Post post) {
