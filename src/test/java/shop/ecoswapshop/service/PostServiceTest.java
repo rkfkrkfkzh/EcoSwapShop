@@ -1,7 +1,5 @@
 package shop.ecoswapshop.service;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,8 +29,6 @@ public class PostServiceTest {
     PostRepository postRepository;
     @Autowired
     MemberRepository memberRepository;
-    @PersistenceContext
-    EntityManager em;
 
     @Test
     @Rollback(value = false)

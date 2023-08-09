@@ -1,9 +1,9 @@
 package shop.ecoswapshop.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import shop.ecoswapshop.domain.Product;
-import shop.ecoswapshop.repository.MemberRepository;
 import shop.ecoswapshop.repository.ProductRepository;
 
 import java.util.List;
@@ -11,15 +11,10 @@ import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
+@RequiredArgsConstructor
 public class ProductService {
 
     private final ProductRepository productRepository;
-    private final MemberRepository memberRepository;
-
-    public ProductService(ProductRepository productRepository, MemberRepository memberRepository) {
-        this.productRepository = productRepository;
-        this.memberRepository = memberRepository;
-    }
 
     // 상품 등록
     @Transactional

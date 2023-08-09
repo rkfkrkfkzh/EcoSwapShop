@@ -1,5 +1,6 @@
 package shop.ecoswapshop.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import shop.ecoswapshop.domain.Member;
@@ -12,13 +13,11 @@ import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true) //조회만 하고 수정은 하지 않는다는 의미
+@RequiredArgsConstructor
+
 public class MemberService {
 
     private final MemberRepository memberRepository;
-
-    public MemberService(MemberRepository memberRepository) {
-        this.memberRepository = memberRepository;
-    }
 
     // 회원 가입
     @Transactional(readOnly = false) // 회원 가입은 읽기 전용이 아닌 트랜잭션에서 실행

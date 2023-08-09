@@ -1,24 +1,19 @@
 package shop.ecoswapshop.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import shop.ecoswapshop.domain.Post;
-import shop.ecoswapshop.repository.MemberRepository;
 import shop.ecoswapshop.repository.PostRepository;
 
 import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
+@RequiredArgsConstructor
 public class PostService {
 
-    private final MemberRepository memberRepository;
     private final PostRepository postRepository;
-
-    public PostService(MemberRepository memberRepository, PostRepository postRepository) {
-        this.memberRepository = memberRepository;
-        this.postRepository = postRepository;
-    }
 
     // 게시글 작성
     @Transactional

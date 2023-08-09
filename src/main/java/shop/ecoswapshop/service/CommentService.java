@@ -1,27 +1,19 @@
 package shop.ecoswapshop.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import shop.ecoswapshop.domain.Comment;
 import shop.ecoswapshop.repository.CommentRepository;
-import shop.ecoswapshop.repository.MemberRepository;
-import shop.ecoswapshop.repository.PostRepository;
 
 import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
+@RequiredArgsConstructor
 public class CommentService {
 
-    private final MemberRepository memberRepository;
     private final CommentRepository commentRepository;
-    private final PostRepository postRepository;
-
-    public CommentService(MemberRepository memberRepository, CommentRepository commentRepository, PostRepository postRepository) {
-        this.memberRepository = memberRepository;
-        this.commentRepository = commentRepository;
-        this.postRepository = postRepository;
-    }
 
     // 댓글 등록
     @Transactional
