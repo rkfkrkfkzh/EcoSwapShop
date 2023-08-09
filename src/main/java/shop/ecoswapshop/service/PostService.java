@@ -27,28 +27,28 @@ public class PostService {
     }
 
     // 특정 사용자가 작성한 모든 게시글 조회
-    public List<Post> getPostsByMemberId(Long memberId) {
+    public List<Post> findPostsByMemberId(Long memberId) {
         return postRepository.findByMemberId(memberId);
     }
 
     // 게시글 제목에 해당하는 문자열을 포함하는 게시글 조회
-    public List<Post> getPostsByTitle(String keyword) {
+    public List<Post> findPostsByTitle(String keyword) {
         return postRepository.findByTitleContaining(keyword);
     }
 
     // 게시글 내용에 해당하는 문자열을 포함하는 게시글 조회
-    public List<Post> getPostsByContent(String keyword) {
+    public List<Post> findPostsByContent(String keyword) {
         return postRepository.findByContentContaining(keyword);
     }
 
     // 게시글 제목과 내용에 해당하는 문자열을 포함하는 게시글 조회
-    public List<Post> getPostsByTitleOrContent(String title, String content) {
+    public List<Post> findPostsByTitleOrContent(String title, String content) {
         return postRepository.findByTitleContainingOrContentContaining(title, content);
     }
 
     // 게시글 삭제
     @Transactional
-    public void deletePost(Long postId) {
+    public void deletePostById(Long postId) {
         postRepository.deleteById(postId);
     }
 }

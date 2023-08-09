@@ -95,16 +95,13 @@ public class MemberServiceTest {
         member.setAddress(new Address("City", "Street", "12345"));
         member.setType(UserType.TYPE_USER);
         member.setRegistrationDate(LocalDateTime.now());
-
-
-        //when
         Long memberId = memberService.registerMember(member);
 
-        //then
+        //when
         assertNotNull(memberId);
-
         memberService.deleteMemberById(memberId);
 
+        //then
         Member deleteMember = memberService.findMemberById(memberId);
         assertNull(deleteMember);
     }

@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import static jakarta.persistence.CascadeType.ALL;
 import static jakarta.persistence.FetchType.LAZY;
 
 @Entity
@@ -17,7 +18,7 @@ public class Post {
 
     @Id
     @GeneratedValue
-    @Column
+    @Column(name = "post_id")
     private Long id; // 게시글 아이디
 
     @ManyToOne(fetch = LAZY)
@@ -30,10 +31,14 @@ public class Post {
 
     private LocalDateTime creationDate; // 작성일
 
-    @OneToMany(mappedBy = "post")
+    @OneToMany(mappedBy = "post", cascade = ALL)
     private List<Comment> commentList = new ArrayList<>();
 
     // ==연관관계 메서드==
+    public void setMember(Member member) {
+        this.member=member;
+        member.getPostList().add(this);
+    }
     public void addComment(Comment comment) {
         commentList.add(comment);
         comment.setPost(this);

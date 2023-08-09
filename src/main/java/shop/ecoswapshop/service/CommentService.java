@@ -5,7 +5,7 @@ import org.springframework.transaction.annotation.Transactional;
 import shop.ecoswapshop.domain.Comment;
 import shop.ecoswapshop.repository.CommentRepository;
 import shop.ecoswapshop.repository.MemberRepository;
-import shop.ecoswapshop.repository.ProductRepository;
+import shop.ecoswapshop.repository.PostRepository;
 
 import java.util.List;
 
@@ -14,13 +14,13 @@ import java.util.List;
 public class CommentService {
 
     private final MemberRepository memberRepository;
-    private final ProductRepository productRepository;
     private final CommentRepository commentRepository;
+    private final PostRepository postRepository;
 
-    public CommentService(MemberRepository memberRepository, ProductRepository productRepository, CommentRepository commentRepository) {
+    public CommentService(MemberRepository memberRepository, CommentRepository commentRepository, PostRepository postRepository) {
         this.memberRepository = memberRepository;
-        this.productRepository = productRepository;
         this.commentRepository = commentRepository;
+        this.postRepository = postRepository;
     }
 
     // 댓글 등록
@@ -35,12 +35,12 @@ public class CommentService {
     }
 
     // 특정 사용자가 작성한 모든 댓글 조회
-    public List<Comment> getCommentsByUserId(Long memberId) {
+    public List<Comment> getCommentsByMemberId(Long memberId) {
         return commentRepository.findByMemberId(memberId);
     }
 
     // 특정 상품에 대한 특정 사용자의 댓글 조회
-    public List<Comment> getCommentsByPostIdAndUserId(Long postId, Long memberId) {
+    public List<Comment> getCommentsByPostIdAndMemberId(Long postId, Long memberId) {
         return commentRepository.findByPostIdAndMemberId(postId, memberId);
     }
 
