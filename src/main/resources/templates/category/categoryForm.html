@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <!-- 메타 정보, 스타일, 스크립트 -->
+</head>
+<body>
+<form action="/categories" method="post">
+    <label for="categoryName">Category Name:</label>
+    <input type="text" name="categoryName" id="categoryName" required>
+    <button type="submit">Add Category</button>
+</form>
+
+<ul>
+    <li th:each="category : ${categories}">
+        <span th:text="${category.categoryName}"></span>
+    </li>
+</ul>
+</body>
+</html>

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home - 중고거래 웹사이트</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<body>
+<!-- Header inclusion -->
+<div th:replace="fragments/header :: header"></div>
+
+<!-- Main content -->
+<div class="container mt-4">
+    <div class="row">
+        <!-- Sidebar inclusion -->
+        <div class="col-md-3">
+            <div th:replace="fragments/sidebar :: sidebar"></div>
+        </div>
+
+        <!-- Main Section -->
+        <div class="col-md-9">
+            <h1>Welcome to Eco Swap SHOP</h1>
+            <p>Explore the best deals on used products from trusted sellers.</p>
+
+            <!-- Featured Products Section -->
+            <h2>Featured Products</h2>
+            <div class="row">
+                <!-- Example Product Card -->
+                <div class="col-md-4">
+                    <div class="card">
+                        <img src="product-image.jpg" alt="Product Image" class="card-img-top">
+                        <div class="card-body">
+                            <h5 class="card-title">Product Name</h5>
+                            <p class="card-text">Description</p>
+                            <a href="/product-detail" class="btn btn-primary">View Details</a>
+                        </div>
+                    </div>
+                </div>
+                <!-- More Products -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Footer inclusion -->
+<div th:replace="fragments/footer :: footer"></div>
+
+<!-- Optional JavaScript -->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+</html>
