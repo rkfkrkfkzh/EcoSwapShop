@@ -12,6 +12,9 @@ import java.util.Optional;
 @Repository
 public interface MemberRepository extends JpaRepository<Member, Long> {
 
+    // 회원 아이디로 조회
+    Member findByUsername(String userName);
+
     // 회원 이름으로 조회
     List<Member> findByFullName(String fullName);
 

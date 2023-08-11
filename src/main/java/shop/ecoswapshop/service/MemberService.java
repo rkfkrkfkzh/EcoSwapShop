@@ -1,6 +1,10 @@
 package shop.ecoswapshop.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import shop.ecoswapshop.domain.Member;
@@ -8,14 +12,14 @@ import shop.ecoswapshop.domain.UserType;
 import shop.ecoswapshop.repository.MemberRepository;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true) //조회만 하고 수정은 하지 않는다는 의미
 @RequiredArgsConstructor
-
-public class MemberService {
+public class MemberService implements UserDetailsService {
 
     private final MemberRepository memberRepository;
 
@@ -88,5 +92,16 @@ public class MemberService {
     // 로그인 기능 - 이메일과 비밀번호로 회원 조회
     public Optional<Member> findByEmailAndPassword(String email, String password) {
         return memberRepository.findByEmailAndPassword(email, password);
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        Member member = memberRepository.findByUsername(username);
+        if (member == null) {
+            throw new UsernameNotFoundException("이런 유저 없습니다잉");
+        }
+        return new org.springframework.security.core.userdetails.User(
+                member.getUsername(), member.getPassword(), Collections.singletonList(
+                        new SimpleGrantedAuthority("ROLE_USER")));
     }
 }
