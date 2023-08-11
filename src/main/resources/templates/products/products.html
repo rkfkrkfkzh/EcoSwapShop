@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container mt-4">
+    <h1 class="text-center">Products</h1>
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th>Product Name</th>
+            <th>Description</th>
+            <th>Price</th>
+            <th>Condition</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="product : ${products}">
+            <td th:text="${product.productName}"></td>
+            <td th:text="${product.productDescription}"></td>
+            <td th:text="${product.price}"></td>
+            <td th:text="${product.productCondition}"></td>
+            <td><a th:href="@{/product/details/{id}(id=${product.id})}">Details</a></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

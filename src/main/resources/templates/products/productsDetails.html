@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Details</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container mt-4">
+    <h1 class="text-center">Product Details</h1>
+    <h2 th:text="${product.productName}"></h2>
+    <p th:text="${product.productDescription}"></p>
+    <p><strong>Price:</strong> <span th:text="${product.price}"></span></p>
+    <p><strong>Condition:</strong> <span th:text="${product.productCondition}"></span></p>
+    <!-- 여기에 사진을 추가할 수 있습니다. -->
+    <a th:href="@{/products}">Back to Products</a>
+</div>
+</body>
+</html>
