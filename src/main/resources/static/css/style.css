@@ -48,3 +48,66 @@ footer {
     background-color: #3498db;
     color: white;
 }
+.navbar {
+    background-color: #2980b9;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.navbar .navbar-brand,
+.navbar .nav-link {
+    color: white;
+}
+.sidebar {
+    padding: 20px;
+    background-color: #f5f5f5;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar h5 {
+    font-weight: bold;
+}
+
+.sidebar ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.sidebar ul li a {
+    color: #2980b9;
+    text-decoration: none;
+    padding: 10px;
+    display: block;
+}
+
+.sidebar ul li a:hover {
+    background-color: #ecf0f1;
+}
+.card {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border: none;
+}
+
+.card .btn-primary {
+    background-color: #2980b9;
+    border: none;
+}
+
+.card .btn-primary:hover {
+    background-color: #3498db;
+}
+
+.card-img-top {
+    max-height: 200px;
+    object-fit: cover;
+}
+.footer {
+    background-color: #2980b9;
+    padding: 20px;
+}
+
+.footer .text-muted {
+    color: white;
+    margin: 0;
+}
+
+

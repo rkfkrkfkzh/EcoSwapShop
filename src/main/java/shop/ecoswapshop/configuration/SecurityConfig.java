@@ -6,7 +6,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
@@ -18,12 +17,17 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain configure(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests(authorizeRequests -> authorizeRequests
-                        .requestMatchers(new AntPathRequestMatcher("/openapi/openapi.yml")).permitAll()
-                        .anyRequest().authenticated())
-                .httpBasic(); // httpBasic를 괄호 밖으로 옮김
+                        .antMatchers("/members/login").authenticated() // members 관련 경로는 인증 필요
+                        .anyRequest().permitAll()) // 나머지 경로는 인증 없이 허용
+                .formLogin(formLogin -> formLogin
+                        .loginPage("/members/login")
+                        .permitAll())
+                .logout(logout -> logout
+                        .logoutUrl("/members/logout")
+                        .permitAll());
         return http.build();
     }
 }

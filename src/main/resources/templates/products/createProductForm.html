@@ -5,43 +5,40 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create Product</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha2/css/bootstrap.min.css">
-    <style>
-        .form-container {
-            background: #f8f9fa;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-        .btn-primary {
-            background-color: #0d6efd;
-            border-color: #0d6efd;
-        }
-        .btn-secondary {
-            color: #6c757d;
-            border-color: #6c757d;
-        }
-    </style>
 </head>
 <body>
-<div th:replace="header :: header"></div> <!-- Header inclusion -->
-
+<div th:replace="fragments/header :: header"></div>
 <div class="container mt-4">
     <div class="row">
-        <div class="col-md-3" th:replace="sidebar :: sidebar"></div> <!-- Sidebar inclusion -->
         <div class="col-md-9">
             <div class="form-container">
-                <h1 class="text-center mb-4">Create New Product</h1>
-                <form action="#" th:action="@{/products/create}" th:object="${products}" method="post" class="needs-validation" novalidate>
-                    <!-- Your form content as above -->
+                <h1 class="text-center mb-4">제품 등록</h1>
+                <form action="#" th:action="@{/products/create}" th:object="${product}" method="post" class="needs-validation" novalidate>
+                    <div class="mb-3">
+                        <label for="productName" class="form-label">제품명</label>
+                        <input type="text" class="form-control" id="productName" th:field="*{productName}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="price" class="form-label">제품 가격</label>
+                        <input type="number" class="form-control" id="price" th:field="*{price}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="productDescription" class="form-label">제품 설명</label>
+                        <textarea class="form-control" id="productDescription" th:field="*{productDescription}" rows="3" required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="photoList" class="form-label">제품 이미지</label>
+                        <input type="file" class="form-control" id="photoList" th:field="*{photoList}">
+                    </div>
+                    <button type="submit" class="btn btn-primary">등록</button>
                 </form>
             </div>
         </div>
     </div>
 </div>
 
-<div th:replace="footer :: footer"></div> <!-- Footer inclusion -->
+<div th:replace="fragments/footer :: footer"></div> <!-- Footer inclusion -->
 
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha2/js/bootstrap.min.js"></script>
-<!-- Script as above -->
 </body>
 </html>

@@ -2,14 +2,15 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Sidebar</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 </head>
 <body>
 <div th:fragment="sidebar">
-    <div class="sidebar">
+    <div class="sidebar bg-light pt-3 pl-3">
         <h5>카테고리</h5>
-        <ul>
-            <li><a href="/category/electronics">가전제품</a></li>
-            <li><a href="/category/furniture">생활용품</a></li>
+        <ul class="list-unstyled">
+            <li><a href="/category/electronics" class="text-dark">가전제품</a></li>
+            <li><a href="/category/furniture" class="text-dark">생활용품</a></li>
             <!-- More categories -->
         </ul>
     </div>
