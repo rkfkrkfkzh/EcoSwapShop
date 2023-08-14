@@ -1,6 +1,5 @@
 package shop.ecoswapshop.controller;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,6 +12,7 @@ import shop.ecoswapshop.domain.Address;
 import shop.ecoswapshop.domain.Member;
 import shop.ecoswapshop.service.MemberService;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @Controller

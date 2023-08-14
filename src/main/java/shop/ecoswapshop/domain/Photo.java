@@ -1,11 +1,12 @@
 package shop.ecoswapshop.domain;
 
-import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.URL;
 
-import static jakarta.persistence.FetchType.LAZY;
+import javax.persistence.*;
+
+import static javax.persistence.FetchType.LAZY;
 
 @Entity
 @Getter

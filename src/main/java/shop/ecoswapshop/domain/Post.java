@@ -1,15 +1,15 @@
 package shop.ecoswapshop.domain;
 
-import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import static jakarta.persistence.CascadeType.ALL;
-import static jakarta.persistence.FetchType.LAZY;
+import static javax.persistence.CascadeType.ALL;
+import static javax.persistence.FetchType.LAZY;
 
 @Entity
 @Getter
