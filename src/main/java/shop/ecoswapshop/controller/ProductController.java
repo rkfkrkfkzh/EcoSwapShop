@@ -7,6 +7,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import shop.ecoswapshop.domain.Condition;
 import shop.ecoswapshop.domain.Photo;
 import shop.ecoswapshop.domain.Product;
 import shop.ecoswapshop.service.ProductService;
@@ -41,10 +42,13 @@ public class ProductController {
         Product product = new Product();
         model.addAttribute("productForm", new ProductForm());
         model.addAttribute("product", product);
+        model.addAttribute("conditions", Condition.values()); // Condition 열거형의 값들을 모델에 추가
+
         return "products/createProductForm";
     }
 
-    @PostMapping
+
+    @PostMapping("/create")
     public String create(@ModelAttribute ProductForm productForm) {
         Product product = new Product();
         productService.registerProduct(product);

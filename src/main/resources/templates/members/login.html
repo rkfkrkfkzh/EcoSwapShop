@@ -11,7 +11,7 @@
             <div class="card">
                 <div class="card-body">
                     <h2 class="text-center">Login</h2>
-                    <form th:action="@{/login}" method="post">
+                    <form th:action="@{/members/login}" method="post">
                         <div class="form-group">
                             <label for="username">Username:</label>
                             <input type="text" class="form-control" id="username" name="username" required="required"/>
@@ -20,9 +20,12 @@
                             <label for="password">Password:</label>
                             <input type="password" class="form-control" id="password" name="password" required="required"/>
                         </div>
-                        <button type="submit" class="btn btn-primary btn-block">Login</button>
+                        <button type="submit" class="btn btn-primary btn-block">로그인</button>
                         <p class="text-danger text-center" th:if="${param.error}">Invalid username or password</p>
                     </form>
+                    <div class="text-center mt-3">
+                        <a href="/members/new" class="btn btn-primary btn-block">회원가입</a>
+                    </div>
                 </div>
             </div>
         </div>

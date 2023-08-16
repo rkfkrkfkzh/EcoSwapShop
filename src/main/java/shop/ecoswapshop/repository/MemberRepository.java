@@ -38,4 +38,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     // 로그인 기능 - 이메일과 비밀번호로 회원 조회
     Optional<Member> findByEmailAndPassword(String email, String password);
+
+    // 아이디 중복체크
+    boolean existsByUsername(String username);
 }

@@ -5,6 +5,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import shop.ecoswapshop.domain.Member;
@@ -22,11 +23,14 @@ import java.util.Optional;
 public class MemberService implements UserDetailsService {
 
     private final MemberRepository memberRepository;
+    private final BCryptPasswordEncoder passwordEncoder;
 
     // 회원 가입
     @Transactional(readOnly = false) // 회원 가입은 읽기 전용이 아닌 트랜잭션에서 실행
     public Long registerMember(Member member) { // 회원 객체를 저장하고 생성된 회원의 ID를 반환
         validateDuplicateMember(member); //중복 회원 검출
+        String encodedPassword = passwordEncoder.encode(member.getPassword());
+        member.setPassword(encodedPassword); // 인코딩된 비밀번호 설정
         memberRepository.save(member);
         return member.getId();
     }
@@ -103,5 +107,10 @@ public class MemberService implements UserDetailsService {
         return new org.springframework.security.core.userdetails.User(
                 member.getUsername(), member.getPassword(), Collections.singletonList(
                         new SimpleGrantedAuthority("ROLE_USER")));
+    }
+
+    // id 중복체크
+    public boolean existsByUsername(String username) {
+        return memberRepository.existsByUsername(username);
     }
 }
