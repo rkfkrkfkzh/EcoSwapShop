@@ -3,10 +3,10 @@ spring:
     url: jdbc:h2:tcp://localhost/~/ecoswapshop
     username: sa
     password:
-    Driver-class-name: org.h2.Driver
+    driver-class-name: org.h2.Driver
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     properties:
       hibernate:
         show_sql: true
