@@ -4,7 +4,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
@@ -21,7 +20,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests(authorizeRequests -> authorizeRequests
-                        .antMatchers("/members/login").authenticated() // members 관련 경로는 인증 필요
+                        .antMatchers("/members/login").permitAll()
                         .antMatchers("/members/new").permitAll() // 회원 가입 페이지 허용
                         .anyRequest().permitAll()) // 나머지 경로는 인증 없이 허용
                 .formLogin(formLogin -> formLogin
@@ -34,10 +33,7 @@ public class SecurityConfig {
                         .logoutUrl("/members/logout")
                         .logoutSuccessUrl("/") // 로그아웃 성공 시 이동할 페이지
                         .permitAll());
-        http
-                .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
-                .and();
+
         return http.build();
     }
 }

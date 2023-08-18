@@ -2,6 +2,7 @@ package shop.ecoswapshop.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -104,7 +105,7 @@ public class MemberService implements UserDetailsService {
         if (member == null) {
             throw new UsernameNotFoundException("이런 유저 없습니다잉");
         }
-        return new org.springframework.security.core.userdetails.User(
+        return new User(
                 member.getUsername(), member.getPassword(), Collections.singletonList(
                         new SimpleGrantedAuthority("ROLE_USER")));
     }

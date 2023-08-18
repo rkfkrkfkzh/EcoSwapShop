@@ -12,6 +12,7 @@
                 <div class="card-body">
                     <h2 class="text-center">Login</h2>
                     <form th:action="@{/members/login}" method="post">
+                        <input type="hidden" name="_csrf" th:value="${_csrf.token}" />
                         <div class="form-group">
                             <label for="username">Username:</label>
                             <input type="text" class="form-control" id="username" name="username" required="required"/>

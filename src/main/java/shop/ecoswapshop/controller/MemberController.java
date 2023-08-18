@@ -53,11 +53,11 @@ public class MemberController {
         return "members/memberList";
     }
 
-    @GetMapping("/members/{memberId}")
+    @GetMapping("/members/detail/{memberId}")
     public String detail(@PathVariable Long memberId, Model model) {
         Member member = memberService.findMemberById(memberId);
         model.addAttribute("member", member);
-        return "members/memberDetail";
+        return "members/login";
     }
 
     @DeleteMapping("/members/{memberId}")
