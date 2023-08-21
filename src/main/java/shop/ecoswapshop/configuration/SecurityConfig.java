@@ -26,12 +26,14 @@ public class SecurityConfig {
                 .formLogin(formLogin -> formLogin
                         .loginPage("/members/login")
                         .loginProcessingUrl("/members/login")
-                        .successForwardUrl("/") // 로그인 성공 시 이동할 페이지
+                        .successForwardUrl("/members/login") // 로그인 성공 시 이동할 페이지
                         .failureUrl("/members/login?error=true") // 로그인 실패 시 이동할 페이지
                         .permitAll())
                 .logout(logout -> logout
                         .logoutUrl("/members/logout")
                         .logoutSuccessUrl("/") // 로그아웃 성공 시 이동할 페이지
+                        .invalidateHttpSession(true) // 세션 무효화
+                        .deleteCookies("JSESSIONID") // 세션 쿠키 삭제
                         .permitAll());
 
         return http.build();

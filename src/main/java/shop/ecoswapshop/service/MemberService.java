@@ -101,6 +101,8 @@ public class MemberService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        // 로그 추가
+        System.out.println("loadUserByUsername called with username: " + username);
         Member member = memberRepository.findByUsername(username);
         if (member == null) {
             throw new UsernameNotFoundException("이런 유저 없습니다잉");

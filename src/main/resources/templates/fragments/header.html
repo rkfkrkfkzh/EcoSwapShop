@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Header</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
@@ -17,8 +18,14 @@
                 <li class="nav-item"><a class="nav-link" href="/post">게시글</a></li>
             </ul>
             <ul class="navbar-nav ml-auto">
-                <li class="nav-item"><a class="nav-link" href="/members/login">로그인</a></li>
-                <!-- Optional: Logout -->
+                <!-- 로그인 상태인 경우 -->
+                <div th:if="${#authorization.expression('isAuthenticated()')}">
+                    <li><a th:href="@{/members/logout}">로그아웃</a></li>
+                </div>
+                <!-- 로그인 상태가 아닌 경우 -->
+                <div th:unless="${#authorization.expression('isAuthenticated()')}">
+                    <li><a th:href="@{/members/login}">로그인</a></li>
+                </div>
             </ul>
         </div>
     </nav>
