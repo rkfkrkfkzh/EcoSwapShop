@@ -1,10 +1,6 @@
 package shop.ecoswapshop.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -12,12 +8,10 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import shop.ecoswapshop.domain.Condition;
 import shop.ecoswapshop.domain.Member;
-import shop.ecoswapshop.domain.Photo;
 import shop.ecoswapshop.domain.Product;
 import shop.ecoswapshop.service.MemberService;
 import shop.ecoswapshop.service.ProductService;
 
-import javax.servlet.http.HttpSession;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -47,13 +41,14 @@ public class ProductController {
         return "products/productList";
     }
 
-    @GetMapping("/details/{id}")
+    @GetMapping("/details/{productId}")
     public String details(@PathVariable Long productId, Model model) {
-        Product product = productService.findProductById(productId).orElseThrow();
-        List<Photo> photos = productService.getPhotoByProductId(productId);
-        model.addAttribute("product", product);
-        model.addAttribute("photos", photos);
-        return "products/details";
+        Optional<Product> product = productService.findProductById(productId);
+        if (!product.isPresent()) {
+            return "redirect:/error";
+        }
+        model.addAttribute("product", product.get());
+        return "products/productsDetails"; //Thymeleaf view
     }
 
     @GetMapping("/new")
@@ -103,7 +98,38 @@ public class ProductController {
         return "redirect:/success";
     }
 
-    @GetMapping("delete/{id}")
+    @GetMapping("/edit/{productId}")
+    public String editForm(@PathVariable Long productId, Model model) {
+        Optional<Product> product = productService.findProductById(productId);
+        if (!product.isPresent()) {
+            return "redirect:/error";
+        }
+        model.addAttribute("productForm", product.get());
+        model.addAttribute("conditions", Condition.values());
+        return "products/productEdit"; //Thymeleaf view
+    }
+
+    @PostMapping("/edit/{productId}")
+    public String edit(@PathVariable Long productId, @ModelAttribute ProductForm productForm) {
+        Optional<Product> productById = productService.findProductById(productId);
+        if (productById.isPresent()) {
+            Product product = productById.get();
+
+            product.setProductName(productForm.getProductName());
+            product.setProductDescription(productForm.getProductDescription());
+            product.setPrice(productForm.getPrice());
+            product.setProductCondition(productForm.getProductCondition());
+
+            productService.updateProduct(product);
+            return "redirect:/products";
+
+        } else {
+            // Handle
+            return "redirect:/products?error-true";
+        }
+    }
+
+    @GetMapping("delete/{productId}")
     public String delete(@PathVariable Long productId) {
         productService.deleteProductById(productId);
         return "redirect:/products";

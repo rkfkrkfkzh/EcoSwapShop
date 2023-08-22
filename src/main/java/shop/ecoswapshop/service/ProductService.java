@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import shop.ecoswapshop.domain.Photo;
 import shop.ecoswapshop.domain.Product;
+import shop.ecoswapshop.exception.ProductNotFoundException;
 import shop.ecoswapshop.repository.PhotoRepository;
 import shop.ecoswapshop.repository.ProductRepository;
 
@@ -71,6 +72,24 @@ public class ProductService {
                 .findFirst() // Optional<Photo> 타입을 반환
                 .orElseThrow(); // 빈 Optional을 반환하면 예외처리
         product.getPhotoList().remove(photoToRemove);
+    }
+
+    @Transactional
+    public void updateProduct(Product product) {
+        Optional<Product> optionalProduct = productRepository.findById(product.getId());
+
+        if (optionalProduct.isPresent()) {
+            Product existingProduct = optionalProduct.get();
+
+            existingProduct.setProductName(product.getProductName());
+            existingProduct.setPrice(product.getPrice());
+            existingProduct.setProductDescription(product.getProductDescription());
+            existingProduct.setProductCondition(product.getProductCondition());
+
+            productRepository.save(existingProduct);
+        } else {
+            throw new ProductNotFoundException("Product with id " + product.getId());
+        }
     }
 }
 
