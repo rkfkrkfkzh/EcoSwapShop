@@ -15,6 +15,7 @@ import shop.ecoswapshop.domain.Member;
 import shop.ecoswapshop.service.MemberService;
 
 import javax.validation.Valid;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -42,6 +43,7 @@ public class MemberController {
         member.setFullName(form.getFullName());
         member.setPhoneNumber(form.getPhoneNumber());
         member.setAddress(new Address(form.getCity(), form.getStreet(), form.getZipcode()));
+        member.setRegistrationDate(LocalDateTime.now());
 
         memberService.registerMember(member);
         return "redirect:/";

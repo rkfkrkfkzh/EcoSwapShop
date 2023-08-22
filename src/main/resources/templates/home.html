@@ -27,19 +27,22 @@
             <!-- Featured Products Section -->
             <h2>주요 제품</h2>
             <div class="row">
-                <!-- Example Product Card -->
-                <div class="col-md-4">
+                <!-- Thymeleaf로 상품 반복 -->
+                <div th:each="product : ${products}" class="col-md-4">
                     <div class="card">
-                        <img src="product/image.jpg" alt="제품 이미지" class="card-img-top">
+                        <!-- 'product.imageURL'은 Product 객체의 이미지 URL을 가리킵니다. -->
                         <div class="card-body">
-                            <h5 class="card-title">상품명</h5>
-                            <p class="card-text">설명</p>
-                            <a href="/product/detail" class="btn btn-primary">세부 정보보기</a>
+                            <!-- 'product.name'은 Product 객체의 이름을 가리킵니다. -->
+                            <h5 th:text="${product.productName}" class="card-title">상품명</h5>
+                            <!-- 'product.description'은 Product 객체의 설명을 가리킵니다. -->
+                            <p th:text="${product.productDescription}" class="card-text">설명</p>
+                            <!-- 'product.id'로 각 제품의 세부 정보 페이지로 연결 -->
+                            <a th:href="@{/product/detail/{id}(id=${product.id})}" class="btn btn-primary">세부 정보보기</a>
                         </div>
                     </div>
                 </div>
-                <!-- More Products -->
             </div>
+
         </div>
     </div>
 </div>

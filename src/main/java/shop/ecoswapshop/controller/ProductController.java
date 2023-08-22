@@ -18,6 +18,7 @@ import shop.ecoswapshop.service.MemberService;
 import shop.ecoswapshop.service.ProductService;
 
 import javax.servlet.http.HttpSession;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -46,13 +47,13 @@ public class ProductController {
         return "products/productList";
     }
 
-    @GetMapping("/{productId}")
-    public String detail(@PathVariable Long productId, Model model) {
+    @GetMapping("/details/{id}")
+    public String details(@PathVariable Long productId, Model model) {
         Product product = productService.findProductById(productId).orElseThrow();
         List<Photo> photos = productService.getPhotoByProductId(productId);
         model.addAttribute("product", product);
         model.addAttribute("photos", photos);
-        return "products/detail";
+        return "products/details";
     }
 
     @GetMapping("/new")
@@ -85,6 +86,8 @@ public class ProductController {
         product.setProductName(productForm.getProductName());
         product.setPrice(productForm.getPrice());
         product.setProductDescription(productForm.getProductDescription());
+        product.setProductCondition(productForm.getProductCondition());
+        product.setCreationDate(LocalDateTime.now());
         product.setMember(member);
         // Product 객체와 Member 객체를 연결하는 로직 추가 (예: foreign key 설정 등)
         // 예: product.setMember(member);
@@ -98,5 +101,11 @@ public class ProductController {
     public String handleFileUpload(@RequestParam("productImage") MultipartFile file, RedirectAttributes redirectAttributes) {
         // 파일 처리 로직 (저장 등)
         return "redirect:/success";
+    }
+
+    @GetMapping("delete/{id}")
+    public String delete(@PathVariable Long productId) {
+        productService.deleteProductById(productId);
+        return "redirect:/products";
     }
 }
