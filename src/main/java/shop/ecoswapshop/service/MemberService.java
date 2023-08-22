@@ -1,7 +1,9 @@
 package shop.ecoswapshop.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -44,8 +46,8 @@ public class MemberService implements UserDetailsService {
     }
 
     // 회원 조회
-    public Member findMemberById(Long memberId) {
-        return memberRepository.findById(memberId).orElse(null);
+    public Optional<Member> findMemberById(Long memberId) {
+        return memberRepository.findById(memberId);
     }
 
     // 전체 회원 조회
@@ -115,5 +117,17 @@ public class MemberService implements UserDetailsService {
     // id 중복체크
     public boolean existsByUsername(String username) {
         return memberRepository.existsByUsername(username);
+    }
+
+    public Optional<Long> findLoggedInMemberId() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName(); // 로그인한 사용자의 username 가져오기
+
+        Member member = memberRepository.findByUsername(username); // username으로 Member 조회
+        if (member != null) {
+            return Optional.of(member.getId()); // memberId 반환
+        } else {
+            return Optional.empty();
+        }
     }
 }

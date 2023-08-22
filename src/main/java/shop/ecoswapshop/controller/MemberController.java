@@ -16,6 +16,7 @@ import shop.ecoswapshop.service.MemberService;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequiredArgsConstructor
@@ -55,7 +56,7 @@ public class MemberController {
 
     @GetMapping("/members/detail/{memberId}")
     public String detail(@PathVariable Long memberId, Model model) {
-        Member member = memberService.findMemberById(memberId);
+        Optional<Member> member = memberService.findMemberById(memberId);
         model.addAttribute("member", member);
         return "members/login";
     }
