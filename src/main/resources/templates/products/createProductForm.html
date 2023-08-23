@@ -45,8 +45,10 @@
     </div>
 </div>
 
-<div th:replace="fragments/footer :: footer"></div> <!-- Footer inclusion -->
-
+<!-- Footer inclusion -->
+<div class="fixed-bottom">
+    <div th:replace="fragments/footer :: footer"></div>
+</div>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function () {

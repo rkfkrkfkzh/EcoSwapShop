@@ -28,7 +28,8 @@
         <tbody>
         <tr th:each="product : ${products}">
             <td th:text="${product.productName}"></td>
-            <td class="short-description" th:text="${#strings.substring(product.productDescription, 0, 50)} + '...'"></td>
+            <td th:if="${#strings.length(product.productDescription) > 20}" th:text="${#strings.substring(product.productDescription, 0, 20)} + '...'"></td>
+            <td th:unless="${#strings.length(product.productDescription) > 20}" th:text="${product.productDescription}"></td>
             <td th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + '원'"></td>
             <td th:text="${product.productCondition}"></td>
             <td>
@@ -40,18 +41,11 @@
         </tbody>
     </table>
 </div>
-<div th:replace="fragments/footer :: footer"></div> <!-- Footer inclusion -->
-
+<!-- Footer inclusion -->
+<div class="fixed-bottom">
+    <div th:replace="fragments/footer :: footer"></div>
+</div>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        var descriptions = document.querySelectorAll(".short-description");
-        descriptions.forEach(function(description) {
-            if (description.textContent.length > 50) {
-                description.textContent = description.textContent.substring(0, 50) + "...";
-            }
-        });
-    });
-</script>
+
 </body>
 </html>
