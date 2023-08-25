@@ -9,8 +9,8 @@
 <body>
 <div th:replace="fragments/header :: header"></div> <!-- Header inclusion -->
 
-<div class="container mt-4 text-center">
-    <div class="d-flex justify-content-between align-items-center">
+<div class="container mt-4 text-center" style="max-height: 80vh; overflow-y: auto;">
+    <div class="d-flex justify-content-between align-items-center mb-3">
         <h1>상품 리스트</h1>
         <a href="/products/new" class="btn btn-primary">상품 등록</a>
     </div>
@@ -42,7 +42,7 @@
     </table>
 </div>
 <!-- Footer inclusion -->
-<div class="fixed-bottom">
+<div class="mb-5">
     <div th:replace="fragments/footer :: footer"></div>
 </div>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>

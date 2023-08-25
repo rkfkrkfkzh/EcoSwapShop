@@ -125,7 +125,7 @@ public class ProductController {
 
         } else {
             // Handle
-            return "redirect:/products?error-true";
+            return "redirect:/products?error=true";
         }
     }
 

@@ -30,6 +30,7 @@ public class PostController {
         return "posts/postList";
     }
 
+    // 등록
     @GetMapping("/new")
     public String showPostForm(Model model) {
         Post post = new Post();
@@ -44,7 +45,7 @@ public class PostController {
         Optional<Long> optionalMemberId = memberService.findLoggedInMemberId();
 
         if (!optionalMemberId.isPresent()) {
-            return "redirect:/error";
+            return "redirect:/login";
         }
 
         Long memberId = optionalMemberId.get();
@@ -60,10 +61,11 @@ public class PostController {
         post.setCreationDate(LocalDateTime.now());
         post.setMember(member);
         postService.createPost(post);
-        return "redirect:/post";
+        return "redirect:/posts";
     }
 
-    @GetMapping("/edit/{postId}")
+    // 수정
+    @GetMapping("/{postId}/edit")
     public String showEditPostForm(@PathVariable Long postId, Model model) {
         Optional<Post> post = postService.findPostById(postId);
         if (!post.isPresent()) {
@@ -73,7 +75,7 @@ public class PostController {
         return "posts/postEdit";
     }
 
-    @PostMapping("/edit/{postId}")
+    @PostMapping("/{postId}/edit")
     public String edit(@PathVariable Long postId, @ModelAttribute PostForm postForm) {
         Optional<Post> postById = postService.findPostById(postId);
         if (postById.isPresent()) {
@@ -83,10 +85,22 @@ public class PostController {
             post.setContent(postForm.getContent());
 
             postService.updatePost(post);
-            return "rediect:/posts";
+            return "redirect:/posts/";
         }else {
-            return "redirect:/posts?error-true";
+            return "redirect:/posts?error=true";
         }
-
     }
+
+    // 상세 페이지
+    @GetMapping("/details/{postId}")
+    public String showPostDetail(@PathVariable Long postId, Model model) {
+        Optional<Post> post = postService.findPostById(postId);
+        if (!post.isPresent()) {
+            return "redirect:/error";
+        }
+        model.addAttribute("post", post.get());
+        return "posts/postDetails";
+    }
+
+
 }
