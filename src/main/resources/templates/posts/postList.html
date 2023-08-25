@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Post List</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<body>
+<div th:replace="fragments/header :: header"></div> <!-- Header inclusion -->
+<div class="container mt-4 text-center">
+    <div class="d-flex justify-content-between align-items-center">
+        <h1>게시물 리스트</h1>
+        <a href="/posts/new" class="btn btn-primary">게시물 등록</a>
+    </div>
+
+    <table class="table table-striped mt-4 mx-auto">
+        <thead>
+        <tr>
+            <th>제목</th>
+            <th>내용</th>
+            <th>작성일</th>
+            <th>옵션</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="post : ${posts}">
+            <td th:text="${post.title}"></td>
+            <td th:text="${post.content}"></td>
+            <td th:text="${#dates.format(post.creationDate, 'yyyy-MM-dd HH:mm')}"></td>
+            <td>
+                <a th:href="@{/posts/{postId}/edit(postId=${post.id})}" class="btn btn-warning">수정</a>
+                <!-- 나머지 옵션 (상세보기, 삭제 등) 추가 가능 -->
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="fixed-bottom">
+    <div th:replace="fragments/footer :: footer"></div>
+</div>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+<!-- Optional JavaScript -->
+</body>
+</html>

@@ -4,9 +4,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import shop.ecoswapshop.domain.Post;
+import shop.ecoswapshop.exception.NotFoundException;
 import shop.ecoswapshop.repository.PostRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
@@ -19,6 +21,16 @@ public class PostService {
     @Transactional
     public Long createPost(Post post) {
         return postRepository.save(post).getId();
+    }
+
+    // 모든 게시글 조회
+    public List<Post> findAllPosts() {
+        return postRepository.findAll();
+    }
+
+    // 특정 게시글 조회
+    public Optional<Post> findPostById(Long postId) {
+        return postRepository.findById(postId);
     }
 
     // 특정 사용자가 작성한 모든 게시글 조회
@@ -47,5 +59,21 @@ public class PostService {
         Post post = postRepository.findById(postId).orElseThrow();
         post.setMember(null);
         postRepository.deleteById(postId);
+    }
+
+    @Transactional
+    public void updatePost(Post post) {
+        Optional<Post> optionalPost = postRepository.findById(post.getId());
+
+        if (optionalPost.isPresent()) {
+            Post existingPost = optionalPost.get();
+
+            existingPost.setTitle(post.getTitle());
+            existingPost.setContent(post.getContent());
+
+            postRepository.save(existingPost);
+        } else {
+            throw new NotFoundException("Post with id " + post.getId());
+        }
     }
 }

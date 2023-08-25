@@ -8,8 +8,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 public class PostForm {
-
     private String title;
-    private String description;
+    private String content;
     private LocalDateTime creationDate;
 }

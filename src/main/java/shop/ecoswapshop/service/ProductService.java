@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import shop.ecoswapshop.domain.Photo;
 import shop.ecoswapshop.domain.Product;
-import shop.ecoswapshop.exception.ProductNotFoundException;
+import shop.ecoswapshop.exception.NotFoundException;
 import shop.ecoswapshop.repository.PhotoRepository;
 import shop.ecoswapshop.repository.ProductRepository;
 
@@ -88,7 +88,7 @@ public class ProductService {
 
             productRepository.save(existingProduct);
         } else {
-            throw new ProductNotFoundException("Product with id " + product.getId());
+            throw new NotFoundException("Product with id " + product.getId());
         }
     }
 }
