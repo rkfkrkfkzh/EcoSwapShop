@@ -1,7 +1,6 @@
 package shop.ecoswapshop.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -25,17 +24,32 @@ public class ProductController {
     private final ProductService productService;
     private final MemberService memberService;
 
+
+    private Optional<Long> getLoggedInMemberId() {
+        return memberService.findLoggedInMemberId();
+    }
+
+    private Member getLoggedInMember() {
+        Optional<Long> loggedInMemberId = getLoggedInMemberId();
+        if (!loggedInMemberId.isPresent()) {
+            throw new RuntimeException("Logged in member not found");
+        }
+        Long memberId = loggedInMemberId.get();
+        Optional<Member> memberById = memberService.findMemberById(memberId);
+        if (!memberById.isPresent()) {
+            throw new RuntimeException("Member Not Found");
+        }
+        return memberById.get();
+    }
+
     @GetMapping
     public String list(Model model) {
         // 로그인한 사용자의 memberId를 가져옵니다.
         Optional<Long> loggedInMemberId = memberService.findLoggedInMemberId();
-
         // 모든 상품을 조회합니다.
         List<Product> products = productService.findAllProducts();
-
         // 상품 목록을 모델에 추가합니다.
         model.addAttribute("products", products);
-
         // 로그인한 사용자의 memberId가 있다면 모델에 추가합니다.
         loggedInMemberId.ifPresent(memberId -> model.addAttribute("loggedInMemberId", memberId));
 
@@ -54,18 +68,7 @@ public class ProductController {
 
     @GetMapping("/new")
     public String createForm(Model model) {
-        Optional<Long> optionalMemberId = memberService.findLoggedInMemberId();
-
-        if (!optionalMemberId.isPresent()) {
-            return "redirect:/error";
-        }
-
-        Long memberId = optionalMemberId.get();
-        Optional<Member> optionalMember = memberService.findMemberById(memberId);
-
-        if (!optionalMember.isPresent()) {
-            return "redirect:/error";
-        }
+        Member loggedInMember = getLoggedInMember();
         Product product = new Product();
         model.addAttribute("productForm", new ProductForm());
         model.addAttribute("product", product);
@@ -76,27 +79,14 @@ public class ProductController {
 
     @PostMapping("/create")
     public String create(@ModelAttribute ProductForm productForm) {
-        Optional<Long> optionalMemberId = memberService.findLoggedInMemberId();
-
-        if (!optionalMemberId.isPresent()) {
-            return "redirect:/error";
-        }
-
-        Long memberId = optionalMemberId.get();
-        Optional<Member> optionalMember = memberService.findMemberById(memberId);
-
-        if (!optionalMember.isPresent()) {
-            return "redirect:/error";
-        }
-
-        Member member = optionalMember.get();
+        Member loggedInMember = getLoggedInMember();
         Product product = new Product();
         product.setProductName(productForm.getProductName());
         product.setPrice(productForm.getPrice());
         product.setProductDescription(productForm.getProductDescription());
         product.setProductCondition(productForm.getProductCondition());
         product.setCreationDate(LocalDateTime.now());
-        product.setMember(member);
+        product.setMember(loggedInMember);
         // Product 객체와 Member 객체를 연결하는 로직 추가 (예: foreign key 설정 등)
         // 예: product.setMember(member);
 
@@ -105,44 +95,53 @@ public class ProductController {
         return "redirect:/products";
     }
 
+    private boolean isUserAuthorized(Long memberId) {
+        Optional<Long> loggedInMemberId = memberService.findLoggedInMemberId();
+        return loggedInMemberId.isPresent() && loggedInMemberId.get().equals(memberId);
+
+    }
+
     @GetMapping("/edit/{productId}")
     public String editForm(@PathVariable Long productId, Model model) {
+        return processEditForm(productId, model);
+    }
+
+    private String processEditForm(Long productId, Model model) {
         Optional<Product> product = productService.findProductById(productId);
         if (!product.isPresent()) {
             return "redirect:/error";
         }
         // 추가: 현재 로그인한 사용자의 정보 가져오기
-        Optional<Long> loggedInMemberId = memberService.findLoggedInMemberId();
-        if (!loggedInMemberId.isPresent() || !product.get().getMember().getId().equals(loggedInMemberId.get())) {
+        if (!isUserAuthorized(product.get().getMember().getId())) {
             return "redirect:/error";
         }
 
         model.addAttribute("productForm", product.get());
         model.addAttribute("conditions", Condition.values());
-        return "products/productEdit"; //Thymeleaf view
+        return "products/productEdit";
     }
 
     @PostMapping("/edit/{productId}")
     public String edit(@PathVariable Long productId, @ModelAttribute ProductForm productForm) {
+        return processEdit(productId, productForm);
+    }
+
+    private String processEdit(Long productId, ProductForm productForm) {
         Optional<Product> productById = productService.findProductById(productId);
-        if (productById.isPresent()) {
-            Product product = productById.get();
-
-            Optional<Long> loggedInMemberId = memberService.findLoggedInMemberId();
-            if (!loggedInMemberId.isPresent() || !product.getMember().getId().equals(loggedInMemberId.get())) {
-                return "redirect:/error"; // 작성자가 아닌 경우 에러 페이지로 이동
-            }
-            product.setProductName(productForm.getProductName());
-            product.setProductDescription(productForm.getProductDescription());
-            product.setPrice(productForm.getPrice());
-            product.setProductCondition(productForm.getProductCondition());
-
-            productService.updateProduct(product);
-            return "redirect:/products";
-        } else {
-            // Handle
-            return "redirect:/products?error=true";
+        if (!productById.isPresent()) {
+            return "redirect:/error";
         }
+        Product product = productById.get();
+        if (!isUserAuthorized(product.getMember().getId())) {
+            return "redirect:/error";
+        }
+        product.setProductName(productForm.getProductName());
+        product.setProductDescription(productForm.getProductDescription());
+        product.setPrice(productForm.getPrice());
+        product.setProductCondition(productForm.getProductCondition());
+
+        productService.updateProduct(product);
+        return "redirect:/products";
     }
 
     @PostMapping("/upload")
