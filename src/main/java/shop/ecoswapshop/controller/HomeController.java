@@ -2,18 +2,16 @@ package shop.ecoswapshop.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.support.JpaRepositoryImplementation;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import shop.ecoswapshop.domain.Member;
 import shop.ecoswapshop.domain.Product;
+import shop.ecoswapshop.service.MemberService;
 import shop.ecoswapshop.service.ProductService;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Controller
@@ -21,28 +19,43 @@ import java.util.List;
 public class HomeController {
 
     private final ProductService productService;
+    private final MemberService memberService;
+
+    private Optional<Long> getLoggedInMemberId() {
+        return memberService.findLoggedInMemberId();
+    }
+
+    private Member getLoggedMember() {
+        Optional<Long> loggedInMemberId = getLoggedInMemberId();
+        if (!loggedInMemberId.isPresent()) {
+            throw new RuntimeException("Logged in member not found");
+        }
+        Long memberId = loggedInMemberId.get();
+        Optional<Member> memberById = memberService.findMemberById(memberId);
+        if (!memberById.isPresent()) {
+            throw new RuntimeException("Member Not Found");
+        }
+        return memberById.get();
+    }
 
     @GetMapping("/")
     public String home(Model model) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-
         List<Product> products = productService.findAllProducts();
-
         model.addAttribute("products", products);
 
-        if (auth != null) {
-            Object principal = auth.getPrincipal();
-            if (principal instanceof UserDetails) {
-                String username = ((UserDetails) principal).getUsername();
-                System.out.println("로그인 사용자 이름: " + username);
+        Optional<Long> loggedInMemberId = getLoggedInMemberId();
+        if (loggedInMemberId.isPresent()) {
+            Long memberId = loggedInMemberId.get();
+            Optional<Member> memberById = memberService.findMemberById(memberId);
+            if (memberById.isPresent()) {
+                Member loggedMember = memberById.get();
+                model.addAttribute("loggedMember", loggedMember);
             } else {
-                System.out.println("로그인 사용자 정보를 얻을 수 없음");
+                log.warn("Logged in member not found");
             }
         } else {
-            System.out.println("로그인 되지 않은 사용자");
+            log.info("User not logged in");
         }
-
         return "home";
-
     }
 }
