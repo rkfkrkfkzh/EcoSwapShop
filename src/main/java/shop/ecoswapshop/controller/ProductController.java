@@ -1,6 +1,7 @@
 package shop.ecoswapshop.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -92,18 +93,18 @@ public class ProductController {
         return "redirect:/products";
     }
 
-    @PostMapping("/upload")
-    public String handleFileUpload(@RequestParam("productImage") MultipartFile file, RedirectAttributes redirectAttributes) {
-        // 파일 처리 로직 (저장 등)
-        return "redirect:/success";
-    }
-
     @GetMapping("/edit/{productId}")
     public String editForm(@PathVariable Long productId, Model model) {
         Optional<Product> product = productService.findProductById(productId);
         if (!product.isPresent()) {
             return "redirect:/error";
         }
+        // 추가: 현재 로그인한 사용자의 정보 가져오기
+        Optional<Long> loggedInMemberId = memberService.findLoggedInMemberId();
+        if (!loggedInMemberId.isPresent() || !product.get().getMember().equals(loggedInMemberId.get())) {
+            return "redirect:/error";
+        }
+
         model.addAttribute("productForm", product.get());
         model.addAttribute("conditions", Condition.values());
         return "products/productEdit"; //Thymeleaf view
@@ -115,6 +116,11 @@ public class ProductController {
         if (productById.isPresent()) {
             Product product = productById.get();
 
+            Optional<Long> loggedInMemberId = memberService.findLoggedInMemberId();
+            if (!loggedInMemberId.isPresent() || product.getMember().equals(loggedInMemberId.get())) {
+                return "redirect:/error"; // 작성자가 아닌 경우 에러 페이지로 이동
+
+            }
             product.setProductName(productForm.getProductName());
             product.setProductDescription(productForm.getProductDescription());
             product.setPrice(productForm.getPrice());
@@ -122,11 +128,16 @@ public class ProductController {
 
             productService.updateProduct(product);
             return "redirect:/products";
-
         } else {
             // Handle
             return "redirect:/products?error=true";
         }
+    }
+
+    @PostMapping("/upload")
+    public String handleFileUpload(@RequestParam("productImage") MultipartFile file, RedirectAttributes redirectAttributes) {
+        // 파일 처리 로직 (저장 등)
+        return "redirect:/success";
     }
 
     @GetMapping("delete/{productId}")
