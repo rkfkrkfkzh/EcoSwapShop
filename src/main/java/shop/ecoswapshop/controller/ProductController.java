@@ -54,6 +54,18 @@ public class ProductController {
 
     @GetMapping("/new")
     public String createForm(Model model) {
+        Optional<Long> optionalMemberId = memberService.findLoggedInMemberId();
+
+        if (!optionalMemberId.isPresent()) {
+            return "redirect:/error";
+        }
+
+        Long memberId = optionalMemberId.get();
+        Optional<Member> optionalMember = memberService.findMemberById(memberId);
+
+        if (!optionalMember.isPresent()) {
+            return "redirect:/error";
+        }
         Product product = new Product();
         model.addAttribute("productForm", new ProductForm());
         model.addAttribute("product", product);
@@ -101,7 +113,7 @@ public class ProductController {
         }
         // 추가: 현재 로그인한 사용자의 정보 가져오기
         Optional<Long> loggedInMemberId = memberService.findLoggedInMemberId();
-        if (!loggedInMemberId.isPresent() || !product.get().getMember().equals(loggedInMemberId.get())) {
+        if (!loggedInMemberId.isPresent() || !product.get().getMember().getId().equals(loggedInMemberId.get())) {
             return "redirect:/error";
         }
 
@@ -117,9 +129,8 @@ public class ProductController {
             Product product = productById.get();
 
             Optional<Long> loggedInMemberId = memberService.findLoggedInMemberId();
-            if (!loggedInMemberId.isPresent() || product.getMember().equals(loggedInMemberId.get())) {
+            if (!loggedInMemberId.isPresent() || !product.getMember().getId().equals(loggedInMemberId.get())) {
                 return "redirect:/error"; // 작성자가 아닌 경우 에러 페이지로 이동
-
             }
             product.setProductName(productForm.getProductName());
             product.setProductDescription(productForm.getProductDescription());
