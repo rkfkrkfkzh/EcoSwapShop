@@ -1,5 +1,7 @@
 package shop.ecoswapshop.repository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import shop.ecoswapshop.domain.Product;
@@ -30,5 +32,8 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     // 판매자 이름과 상품 이름으로 복합 조건으로 조회
     List<Product> findByMemberFullNameAndProductName(String fullName, String productName);
+
+    // 페이징 처리를 위한 메서드
+    Page<Product> findAll(Pageable pageable);
 
 }

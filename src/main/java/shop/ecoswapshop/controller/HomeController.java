@@ -2,9 +2,11 @@ package shop.ecoswapshop.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import shop.ecoswapshop.domain.Member;
 import shop.ecoswapshop.domain.Product;
 import shop.ecoswapshop.service.MemberService;
@@ -39,9 +41,10 @@ public class HomeController {
     }
 
     @GetMapping("/")
-    public String home(Model model) {
-        List<Product> products = productService.findAllProducts();
-        model.addAttribute("products", products);
+    public String home(@RequestParam(defaultValue = "0")int page, Model model) {
+
+        Page<Product> pagedProducts = productService.getPagedProducts(page, 6);
+        model.addAttribute("pagedProducts", pagedProducts);
 
         Optional<Long> loggedInMemberId = getLoggedInMemberId();
         if (loggedInMemberId.isPresent()) {

@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home - 중고거래 웹사이트</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-
 </head>
 <body>
 <!-- Header inclusion -->
@@ -28,20 +27,35 @@
             <h2>주요 제품</h2>
             <div class="row">
                 <!-- Thymeleaf로 상품 반복 -->
-                <div th:each="product : ${products}" class="col-md-4">
+                <div th:each="product : ${pagedProducts.content}" class="col-md-4">
                     <div class="card">
                         <!-- 'product.imageURL'은 Product 객체의 이미지 URL을 가리킵니다. -->
                         <div class="card-body">
                             <!-- 'product.name'은 Product 객체의 이름을 가리킵니다. -->
                             <h5 th:text="${product.productName}" class="card-title">상품명</h5>
                             <!-- 'product.description'은 Product 객체의 설명을 가리킵니다. -->
-                            <p th:text="${product.productDescription}" class="card-text">설명</p>
+                            <p th:text="${product.productDescription.split('\n')[0]}" class="card-text"
+                               style="white-space: pre-wrap;">설명</p>
                             <!-- 'product.id'로 각 제품의 세부 정보 페이지로 연결 -->
-                            <!-- 'product.id'로 각 제품의 세부 정보 페이지로 연결 -->
-                            <a th:href="@{/products/details/{productId}(productId=${product.id})}" class="btn btn-primary">세부 정보보기</a>
+                            <a th:href="@{/products/details/{productId}(productId=${product.id})}"
+                               class="btn btn-primary">세부 정보보기</a>
                         </div>
                     </div>
                 </div>
+            </div>
+            <!-- Pagination Section -->
+            <div class="pagination-container">
+                <ul class="pagination">
+                    <li th:if="${pagedProducts.number > 0}" class="page-item">
+                        <a class="page-link" th:href="@{/(page=${pagedProducts.number - 1})}">이전</a>
+                    </li>
+                    <li th:each="pageNumber : ${#numbers.sequence(0, pagedProducts.totalPages - 1)}" class="page-item">
+                        <a class="page-link" th:href="@{/(page=${pageNumber})}" th:text="${pageNumber + 1}"></a>
+                    </li>
+                    <li th:if="${pagedProducts.number < pagedProducts.totalPages - 1}" class="page-item">
+                        <a class="page-link" th:href="@{/(page=${pagedProducts.number + 1})}">다음</a>
+                    </li>
+                </ul>
             </div>
 
         </div>
@@ -49,7 +63,7 @@
 </div>
 
 <!-- Footer inclusion -->
-<div class="fixed-bottom">
+<div>
     <div th:replace="fragments/footer :: footer"></div>
 </div>
 

@@ -1,6 +1,9 @@
 package shop.ecoswapshop.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import shop.ecoswapshop.domain.Photo;
@@ -91,6 +94,13 @@ public class ProductService {
             throw new NotFoundException("Product with id " + product.getId());
         }
     }
+
+    // 페이징 처리
+    public Page<Product> getPagedProducts(int page, int pageSize) {
+        Pageable pageable = PageRequest.of(page, pageSize);
+        return productRepository.findAll(pageable);
+    }
+
 }
 
 
