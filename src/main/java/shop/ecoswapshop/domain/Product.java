@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import static javax.persistence.CascadeType.ALL;
 import static javax.persistence.FetchType.LAZY;
 
 @Entity
@@ -42,8 +43,11 @@ public class Product {
 
     private LocalDateTime creationDate; // 등록일
 
-    @OneToMany(mappedBy = "product")
+    @OneToMany(mappedBy = "product", cascade = ALL)
     private List<Photo> photoList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "product", cascade = ALL)
+    private List<Favorite> favorites = new ArrayList<>();
 
     // test 용
     public Product(long id, String productName, int price) {
