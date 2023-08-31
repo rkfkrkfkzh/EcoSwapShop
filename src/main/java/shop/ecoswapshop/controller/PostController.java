@@ -1,6 +1,7 @@
 package shop.ecoswapshop.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -21,18 +22,33 @@ public class PostController {
     private final PostService postService;
     private final MemberService memberService;
 
+    private Optional<Long> getLoggedInMemberId() {
+        return memberService.findLoggedInMemberId();
+    }
+
+    private Member getLoggedInMember() {
+        return getLoggedInMemberId()
+                .map(memberService::findMemberById)
+                .orElseThrow(() -> new RuntimeException("Logged in member not found"))
+                .orElseThrow(() -> new RuntimeException("Member Not Found"));
+    }
+
+    private boolean isUserAuthorized(Long memberId) {
+        return getLoggedInMemberId().isPresent() && getLoggedInMemberId().get().equals(memberId);
+    }
+
     @GetMapping
-    public String showPostList(Model model) {
-        Optional<Long> loggedInMemberId = memberService.findLoggedInMemberId();
-        List<Post> posts = postService.findAllPosts();
-        model.addAttribute("posts", posts);
-        loggedInMemberId.ifPresent(memberId -> model.addAttribute("loggedInMemberId", memberId));
+    public String showPostList(@RequestParam(defaultValue = "0")int page, Model model) {
+        Page<Post> pagedPosts = postService.getPagedPosts(page, 8);
+        model.addAttribute("pagedPosts", pagedPosts);
+        getLoggedInMemberId().ifPresent(memberId -> model.addAttribute("loggedInMemberId", memberId));
         return "posts/postList";
     }
 
     // 등록
     @GetMapping("/new")
     public String showPostForm(Model model) {
+        Member loggedInMember = getLoggedInMember();
         Post post = new Post();
         model.addAttribute("postForm", new PostForm());
         model.addAttribute("post", post);
@@ -42,53 +58,47 @@ public class PostController {
 
     @PostMapping("/create")
     public String createPost(@ModelAttribute PostForm postForm) {
-        Optional<Long> optionalMemberId = memberService.findLoggedInMemberId();
-
-        if (!optionalMemberId.isPresent()) {
-            return "redirect:/login";
-        }
-
-        Long memberId = optionalMemberId.get();
-        Optional<Member> optionalMember = memberService.findMemberById(memberId);
-
-        if (!optionalMember.isPresent()) {
-            return "redirect:/error";
-        }
-        Member member = optionalMember.get();
+        Member loggedInMember = getLoggedInMember();
         Post post = new Post();
         post.setTitle(postForm.getTitle());
         post.setContent(postForm.getContent());
         post.setCreationDate(LocalDateTime.now());
-        post.setMember(member);
+        post.setMember(loggedInMember);
+
         postService.createPost(post);
         return "redirect:/posts";
     }
 
     // 수정
-    @GetMapping("/{postId}/edit")
+    @GetMapping("/edit/{postId}")
     public String showEditPostForm(@PathVariable Long postId, Model model) {
         Optional<Post> post = postService.findPostById(postId);
         if (!post.isPresent()) {
+            return "redirect:/error";
+        }
+        if (!isUserAuthorized(post.get().getMember().getId())) {
             return "redirect:/error";
         }
         model.addAttribute("postForm", post.get());
         return "posts/postEdit";
     }
 
-    @PostMapping("/{postId}/edit")
+    @PostMapping("/edit/{postId}")
     public String edit(@PathVariable Long postId, @ModelAttribute PostForm postForm) {
         Optional<Post> postById = postService.findPostById(postId);
-        if (postById.isPresent()) {
-            Post post = postById.get();
-
-            post.setTitle(postForm.getTitle());
-            post.setContent(postForm.getContent());
-
-            postService.updatePost(post);
-            return "redirect:/posts/";
-        }else {
-            return "redirect:/posts?error=true";
+        if (!postById.isPresent()) {
+            return "redirect:/error";
         }
+        Post post = postById.get();
+        if (!isUserAuthorized(post.getMember().getId())) {
+            return "redirect:/error";
+        }
+
+        post.setTitle(postForm.getTitle());
+        post.setContent(postForm.getContent());
+
+        postService.updatePost(post);
+        return "redirect:/posts/";
     }
 
     // 상세 페이지
@@ -99,8 +109,21 @@ public class PostController {
             return "redirect:/error";
         }
         model.addAttribute("post", post.get());
+        getLoggedInMemberId().ifPresent(memberId -> model.addAttribute("loggedInMemberId", memberId));
         return "posts/postDetails";
     }
 
-
+    @GetMapping("delete/{postId}")
+    public String delete(@PathVariable Long postId) {
+        Optional<Post> postById = postService.findPostById(postId);
+        if (!postById.isPresent()) {
+            return "redirect:/error";
+        }
+        Post post = postById.get();
+        if (!isUserAuthorized(post.getMember().getId())) {
+            return "redirect:/error";
+        }
+        postService.deletePostById(postId);
+        return "redirect:/posts";
+    }
 }

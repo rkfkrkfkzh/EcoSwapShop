@@ -33,8 +33,9 @@
             <td th:text="${product.productCondition}"></td>
             <td>
                 <a th:href="@{/products/details/{id}(id=${product.id})}" class="btn btn-info">상세보기</a>
-                <a th:href="@{/products/edit/{id}(id=${product.id})}" class="btn btn-warning">수정</a>
-                <a th:href="@{/products/delete/{id}(id=${product.id})}" class="btn btn-danger">삭제</a>
+                <!-- 수정 및 삭제 버튼 조건 추가 -->
+                <a th:if="${loggedInMemberId == product.member.id}" th:href="@{/products/edit/{id}(id=${product.id})}" class="btn btn-warning">수정</a>
+                <a th:if="${loggedInMemberId == product.member.id}" th:href="@{/products/delete/{id}(id=${product.id})}" class="btn btn-danger">삭제</a>
             </td>
         </tr>
         </tbody>

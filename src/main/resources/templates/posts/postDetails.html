@@ -13,18 +13,21 @@
 <div class="container mt-4">
     <div class="row">
         <div class="col-md-9">
-            <div class="form-container">
-                <h1 class="text-center mb-4">게시물 상세</h1>
-                <h2 th:text="${post.title}" class="mb-2"></h2>
-                <p th:text="${post.content}" class="mb-4"></p>
-                <p th:text="${#temporals.format(post.creationDate, 'yyyy-MM-dd HH:mm')}" class="text-muted"></p>
-                <!-- 기타 게시물 상세 정보 표시 -->
-                <a th:href="@{/posts/edit/{postId}(postId=${post.id})}" class="btn btn-warning">수정</a>
-                <a th:href="@{/posts/delete/{postId}(postId=${post.id})}" class="btn btn-danger">삭제</a>
+            <div class="post-details">
+                <h1 th:text="${post.title}" class="post-title mb-3"></h1>
+                <p class="post-date text-muted" th:text="${#temporals.format(post.creationDate, 'yyyy-MM-dd HH:mm')}"></p>
+                <hr>
+                <p class="post-content" th:text="${post.content}"></p>
+                <div class="post-actions mt-4">
+                </div>
+                <!-- 수정 및 삭제 버튼 조건 추가 -->
+                <a th:if="${loggedInMemberId == post.member.id}" th:href="@{/posts/edit/{id}(id=${post.id})}" class="btn btn-warning">수정</a>
+                <a th:if="${loggedInMemberId == post.member.id}" th:href="@{/posts/delete/{id}(id=${post.id})}" class="btn btn-danger">삭제</a>
             </div>
         </div>
     </div>
 </div>
+
 <!-- Footer inclusion -->
 <div class="fixed-bottom">
     <div th:replace="fragments/footer :: footer"></div>

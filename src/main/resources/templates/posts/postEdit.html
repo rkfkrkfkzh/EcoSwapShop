@@ -15,8 +15,7 @@
         <div class="col-md-9">
             <div class="form-container">
                 <h1 class="text-center mb-4">게시물 수정</h1>
-                <form th:action="@{/posts/{postId}/edit(postId=${postForm.id})}"
-                      th:object="${postForm}" method="post"
+                <form th:action="@{/posts/edit/{id}(id=${postForm.id})}" th:object="${postForm}" method="post"
                       class="needs-validation" novalidate>
                     <div class="mb-3">
                         <label for="title" class="form-label">제목</label>
@@ -24,7 +23,7 @@
                     </div>
                     <div class="mb-3">
                         <label for="content" class="form-label">내용</label>
-                        <textarea class="form-control" id="content" th:field="*{content}" rows="5" required></textarea>
+                        <textarea class="form-control" id="content" th:field="*{content}" rows="10" required></textarea>
                     </div>
                     <button type="submit" class="btn btn-primary">수정 완료</button>
                 </form>
@@ -33,7 +32,7 @@
     </div>
 </div>
 <!-- Footer inclusion -->
-<div class="fixed-bottom">
+<div class="mb-5">
     <div th:replace="fragments/footer :: footer"></div>
 </div>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>

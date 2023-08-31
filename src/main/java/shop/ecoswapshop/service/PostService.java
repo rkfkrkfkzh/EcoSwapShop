@@ -1,6 +1,9 @@
 package shop.ecoswapshop.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import shop.ecoswapshop.domain.Post;
@@ -56,8 +59,6 @@ public class PostService {
     // 게시글 삭제
     @Transactional
     public void deletePostById(Long postId) {
-        Post post = postRepository.findById(postId).orElseThrow();
-        post.setMember(null);
         postRepository.deleteById(postId);
     }
 
@@ -75,5 +76,11 @@ public class PostService {
         } else {
             throw new NotFoundException("Post with id " + post.getId());
         }
+    }
+
+    // 페이징 처리
+    public Page<Post> getPagedPosts(int page, int pageSize) {
+        Pageable pageable = PageRequest.of(page, pageSize);
+        return postRepository.findAll(pageable);
     }
 }

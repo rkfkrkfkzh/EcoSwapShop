@@ -12,37 +12,41 @@
 
 <div class="container mt-4">
     <div class="row">
-        <div class="col-md-9">
-            <div class="form-container">
-                <h1 class="text-center mb-4">제품 상세</h1>
-                <table class="table table-bordered">
-                    <tbody>
-                    <tr>
-                        <th>제품명</th>
-                        <td th:text="${product.productName}"></td>
-                    </tr>
-                    <tr>
-                        <th>설명</th>
-                        <td><pre th:text="${product.productDescription}" style="white-space: pre-wrap;"></pre></td>
-                    </tr>
-                    <tr>
-                        <th>가격</th>
-                        <td th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + '원'"></td>
-                    </tr>
-                    <tr>
-                        <th>상태</th>
-                        <td th:text="${product.productCondition}"></td>
-                    </tr>
-                    </tbody>
-                </table>
-                <a th:href="@{/products/edit/{id}(id=${product.id})}" class="btn btn-warning">수정</a>
-                <a th:href="@{/products/delete/{id}(id=${product.id})}" class="btn btn-danger">삭제</a>
+        <div class="col-md-9 mx-auto">
+            <div class="text-center mb-4">
+                <h1>제품 상세</h1>
+            </div>
+            <table class="table table-bordered">
+                <tbody>
+                <tr>
+                    <th>제품명</th>
+                    <td th:text="${product.productName}"></td>
+                </tr>
+                <tr>
+                    <th>설명</th>
+                    <td><pre th:text="${product.productDescription}" style="white-space: pre-wrap;"></pre></td>
+                </tr>
+                <tr>
+                    <th>가격</th>
+                    <td th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + '원'"></td>
+                </tr>
+                <tr>
+                    <th>상태</th>
+                    <td th:text="${product.productCondition}"></td>
+                </tr>
+                </tbody>
+            </table>
+            <div class="text-center mt-4">
+                <!-- 수정 및 삭제 버튼 조건 추가 -->
+                <a th:if="${loggedInMemberId == product.member.id}" th:href="@{/products/edit/{id}(id=${product.id})}" class="btn btn-warning">수정</a>
+                <a th:if="${loggedInMemberId == product.member.id}" th:href="@{/products/delete/{id}(id=${product.id})}" class="btn btn-danger ml-2">삭제</a>
             </div>
         </div>
     </div>
 </div>
+
 <!-- Footer inclusion -->
-<div class="fixed-bottom">
+<div class="mb-5">
     <div th:replace="fragments/footer :: footer"></div>
 </div>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>

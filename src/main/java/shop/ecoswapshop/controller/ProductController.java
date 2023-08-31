@@ -14,7 +14,6 @@ import shop.ecoswapshop.service.MemberService;
 import shop.ecoswapshop.service.ProductService;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -37,6 +36,11 @@ public class ProductController {
                 .orElseThrow(()-> new RuntimeException("Member Not Found"));
     }
 
+    private boolean isUserAuthorized(Long memberId) {
+        return getLoggedInMemberId().isPresent() && getLoggedInMemberId().get().equals(memberId);
+
+    }
+
     @GetMapping
     public String list(@RequestParam(defaultValue = "0")int page, Model model) {
         // 모든 상품을 조회합니다.
@@ -56,6 +60,7 @@ public class ProductController {
             return "redirect:/error";
         }
         model.addAttribute("product", product.get());
+        getLoggedInMemberId().ifPresent(memberId -> model.addAttribute("loggedInMemberId", memberId));
         return "products/productsDetails"; //Thymeleaf view
     }
 
@@ -86,11 +91,6 @@ public class ProductController {
         productService.registerProduct(product);
 
         return "redirect:/products";
-    }
-
-    private boolean isUserAuthorized(Long memberId) {
-        return getLoggedInMemberId().isPresent() && getLoggedInMemberId().get().equals(memberId);
-
     }
 
     @GetMapping("/edit/{productId}")
