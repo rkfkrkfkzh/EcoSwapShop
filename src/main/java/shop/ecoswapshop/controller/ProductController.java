@@ -1,6 +1,7 @@
 package shop.ecoswapshop.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -24,34 +25,26 @@ public class ProductController {
     private final ProductService productService;
     private final MemberService memberService;
 
-
+    // 로그인한 사용자의 memberId를 가져옵니다.
     private Optional<Long> getLoggedInMemberId() {
         return memberService.findLoggedInMemberId();
     }
 
     private Member getLoggedInMember() {
-        Optional<Long> loggedInMemberId = getLoggedInMemberId();
-        if (!loggedInMemberId.isPresent()) {
-            throw new RuntimeException("Logged in member not found");
-        }
-        Long memberId = loggedInMemberId.get();
-        Optional<Member> memberById = memberService.findMemberById(memberId);
-        if (!memberById.isPresent()) {
-            throw new RuntimeException("Member Not Found");
-        }
-        return memberById.get();
+        return getLoggedInMemberId()
+                .map(memberService::findMemberById)
+                .orElseThrow(() -> new RuntimeException("Logged in member not found"))
+                .orElseThrow(()-> new RuntimeException("Member Not Found"));
     }
 
     @GetMapping
-    public String list(Model model) {
-        // 로그인한 사용자의 memberId를 가져옵니다.
-        Optional<Long> loggedInMemberId = memberService.findLoggedInMemberId();
+    public String list(@RequestParam(defaultValue = "0")int page, Model model) {
         // 모든 상품을 조회합니다.
-        List<Product> products = productService.findAllProducts();
+        Page<Product> pagedProducts = productService.getPagedProducts(page, 8);
         // 상품 목록을 모델에 추가합니다.
-        model.addAttribute("products", products);
+        model.addAttribute("pagedProducts", pagedProducts);
         // 로그인한 사용자의 memberId가 있다면 모델에 추가합니다.
-        loggedInMemberId.ifPresent(memberId -> model.addAttribute("loggedInMemberId", memberId));
+        getLoggedInMemberId().ifPresent(memberId -> model.addAttribute("loggedInMemberId", memberId));
 
         return "products/productList";
     }
@@ -96,8 +89,7 @@ public class ProductController {
     }
 
     private boolean isUserAuthorized(Long memberId) {
-        Optional<Long> loggedInMemberId = memberService.findLoggedInMemberId();
-        return loggedInMemberId.isPresent() && loggedInMemberId.get().equals(memberId);
+        return getLoggedInMemberId().isPresent() && getLoggedInMemberId().get().equals(memberId);
 
     }
 
@@ -152,6 +144,14 @@ public class ProductController {
 
     @GetMapping("delete/{productId}")
     public String delete(@PathVariable Long productId) {
+        Optional<Product> productById = productService.findProductById(productId);
+        if (!productById.isPresent()) {
+            return "redirect:/error";
+        }
+        Product product = productById.get();
+        if (!isUserAuthorized(product.getMember().getId())) {
+            return "redirect:/error";
+        }
         productService.deleteProductById(productId);
         return "redirect:/products";
     }

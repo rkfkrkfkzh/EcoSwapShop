@@ -13,6 +13,7 @@ import shop.ecoswapshop.domain.UserType;
 import shop.ecoswapshop.repository.MemberRepository;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -102,7 +103,7 @@ public class MemberServiceTest {
         memberService.deleteMemberById(memberId);
 
         //then
-        Member deleteMember = memberService.findMemberById(memberId);
-        assertNull(deleteMember);
+        Optional<Member> memberById = memberService.findMemberById(memberId);
+        assertNull(memberById);
     }
 }

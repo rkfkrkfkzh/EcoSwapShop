@@ -26,7 +26,7 @@
         </tr>
         </thead>
         <tbody>
-        <tr th:each="product : ${products}">
+        <tr th:each="product : ${pagedProducts.content}">
             <td th:text="${product.productName}"></td>
             <td><pre th:text="${product.productDescription.split('\n')[0]}" style="white-space: pre-wrap;"></pre></td>
             <td th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + '원'"></td>
@@ -39,6 +39,20 @@
         </tr>
         </tbody>
     </table>
+    <!-- Pagination Section -->
+    <div class="pagination-container">
+        <ul class="pagination">
+            <li th:if="${pagedProducts.number > 0}" class="page-item">
+                <a class="page-link" th:href="@{/products(page=${pagedProducts.number - 1})}">이전</a>
+            </li>
+            <li th:each="pageNumber : ${#numbers.sequence(0, pagedProducts.totalPages - 1)}" class="page-item">
+                <a class="page-link" th:href="@{/products(page=${pageNumber})}" th:text="${pageNumber + 1}"></a>
+            </li>
+            <li th:if="${pagedProducts.number < pagedProducts.totalPages - 1}" class="page-item">
+                <a class="page-link" th:href="@{/products(page=${pagedProducts.number + 1})}">다음</a>
+            </li>
+        </ul>
+    </div>
 </div>
 <!-- Footer inclusion -->
 <div class="mb-5">
