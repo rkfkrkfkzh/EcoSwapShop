@@ -38,6 +38,12 @@
             </table>
             <div class="text-center mt-4">
                 <!-- 수정 및 삭제 버튼 조건 추가 -->
+                <!-- 찜하기 버튼 추가 -->
+                <form th:action="@{/favorites/new}" method="post">
+                    <input type="hidden" th:value="${product.id}" name="productId"/>
+                    <input type="hidden" th:value="${loggedInMemberId}" name="memberId"/>
+                    <button type="submit" class="btn btn-primary">찜하기</button>
+                </form>
                 <a th:if="${loggedInMemberId == product.member.id}" th:href="@{/products/edit/{id}(id=${product.id})}" class="btn btn-warning">수정</a>
                 <a th:if="${loggedInMemberId == product.member.id}" th:href="@{/products/delete/{id}(id=${product.id})}" class="btn btn-danger ml-2">삭제</a>
             </div>

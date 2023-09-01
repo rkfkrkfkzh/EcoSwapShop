@@ -30,7 +30,7 @@ public class FavoriteService {
                 .findById(productId).orElseThrow(() -> new IllegalArgumentException("Product Not Found"));
         Favorite existingFavorite = favoriteRepository.findByMemberIdAndProductId(memberId, productId);
         if (existingFavorite != null) {
-            throw new IllegalArgumentException("Already favorite");
+            favoriteRepository.delete(existingFavorite);
         }
 
         Favorite favorite = new Favorite();
@@ -43,7 +43,7 @@ public class FavoriteService {
         return favoriteRepository.findByMemberId(memberId);
     }
 
-    public List<Favorite> getFavoriteBtProduct(Long productId) {
+    public List<Favorite> getFavoritesByProduct(Long productId) {
         return favoriteRepository.findByProductId(productId);
     }
 }

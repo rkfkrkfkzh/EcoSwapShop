@@ -23,6 +23,7 @@ public class SecurityConfig {
                         .antMatchers("/members/login").permitAll()
                         .antMatchers("/members/new").permitAll() // 회원 가입 페이지 허용
                         .antMatchers("/products/{productId}/edit").hasRole("USER") // 수정 권한 설정
+                        .antMatchers("/favorite/**").hasRole("USER") // 수정 권한 설정
                         .anyRequest().permitAll()) // 나머지 경로는 인증 없이 허용
                 .formLogin(formLogin -> formLogin
                         .loginPage("/members/login")
