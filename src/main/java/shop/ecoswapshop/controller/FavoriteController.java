@@ -53,10 +53,12 @@ public class FavoriteController {
         return "favorites/favoriteList";
     }
 
-    @PostMapping("/new")
-    public String addFavorite(@RequestParam Long memberId, @RequestParam Long productId) {
-        favoriteService.addFavorite(memberId, productId);
-        return "redirect:/favorites/list";
+    @PostMapping("/toggle")
+    public String toggleFavorite(@RequestParam Long memberId, @RequestParam Long productId) {
+        if (!isUserAuthorized(memberId)) {
+            return "redirect:/error";
+        }
+        favoriteService.toggleFavorite(memberId, productId);
+        return "redirect:/favorites";
     }
-
 }

@@ -11,7 +11,6 @@ import shop.ecoswapshop.repository.MemberRepository;
 import shop.ecoswapshop.repository.ProductRepository;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
@@ -23,7 +22,7 @@ public class FavoriteService {
     private final ProductRepository productRepository;
 
     @Transactional
-    public void addFavorite(Long memberId, Long productId) {
+    public void toggleFavorite(Long memberId, Long productId) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new IllegalArgumentException("Member Not Found"));
         Product product = productRepository
@@ -31,12 +30,12 @@ public class FavoriteService {
         Favorite existingFavorite = favoriteRepository.findByMemberIdAndProductId(memberId, productId);
         if (existingFavorite != null) {
             favoriteRepository.delete(existingFavorite);
+        } else {
+            Favorite favorite = new Favorite();
+            favorite.setMember(member);
+            favorite.setProduct(product);
+            favoriteRepository.save(favorite);
         }
-
-        Favorite favorite = new Favorite();
-        favorite.setMember(member);
-        favorite.setProduct(product);
-        favoriteRepository.save(favorite);
     }
 
     public List<Favorite> getFavoritesByMember(Long memberId) {
