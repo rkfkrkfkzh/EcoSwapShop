@@ -1,6 +1,7 @@
 package shop.ecoswapshop.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -41,16 +42,17 @@ public class FavoriteController {
     }
 
     @GetMapping
-    public String getFavorites(Model model) {
+    public String getFavorites(@RequestParam(defaultValue = "0")int page, Model model) {
         if (getLoggedInMemberId().isPresent()) {
-            List<Favorite> favorites = favoriteService.getFavoritesByMember(getLoggedInMemberId().get());
-            model.addAttribute("favorites", favorites);
-            getLoggedInMemberId().ifPresent(memberId -> model.addAttribute("loggedInMemberId", memberId));
+            Long memberId = getLoggedInMemberId().get();
 
+            Page<Favorite> pagedFavorites = favoriteService.getFavoritesByMember(memberId, page, 8);
+            model.addAttribute("pagedFavorites", pagedFavorites);
+            model.addAttribute("loggedInMemberId", memberId);
+            return "favorites/favoriteList";
         } else {
             return "redirect:/error";
         }
-        return "favorites/favoriteList";
     }
 
     @PostMapping("/toggle")

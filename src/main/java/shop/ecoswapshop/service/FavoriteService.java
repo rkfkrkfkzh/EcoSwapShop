@@ -1,6 +1,9 @@
 package shop.ecoswapshop.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import shop.ecoswapshop.domain.Favorite;
@@ -38,8 +41,9 @@ public class FavoriteService {
         }
     }
 
-    public List<Favorite> getFavoritesByMember(Long memberId) {
-        return favoriteRepository.findByMemberId(memberId);
+    public Page<Favorite> getFavoritesByMember(Long memberId, int page, int pageSize) {
+        PageRequest pageable = PageRequest.of(page, pageSize);
+        return favoriteRepository.findByMemberId(memberId, pageable);
     }
 
     public List<Favorite> getFavoritesByProduct(Long productId) {

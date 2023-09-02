@@ -26,7 +26,7 @@
     </tr>
     </thead>
     <tbody>
-    <tr th:each="favorite : ${favorites}">
+    <tr th:each="favorite : ${pagedFavorites.content}">
       <td th:text="${favorite.product.productName}"></td>
       <td><pre th:text="${favorite.product.productDescription.split('\n')[0]}" style="white-space: pre-wrap;"></pre></td>
       <td th:text="${#numbers.formatDecimal(favorite.product.price, 0, 'COMMA', 0, 'POINT')} + '원'"></td>
@@ -37,7 +37,7 @@
         <a th:if="${loggedInMemberId == favorite.product.member.id}" th:href="@{/products/edit/{id}(id=${favorite.product.id})}" class="btn btn-warning">수정</a>
         <a th:if="${loggedInMemberId == favorite.product.member.id}" th:href="@{/products/delete/{id}(id=${favorite.product.id})}" class="btn btn-danger">삭제</a>
         <!-- 찜 삭제 버튼 -->
-        <form method="post" th:action="@{/favorites/toggle}"style="display: inline;">
+        <form method="post" th:action="@{/favorites/toggle}"style="display:inline;">
           <input type="hidden" name="memberId" th:value="${loggedInMemberId}" />
           <input type="hidden" name="productId" th:value="${favorite.product.id}" />
           <button type="submit" class="btn btn-secondary">찜 삭제</button>
@@ -46,6 +46,21 @@
     </tr>
     </tbody>
   </table>
+  <!-- Pagination Section -->
+  <div class="pagination-container">
+    <ul class="pagination">
+      <li th:if="${pagedFavorites.number > 0}" class="page-item">
+        <a class="page-link" th:href="@{/favorites(page=${pagedFavorites.number - 1})}">이전</a>
+      </li>
+      <li th:each="pageNumber : ${#numbers.sequence(0, pagedFavorites.totalPages - 1)}" class="page-item">
+        <a class="page-link" th:href="@{/favorites(page=${pageNumber})}" th:text="${pageNumber + 1}"></a>
+      </li>
+      <li th:if="${pagedFavorites.number < pagedFavorites.totalPages - 1}" class="page-item">
+        <a class="page-link" th:href="@{/favorites(page=${pagedFavorites.number + 1})}">다음</a>
+      </li>
+    </ul>
+  </div>
+</div>
 </div>
 <!-- Footer inclusion -->
 <div class="mb-5">
