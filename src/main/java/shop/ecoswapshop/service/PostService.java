@@ -6,10 +6,15 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import shop.ecoswapshop.domain.Comment;
+import shop.ecoswapshop.domain.Member;
 import shop.ecoswapshop.domain.Post;
 import shop.ecoswapshop.exception.NotFoundException;
+import shop.ecoswapshop.repository.CommentRepository;
+import shop.ecoswapshop.repository.MemberRepository;
 import shop.ecoswapshop.repository.PostRepository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,6 +24,8 @@ import java.util.Optional;
 public class PostService {
 
     private final PostRepository postRepository;
+    private final MemberRepository memberRepository;
+    private final CommentRepository commentRepository;
 
     // 게시글 작성
     @Transactional
@@ -76,6 +83,22 @@ public class PostService {
         } else {
             throw new NotFoundException("Post with id " + post.getId());
         }
+    }
+
+    @Transactional
+    public Long addComment(Long postId, Long memberId, String content) {
+        Post post = postRepository.findById(postId).orElseThrow(() -> new NotFoundException("Invalid post Id:" + postId));
+        Member member = memberRepository.findById(memberId).orElseThrow(() -> new NotFoundException("Invalid member Id:" + memberId));
+
+        Comment comment = new Comment();
+        comment.setMember(member);
+        comment.setPost(post);
+        comment.setContent(content);
+        comment.setCreationDate(LocalDateTime.now());
+
+        Comment saveComment = commentRepository.save(comment);
+
+        return saveComment.getId();
     }
 
     // 페이징 처리

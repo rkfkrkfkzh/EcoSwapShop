@@ -2,6 +2,8 @@ package shop.ecoswapshop.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -37,7 +39,7 @@ public class PostController {
     }
 
     @GetMapping
-    public String showPostList(@RequestParam(defaultValue = "0")int page, Model model) {
+    public String showPostList(@RequestParam(defaultValue = "0") int page, Model model) {
         Page<Post> pagedPosts = postService.getPagedPosts(page, 8);
         model.addAttribute("pagedPosts", pagedPosts);
         getLoggedInMemberId().ifPresent(memberId -> model.addAttribute("loggedInMemberId", memberId));
@@ -124,5 +126,12 @@ public class PostController {
         }
         postService.deletePostById(postId);
         return "redirect:/posts";
+    }
+
+    // 댓글 comment
+    @PostMapping("/{postId}/comments")
+    public ResponseEntity<Long> addComment(@PathVariable Long postId, @RequestParam Long memberId, @RequestParam String content) {
+        Long commentId = postService.addComment(postId, memberId, content);
+        return new ResponseEntity<>(commentId, HttpStatus.CREATED);
     }
 }
