@@ -129,7 +129,7 @@ public class PostController {
     }
 
     // 댓글 comment
-    @PostMapping("/{postId}/comments")
+    @PostMapping("/details/{postId}/addComment")
     public ResponseEntity<Long> addComment(@PathVariable Long postId, @RequestParam Long memberId, @RequestParam String content) {
         Long commentId = postService.addComment(postId, memberId, content);
         return new ResponseEntity<>(commentId, HttpStatus.CREATED);

@@ -85,6 +85,7 @@ public class PostService {
         }
     }
 
+    // 댓글
     @Transactional
     public Long addComment(Long postId, Long memberId, String content) {
         Post post = postRepository.findById(postId).orElseThrow(() -> new NotFoundException("Invalid post Id:" + postId));
