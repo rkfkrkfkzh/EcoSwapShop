@@ -2,11 +2,10 @@ package shop.ecoswapshop.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import shop.ecoswapshop.domain.Member;
 import shop.ecoswapshop.domain.Post;
 import shop.ecoswapshop.service.MemberService;
@@ -130,8 +129,10 @@ public class PostController {
 
     // 댓글 comment
     @PostMapping("/details/{postId}/addComment")
-    public ResponseEntity<Long> addComment(@PathVariable Long postId, @RequestParam Long memberId, @RequestParam String content) {
+    public String addComment(@PathVariable Long postId, @RequestParam Long memberId, @RequestParam String content, RedirectAttributes redirectAttributes) {
+        Member loggedInMember = getLoggedInMember();
         Long commentId = postService.addComment(postId, memberId, content);
-        return new ResponseEntity<>(commentId, HttpStatus.CREATED);
+        redirectAttributes.addFlashAttribute("successMessage", "댓글이 성공적으로 추가 되었습니다.");
+        return "redirect:/posts/details/" + postId;
     }
 }
