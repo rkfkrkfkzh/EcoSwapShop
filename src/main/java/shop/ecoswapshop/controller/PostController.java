@@ -2,6 +2,8 @@ package shop.ecoswapshop.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -113,6 +115,7 @@ public class PostController {
         return "posts/postDetails";
     }
 
+    // 삭제
     @GetMapping("delete/{postId}")
     public String delete(@PathVariable Long postId) {
         Optional<Post> postById = postService.findPostById(postId);
@@ -127,12 +130,26 @@ public class PostController {
         return "redirect:/posts";
     }
 
-    // 댓글 comment
+    // 댓글 추가
     @PostMapping("/details/{postId}/addComment")
     public String addComment(@PathVariable Long postId, @RequestParam Long memberId, @RequestParam String content, RedirectAttributes redirectAttributes) {
         Member loggedInMember = getLoggedInMember();
         Long commentId = postService.addComment(postId, memberId, content);
         redirectAttributes.addFlashAttribute("successMessage", "댓글이 성공적으로 추가 되었습니다.");
         return "redirect:/posts/details/" + postId;
+    }
+
+    // 댓글 수정
+    @PutMapping("details/{postId}/comments/{commentId}/edit")
+    public ResponseEntity<Void> editComment(@PathVariable Long postId, @PathVariable Long commentId, @RequestParam String newContent) {
+        // 로직
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    // 댓글 삭제
+    @DeleteMapping("details/{postId}/comments/{commentId}/delete")
+    public ResponseEntity<Void> deleteComment(@PathVariable Long postId, @PathVariable Long commentId) {
+        // 로직
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

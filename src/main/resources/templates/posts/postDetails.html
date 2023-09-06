@@ -57,6 +57,10 @@
                         <!-- <strong th:text="${comment.member.username}">: </strong> -->  <!-- 아이디 -->
                         <strong th:text="${comment.member.fullName}">: </strong> <!-- 작성자 -->
                         <small class="text-muted" th:text="${#temporals.format(comment.creationDate, 'yyyy-MM-dd HH:mm')}"></small> <!-- 작성일 -->
+                        <!-- 수정 및 삭제 버튼 -->
+                        <a th:if="${loggedInMemberId == comment.member.id}" th:href="@{/details/{postId}/comments/{commentId}/edit(postId=${post.id}, commentId=${comment.id})}" class="btn btn-warning btn-sm">수정</a>
+                        <a th:if="${loggedInMemberId == comment.member.id}" th:href="@{/details/{postId}/comments/{commentId}/delete(postId=${post.id}, commentId=${comment.id})}" class="btn btn-danger btn-sm">삭제</a>
+
                     </div>
                     <p class="mb-0" th:text="${comment.content}"></p> <!-- 댓글 내용 -->
                 </li>
