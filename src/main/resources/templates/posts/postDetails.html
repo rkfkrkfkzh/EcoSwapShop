@@ -58,11 +58,21 @@
                         <strong th:text="${comment.member.fullName}">: </strong> <!-- 작성자 -->
                         <small class="text-muted" th:text="${#temporals.format(comment.creationDate, 'yyyy-MM-dd HH:mm')}"></small> <!-- 작성일 -->
                         <!-- 수정 및 삭제 버튼 -->
-                        <a th:if="${loggedInMemberId == comment.member.id}" th:href="@{/details/{postId}/comments/{commentId}/edit(postId=${post.id}, commentId=${comment.id})}" class="btn btn-warning btn-sm">수정</a>
-                        <a th:if="${loggedInMemberId == comment.member.id}" th:href="@{/details/{postId}/comments/{commentId}/delete(postId=${post.id}, commentId=${comment.id})}" class="btn btn-danger btn-sm">삭제</a>
-
+                        <div>
+                            <form th:if="${loggedInMemberId == comment.member.id}" th:action="@{/posts/details/{postId}/comments/{commentId}/edit(postId=${post.id}, commentId=${comment.id})}" method="POST">
+                                <button type="submit" class="btn btn-warning btn-sm">수정</button>
+                            </form>
+                            <form th:if="${loggedInMemberId == comment.member.id}" th:action="@{/posts/details/{postId}/comments/{commentId}/delete(postId=${post.id}, commentId=${comment.id})}" method="POST">
+                                <button type="submit" class="btn btn-danger btn-sm">삭제</button>
+                            </form>
+                        </div>
                     </div>
                     <p class="mb-0" th:text="${comment.content}"></p> <!-- 댓글 내용 -->
+                    <!-- 댓글 수정 폼 -->
+                    <form class="edit-comment-form" style="display:none;" th:action="@{/posts/details/{postId}/comments/{commentId}/edit(postId=${post.id}, commentId=${comment.id})}" method="POST">
+                        <input type="text" name="newContent" value="" placeholder="새로운 댓글 내용" />
+                        <button type="submit" class="btn btn-primary btn-sm">수정 완료</button>
+                    </form>
                 </li>
             </ul>
         </div>

@@ -140,16 +140,28 @@ public class PostController {
     }
 
     // 댓글 수정
-    @PutMapping("details/{postId}/comments/{commentId}/edit")
-    public ResponseEntity<Void> editComment(@PathVariable Long postId, @PathVariable Long commentId, @RequestParam String newContent) {
-        // 로직
-        return new ResponseEntity<>(HttpStatus.OK);
+    @PostMapping("details/{postId}/comments/{commentId}/edit")
+    public String editComment(@PathVariable Long postId, @PathVariable Long commentId, @RequestParam String newContent, RedirectAttributes redirectAttributes) {
+        try {
+            Member loggedInMember = getLoggedInMember(); // 로그인한 사용자 가져오기
+            postService.editComment(postId, commentId, newContent, loggedInMember.getId()); // 댓글 수정 서비스 메서드
+            redirectAttributes.addFlashAttribute("successMessage", "댓글이 성공적으로 수정되었습니다");
+            return "redirect:/posts/details/" + postId;
+        } catch (Exception e) {
+            return "redirect:/posts/details/"+postId;
+        }
     }
 
     // 댓글 삭제
-    @DeleteMapping("details/{postId}/comments/{commentId}/delete")
-    public ResponseEntity<Void> deleteComment(@PathVariable Long postId, @PathVariable Long commentId) {
-        // 로직
-        return new ResponseEntity<>(HttpStatus.OK);
+    @PostMapping("details/{postId}/comments/{commentId}/delete")
+    public String deleteComment(@PathVariable Long postId, @PathVariable Long commentId, RedirectAttributes redirectAttributes) {
+        try {
+            Member loggedInMember = getLoggedInMember();
+            postService.deleteComment(postId, commentId, loggedInMember.getId());
+            redirectAttributes.addFlashAttribute("successMessage", "댓글이 성공적으로 삭제되었습니다");
+            return "redirect:/posts/details/" + postId;
+        } catch (Exception e) {
+            return "redirect:/posts/details/" + postId;
+        }
     }
 }

@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import shop.ecoswapshop.domain.Comment;
@@ -16,6 +17,7 @@ import shop.ecoswapshop.repository.PostRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -102,6 +104,27 @@ public class PostService {
         return saveComment.getId();
     }
 
+    // 댓글 수정
+    @Transactional
+    public void editComment(Long postId, Long commentId, String newContent, Long memberId) {
+        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new NoSuchElementException("comment not found"));
+        if (!comment.getMember().getId().equals(memberId)) {
+            throw new AccessDeniedException("You are not authorized to edit this comment");
+        }
+        comment.setContent(newContent);
+        commentRepository.save(comment);
+    }
+
+    // 댓글 삭제
+    @Transactional
+    public void deleteComment(Long postId, Long commentId, Long memberId) {
+        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new NoSuchElementException("comment not found"));
+
+        if (!comment.getMember().getId().equals(memberId)) {
+            throw new AccessDeniedException("You are not authorized to delete this comment");
+        }
+        commentRepository.delete(comment);
+    }
     // 페이징 처리
     public Page<Post> getPagedPosts(int page, int pageSize) {
         Pageable pageable = PageRequest.of(page, pageSize);
