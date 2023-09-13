@@ -5,6 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>게시물 상세</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}"> <!-- Link to your custom CSS file -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const editButtons = document.querySelectorAll('.edit-button');
+
+            editButtons.forEach(function (button) {
+                button.addEventListener('click', function () {
+                    console.log("Edit button clicked");  // 이 부분 추가
+                    const commentId = this.getAttribute('data-comment-id');
+                    const commentContent = this.getAttribute('data-comment-content');
+                    showEditForm(commentId, commentContent);
+                });
+            });
+        });
+
+        function showEditForm(commentId, commentContent) {
+            const editForm = document.getElementById('edit-comment-form-' + commentId);
+            const inputBox = editForm.querySelector('input[name="newContent"]');
+            inputBox.value = commentContent;
+            editForm.style.display = 'block';
+        }
+    </script>
 </head>
 <body>
 
@@ -15,14 +37,17 @@
         <div class="col-md-9">
             <div class="post-details">
                 <h1 th:text="${post.title}" class="post-title mb-3"></h1>
-                <p class="post-date text-muted" th:text="${#temporals.format(post.creationDate, 'yyyy-MM-dd HH:mm')}"></p>
+                <p class="post-date text-muted"
+                   th:text="${#temporals.format(post.creationDate, 'yyyy-MM-dd HH:mm')}"></p>
                 <hr>
                 <p class="post-content" th:text="${post.content}"></p>
                 <div class="post-actions mt-4">
                 </div>
                 <!-- 수정 및 삭제 버튼 조건 추가 -->
-                <a th:if="${loggedInMemberId == post.member.id}" th:href="@{/posts/edit/{id}(id=${post.id})}" class="btn btn-warning">수정</a>
-                <a th:if="${loggedInMemberId == post.member.id}" th:href="@{/posts/delete/{id}(id=${post.id})}" class="btn btn-danger">삭제</a>
+                <a th:if="${loggedInMemberId == post.member.id}" th:href="@{/posts/edit/{id}(id=${post.id})}"
+                   class="btn btn-warning">수정</a>
+                <a th:if="${loggedInMemberId == post.member.id}" th:href="@{/posts/delete/{id}(id=${post.id})}"
+                   class="btn btn-danger">삭제</a>
             </div>
         </div>
     </div>
@@ -43,41 +68,48 @@
 
             <!-- 댓글 작성 폼 -->
             <form th:action="@{/posts/details/{id}/addComment(id=${post.id})}" method="post" class="mb-5">
-                <input type="hidden" name="memberId" th:value="${loggedInMemberId}" />
+                <input type="hidden" name="memberId" th:value="${loggedInMemberId}"/>
                 <div class="form-group">
                     <textarea name="content" placeholder="댓글을 작성하세요." rows="2" class="form-control"></textarea>
                 </div>
                 <button type="submit" class="btn btn-primary btn-sm">댓글 작성</button>
             </form>
-
             <!-- 댓글 목록 -->
             <ul class="list-unstyled">
-                <li th:each="comment : ${post.commentList}" class="mb-3">
+                <li th:each="comment : ${post.commentList}" class="mb-3 comment-box">
                     <div class="d-flex justify-content-between">
-                        <!-- <strong th:text="${comment.member.username}">: </strong> -->  <!-- 아이디 -->
-                        <strong th:text="${comment.member.fullName}">: </strong> <!-- 작성자 -->
-                        <small class="text-muted" th:text="${#temporals.format(comment.creationDate, 'yyyy-MM-dd HH:mm')}"></small> <!-- 작성일 -->
-                        <!-- 수정 및 삭제 버튼 -->
-                        <div>
-                            <form th:if="${loggedInMemberId == comment.member.id}" th:action="@{/posts/details/{postId}/comments/{commentId}/edit(postId=${post.id}, commentId=${comment.id})}" method="POST">
-                                <button type="submit" class="btn btn-warning btn-sm">수정</button>
-                            </form>
-                            <form th:if="${loggedInMemberId == comment.member.id}" th:action="@{/posts/details/{postId}/comments/{commentId}/delete(postId=${post.id}, commentId=${comment.id})}" method="POST">
+                        <strong th:text="${comment.member.fullName}"></strong>
+                        <small class="text-muted"
+                               th:text="${#temporals.format(comment.creationDate, 'yyyy-MM-dd HH:mm')}"></small>
+                        <div class="comment-actions">
+                            <button th:if="${loggedInMemberId == comment.member.id}"
+                                    class="btn btn-warning btn-sm edit-button mr-1"
+                                    th:data-comment-id="${comment.id}"
+                                    th:data-comment-content="${comment.content}">수정
+                            </button>
+                            <form th:if="${loggedInMemberId == comment.member.id}"
+                                  th:action="@{/posts/details/{postId}/comments/{commentId}/delete(postId=${post.id}, commentId=${comment.id})}"
+                                  method="POST">
                                 <button type="submit" class="btn btn-danger btn-sm">삭제</button>
                             </form>
                         </div>
                     </div>
-                    <p class="mb-0" th:text="${comment.content}"></p> <!-- 댓글 내용 -->
+                    <p class="mb-0" th:text="${comment.content}"></p>
                     <!-- 댓글 수정 폼 -->
-                    <form class="edit-comment-form" style="display:none;" th:action="@{/posts/details/{postId}/comments/{commentId}/edit(postId=${post.id}, commentId=${comment.id})}" method="POST">
-                        <input type="text" name="newContent" value="" placeholder="새로운 댓글 내용" />
+                    <form th:id="'edit-comment-form-' + ${comment.id}" class="edit-comment-form mb-5"
+                          style="display:none;"
+                          th:action="@{/posts/details/{postId}/comments/{commentId}/edit(postId=${post.id}, commentId=${comment.id})}"
+                          method="POST">
+                        <div class="form-group">
+                            <input type="text" name="newContent" placeholder="새로운 댓글 내용" class="form-control"/>
+                        </div>
                         <button type="submit" class="btn btn-primary btn-sm">수정 완료</button>
                     </form>
                 </li>
             </ul>
         </div>
-    </div>
-</div>
+    </div> <!-- row 닫는 태그 -->
+</div> <!-- container mt-5 닫는 태그 -->
 <!-- 댓글 섹션 끝 -->
 <!-- Footer inclusion -->
 <div class="mb-5">
