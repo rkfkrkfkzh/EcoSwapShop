@@ -125,6 +125,28 @@ public class PostService {
         }
         commentRepository.delete(comment);
     }
+
+    // 대댓글
+    @Transactional
+    public Long addReply(Long postId, Long parentId, Long memberId, String content) {
+        Post post = findPostById(postId).orElseThrow(() -> new RuntimeException("Post not found"));
+        Comment parentComment = commentRepository.findById(parentId).orElseThrow(() -> new RuntimeException("Parent comment not found"));
+        Member member = memberRepository.findById(memberId).orElseThrow(() -> new RuntimeException("Member not found"));
+
+        Comment reply = new Comment();
+        reply.setContent(content);
+        reply.setCreationDate(LocalDateTime.now());
+        reply.setMember(member);
+        reply.setParentComment(parentComment);
+
+        parentComment.getChildComments().add(reply);
+        post.getCommentList().add(reply);
+
+        commentRepository.save(reply);
+
+        return reply.getId();
+    }
+
     // 페이징 처리
     public Page<Post> getPagedPosts(int page, int pageSize) {
         Pageable pageable = PageRequest.of(page, pageSize);

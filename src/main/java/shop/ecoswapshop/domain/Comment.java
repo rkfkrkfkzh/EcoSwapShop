@@ -5,6 +5,8 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import static javax.persistence.FetchType.LAZY;
 
@@ -30,8 +32,17 @@ public class Comment {
     @JoinColumn(name = "post_id")
     private Post post; // 해당 게시글 아이디
 
+    // 대댓글 구현
+    @ManyToOne
+    @JoinColumn(name = "parent_id") // 부모 댓글에 대한 참조
+    private Comment parentComment;
+
+    @OneToMany(mappedBy = "parentComment") // 대댓글에 대한 참조
+    private List<Comment> childComments = new ArrayList<>();
+
     // ==연관관계 메서드==
     public void setMember(Member member) {
+
         if (this.member != null) {
             this.member.getCommentList().remove(this);
         }

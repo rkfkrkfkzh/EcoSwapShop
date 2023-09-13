@@ -148,7 +148,7 @@ public class PostController {
             redirectAttributes.addFlashAttribute("successMessage", "댓글이 성공적으로 수정되었습니다");
             return "redirect:/posts/details/" + postId;
         } catch (Exception e) {
-            return "redirect:/posts/details/"+postId;
+            return "redirect:/posts/details/" + postId;
         }
     }
 
@@ -163,5 +163,14 @@ public class PostController {
         } catch (Exception e) {
             return "redirect:/posts/details/" + postId;
         }
+    }
+
+    // 대댓글
+    @PostMapping("details/{postId}/addReply/{parentId}")
+    public String addReply(@PathVariable Long postId, @PathVariable Long parentId, @RequestParam Long memberId, @RequestParam String content, RedirectAttributes redirectAttributes) {
+        Long replyId = postService.addReply(postId, parentId, memberId, content);
+        redirectAttributes.addFlashAttribute("successMessage", "대댓글이 성공적으로 추가되었습니다");
+        return "redirect:/posts/details/" + postId;
+
     }
 }

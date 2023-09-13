@@ -17,4 +17,5 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
 
     // 특정 상품에 대한 특정 사용자의 댓글 조회
     List<Comment> findByPostIdAndMemberId(Long postId, Long memberId);
+
 }

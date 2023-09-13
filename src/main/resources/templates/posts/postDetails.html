@@ -105,8 +105,29 @@
                         </div>
                         <button type="submit" class="btn btn-primary btn-sm">수정 완료</button>
                     </form>
+                    <!-- 여기에 대댓글 폼을 추가 -->
+                    <form th:action="@{/posts/details/{postId}/addReply/{parentId}(postId=${post.id}, parentId=${comment.id})}" method="post" class="mb-3">
+                        <input type="hidden" name="memberId" th:value="${loggedInMemberId}" />
+                        <div class="form-group">
+                            <textarea name="content" placeholder="답글을 작성하세요." rows="1" class="form-control"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-sm">답글 작성</button>
+                    </form>
+                    <!-- 대댓글을 표시하는 예시 -->
+                    <ul class="list-unstyled reply-list pl-3">  <!-- Padding-left 추가로 대댓글이 댓글에 비해 들여쓰기됨 -->
+                        <li th:each="reply : ${comment.childComments}">  <!-- replyList를 childComments로 수정 -->
+                            <div class="d-flex justify-content-between">
+                                <strong th:text="${reply.member.fullName}"></strong> <!-- 대댓글 작성자 -->
+                                <small class="text-muted"
+                                       th:text="${#temporals.format(reply.creationDate, 'yyyy-MM-dd HH:mm')}"></small> <!-- 대댓글 작성 시간 -->
+                            </div>
+                            <p th:text="${reply.content}"></p> <!-- 대댓글 내용 -->
+                        </li>
+                    </ul>
+
                 </li>
             </ul>
+
         </div>
     </div> <!-- row 닫는 태그 -->
 </div> <!-- container mt-5 닫는 태그 -->
