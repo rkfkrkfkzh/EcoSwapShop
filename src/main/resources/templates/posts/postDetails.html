@@ -106,8 +106,9 @@
                         <button type="submit" class="btn btn-primary btn-sm">수정 완료</button>
                     </form>
                     <!-- 여기에 대댓글 폼을 추가 -->
-                    <form th:action="@{/posts/details/{postId}/addReply/{parentId}(postId=${post.id}, parentId=${comment.id})}" method="post" class="mb-3">
-                        <input type="hidden" name="memberId" th:value="${loggedInMemberId}" />
+                    <form th:action="@{/posts/details/{postId}/addReply/{parentId}(postId=${post.id}, parentId=${comment.id})}"
+                          method="post" class="mb-3">
+                        <input type="hidden" name="memberId" th:value="${loggedInMemberId}"/>
                         <div class="form-group">
                             <textarea name="content" placeholder="답글을 작성하세요." rows="1" class="form-control"></textarea>
                         </div>
@@ -119,15 +120,38 @@
                             <div class="d-flex justify-content-between">
                                 <strong th:text="${reply.member.fullName}"></strong> <!-- 대댓글 작성자 -->
                                 <small class="text-muted"
-                                       th:text="${#temporals.format(reply.creationDate, 'yyyy-MM-dd HH:mm')}"></small> <!-- 대댓글 작성 시간 -->
+                                       th:text="${#temporals.format(reply.creationDate, 'yyyy-MM-dd HH:mm')}"></small>
+                                <!-- 대댓글 작성 시간 -->
+                                <!-- 대댓글 수정 및 삭제 버튼 -->
+                                <div class="comment-actions">
+                                    <button th:if="${loggedInMemberId == reply.member.id}"
+                                            class="btn btn-warning btn-sm edit-button-reply mr-1"
+                                            th:data-reply-id="${reply.id}"
+                                            th:data-reply-content="${reply.content}">수정
+                                    </button>
+                                    <form th:if="${loggedInMemberId == reply.member.id}"
+                                          th:action="@{/posts/details/{postId}/replies/{replyId}/delete(postId=${post.id}, replyId=${reply.id})}"
+                                          method="POST">
+                                        <button type="submit" class="btn btn-danger btn-sm">삭제</button>
+                                    </form>
+                                </div>
                             </div>
                             <p th:text="${reply.content}"></p> <!-- 대댓글 내용 -->
+                            <!-- 대댓글 수정 폼 -->
+                            <form th:id="'edit-reply-form-' + ${reply.id}" class="edit-reply-form mb-5"
+                                  style="display:none;"
+                                  th:action="@{/posts/details/{postId}/replies/{replyId}/edit(postId=${post.id}, replyId=${reply.id})}"
+                                  method="POST">
+                                <div class="form-group">
+                                    <input type="text" name="newReplyContent" placeholder="새로운 대댓글 내용"
+                                           class="form-control"/>
+                                </div>
+                                <button type="submit" class="btn btn-primary btn-sm">수정 완료</button>
+                            </form>
                         </li>
                     </ul>
-
                 </li>
             </ul>
-
         </div>
     </div> <!-- row 닫는 태그 -->
 </div> <!-- container mt-5 닫는 태그 -->

@@ -147,6 +147,27 @@ public class PostService {
         return reply.getId();
     }
 
+    // 대댓글 수정
+    @Transactional
+    public void editReply(Long postId, Long replyId, String newContent, Long memberId) {
+        Comment reply = commentRepository.findById(replyId).orElseThrow(() -> new RuntimeException("reply not found"));
+        if (!reply.getMember().getId().equals(memberId)) {
+            throw new AccessDeniedException("You are not authorized to edit this reply");
+        }
+        reply.setContent(newContent);
+        commentRepository.save(reply);
+    }
+
+    // 대댓글 삭제
+    @Transactional
+    public void deleteReply(Long postId, Long replyId, Long memberId) {
+        Comment reply = commentRepository.findById(replyId).orElseThrow(() -> new RuntimeException("reply not found"));
+        if (!reply.getMember().getId().equals(memberId)) {
+            throw new AccessDeniedException("You are not authorized to delete this reply");
+        }
+        commentRepository.delete(reply);
+    }
+
     // 페이징 처리
     public Page<Post> getPagedPosts(int page, int pageSize) {
         Pageable pageable = PageRequest.of(page, pageSize);
