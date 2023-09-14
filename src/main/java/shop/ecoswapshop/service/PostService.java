@@ -149,23 +149,25 @@ public class PostService {
 
     // 대댓글 수정
     @Transactional
-    public void editReply(Long postId, Long replyId, String newContent, Long memberId) {
-        Comment reply = commentRepository.findById(replyId).orElseThrow(() -> new RuntimeException("reply not found"));
-        if (!reply.getMember().getId().equals(memberId)) {
+    public void editReply(Long postId, Long commentId, String newContent, Long memberId) {
+        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new RuntimeException("reply not found"));
+        Long parentId = comment.getParentComment().getId();  // 부모 댓글의 ID 가져오기
+        if (!comment.getMember().getId().equals(memberId)) {
             throw new AccessDeniedException("You are not authorized to edit this reply");
         }
-        reply.setContent(newContent);
-        commentRepository.save(reply);
+        comment.setContent(newContent);
+        commentRepository.save(comment);
     }
 
     // 대댓글 삭제
     @Transactional
-    public void deleteReply(Long postId, Long replyId, Long memberId) {
-        Comment reply = commentRepository.findById(replyId).orElseThrow(() -> new RuntimeException("reply not found"));
-        if (!reply.getMember().getId().equals(memberId)) {
+    public void deleteReply(Long postId, Long commentId, Long memberId) {
+        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new RuntimeException("reply not found"));
+        Long parentId = comment.getParentComment().getId();  // 부모 댓글의 ID 가져오기
+        if (!comment.getMember().getId().equals(memberId)) {
             throw new AccessDeniedException("You are not authorized to delete this reply");
         }
-        commentRepository.delete(reply);
+        commentRepository.delete(comment);
     }
 
     // 페이징 처리

@@ -18,12 +18,29 @@
                     showEditForm(commentId, commentContent);
                 });
             });
+            // 추가: 대댓글에 대한 수정 버튼을 클릭했을 때
+            const editReplyButtons = document.querySelectorAll('.edit-button-reply');
+            editReplyButtons.forEach(function (button) {
+                button.addEventListener('click', function () {
+                    console.log("Edit reply button clicked");
+                    const replyId = this.getAttribute('data-reply-id');
+                    const replyContent = this.getAttribute('data-reply-content');
+                    showEditReplyForm(replyId, replyContent);
+                });
+            });
         });
 
         function showEditForm(commentId, commentContent) {
             const editForm = document.getElementById('edit-comment-form-' + commentId);
             const inputBox = editForm.querySelector('input[name="newContent"]');
             inputBox.value = commentContent;
+            editForm.style.display = 'block';
+        }
+        // 추가: 대댓글 수정 폼 보여주기
+        function showEditReplyForm(replyId, replyContent) {
+            const editForm = document.getElementById('edit-reply-form-' + replyId);
+            const inputBox = editForm.querySelector('input[name="newContent"]');
+            inputBox.value = replyContent;
             editForm.style.display = 'block';
         }
     </script>
@@ -143,7 +160,7 @@
                                   th:action="@{/posts/details/{postId}/replies/{replyId}/edit(postId=${post.id}, replyId=${reply.id})}"
                                   method="POST">
                                 <div class="form-group">
-                                    <input type="text" name="newReplyContent" placeholder="새로운 대댓글 내용"
+                                    <input type="text" name="newContent" placeholder="새로운 대댓글 내용"
                                            class="form-control"/>
                                 </div>
                                 <button type="submit" class="btn btn-primary btn-sm">수정 완료</button>

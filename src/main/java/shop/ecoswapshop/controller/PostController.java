@@ -175,28 +175,32 @@ public class PostController {
     }
 
     // 대댓글 수정
-    @PostMapping("details/{postId}/comments/{replyId}/edit")
-    public String editReply(@PathVariable Long postId, @PathVariable Long replyId, @RequestParam String newContent, RedirectAttributes redirectAttributes) {
+    @PostMapping("details/{postId}/replies/{commentId}/edit")
+    public String editReply(@PathVariable Long postId, @PathVariable Long commentId, @RequestParam String newContent, RedirectAttributes redirectAttributes) {
+        System.out.println("Inside editReply method");
         try {
             Member loggedInMember = getLoggedInMember(); // 로그인한 사용자 가져오기
-            postService.editReply(postId, replyId, newContent, loggedInMember.getId()); // 대댓글 수정 서비스 메서드
+            postService.editReply(postId, commentId, newContent, loggedInMember.getId());  // 대댓글 수정 서비스 메서드
             redirectAttributes.addFlashAttribute("successMessage", "대댓글이 수정되었습니다");
             return "redirect:/posts/details/" + postId;
         } catch (Exception e) {
+            System.out.println("Exception in editReply: " + e.getMessage());
+
             return "redirect:/posts/details/" + postId;
         }
     }
 
     // 대댓글 삭제
-    @PostMapping("details/{postId}/comments/{replyId}/delete")
-    public String deleteReply(@PathVariable Long postId, @PathVariable Long replyId, @RequestParam RedirectAttributes redirectAttributes) {
+    @PostMapping("details/{postId}/replies/{commentId}/delete")
+    public String deleteReply(@PathVariable Long postId, @PathVariable Long commentId, RedirectAttributes redirectAttributes) {
         try {
             Member loggedInMember = getLoggedInMember();
-            postService.deleteReply(postId, replyId, loggedInMember.getId());
+            postService.deleteReply(postId, commentId, loggedInMember.getId());
             redirectAttributes.addFlashAttribute("successMessage", "대댓글이 삭제되었습니다");
             return "redirect:/posts/details/" + postId;
         } catch (Exception e) {
             return "redirect:/posts/details/" + postId;
         }
     }
+
 }
