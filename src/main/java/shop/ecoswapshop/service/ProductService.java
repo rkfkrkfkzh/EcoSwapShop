@@ -21,7 +21,7 @@ import java.util.Optional;
 public class ProductService {
 
     private final ProductRepository productRepository;
-    private final PhotoRepository photoRepository;
+    private final PhotoService photoService;
 
     // 상품 등록
     @Transactional
@@ -56,7 +56,7 @@ public class ProductService {
     public Long addPhotoToProduct(Long productId, Photo photo) {
         Product product = productRepository.findById(productId).orElseThrow();
         product.addPhoto(photo);
-        photoRepository.save(photo);
+        photoService.savePhoto(photo);
         return photo.getId();
     }
 

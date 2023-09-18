@@ -2,6 +2,7 @@ package shop.ecoswapshop.controller;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.web.multipart.MultipartFile;
 import shop.ecoswapshop.domain.Condition;
 
 import java.time.LocalDateTime;
@@ -16,5 +17,5 @@ public class ProductForm {
     private Condition productCondition;
     private String photoList;
     private LocalDateTime creationDate;
-
+    private MultipartFile photo; // 새로 추가한 필드
 }
