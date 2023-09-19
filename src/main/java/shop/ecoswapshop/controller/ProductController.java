@@ -11,9 +11,12 @@ import shop.ecoswapshop.domain.Condition;
 import shop.ecoswapshop.domain.Member;
 import shop.ecoswapshop.domain.Product;
 import shop.ecoswapshop.service.MemberService;
+import shop.ecoswapshop.service.PhotoService;
 import shop.ecoswapshop.service.ProductService;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -76,7 +79,7 @@ public class ProductController {
     }
 
     @PostMapping("/create")
-    public String create(@ModelAttribute ProductForm productForm) {
+    public String create(@ModelAttribute ProductForm productForm, @RequestParam("files")List<MultipartFile>files)throws IOException {
         Member loggedInMember = getLoggedInMember();
         Product product = new Product();
         product.setProductName(productForm.getProductName());
@@ -88,7 +91,7 @@ public class ProductController {
         // Product 객체와 Member 객체를 연결하는 로직 추가 (예: foreign key 설정 등)
         // 예: product.setMember(member);
 
-        productService.registerProduct(product);
+        productService.registerProduct(product, files);
 
         return "redirect:/products";
     }

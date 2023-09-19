@@ -1,17 +1,23 @@
 package shop.ecoswapshop.service;
 
 import lombok.RequiredArgsConstructor;
+import org.dom4j.XPathException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import shop.ecoswapshop.domain.Photo;
 import shop.ecoswapshop.domain.Product;
 import shop.ecoswapshop.exception.NotFoundException;
 import shop.ecoswapshop.repository.PhotoRepository;
 import shop.ecoswapshop.repository.ProductRepository;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,12 +27,25 @@ import java.util.Optional;
 public class ProductService {
 
     private final ProductRepository productRepository;
-    private final PhotoService photoService;
+    private final PhotoRepository photoRepository;
 
     // 상품 등록
     @Transactional
-    public Long registerProduct(Product product) {
-        return productRepository.save(product).getId();
+    public Long registerProduct(Product product, List<MultipartFile> files) throws IOException {
+
+        Product savedProduct = productRepository.save(product);
+        for (MultipartFile file :files){
+            byte[] bytes = file.getBytes();
+            Path path = Paths.get("uploads/" + file.getOriginalFilename());
+            Files.write(path, bytes);
+
+            String photoUrl = "/uploads/" + file.getOriginalFilename();
+            Photo photo = new Photo();
+            photo.setUrl(photoUrl);
+            photo.setProduct(savedProduct);
+            photoRepository.save(photo);
+        }
+        return savedProduct.getId();
     }
 
     // 상품 조회
@@ -51,30 +70,10 @@ public class ProductService {
         productRepository.deleteAll();
     }
 
-    // 특정상품에 사진추가
-    @Transactional
-    public Long addPhotoToProduct(Long productId, Photo photo) {
-        Product product = productRepository.findById(productId).orElseThrow();
-        product.addPhoto(photo);
-        photoService.savePhoto(photo);
-        return photo.getId();
-    }
-
     // 특정 상품의 모든 사진 조회
     public List<Photo> getPhotoByProductId(Long productId) {
         Product product = productRepository.findById(productId).orElseThrow();
         return product.getPhotoList();
-    }
-
-    //특정 상품에서 특정 사진을 제거
-    @Transactional
-    public void removePhotoFromProduct(Long productId, Long photoId) {
-        Product product = productRepository.findById(productId).orElseThrow();
-        Photo photoToRemove = product.getPhotoList().stream() // 리스트를 스트림으로 변환, 코드의 가독성, 유지보수성, 확장성, 성능 최적화
-                .filter(photo -> photo.getId().equals(photoId))// photoId와 같은 요소만 선택
-                .findFirst() // Optional<Photo> 타입을 반환
-                .orElseThrow(); // 빈 Optional을 반환하면 예외처리
-        product.getPhotoList().remove(photoToRemove);
     }
 
     @Transactional

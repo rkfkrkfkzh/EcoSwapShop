@@ -12,6 +12,7 @@ import shop.ecoswapshop.repository.PhotoRepository;
 public class PhotoService {
 
     private final PhotoRepository photoRepository;
+    private final String uploadDir = "uploads";
 
     @Transactional
     public Long savePhoto(Photo photo) {
