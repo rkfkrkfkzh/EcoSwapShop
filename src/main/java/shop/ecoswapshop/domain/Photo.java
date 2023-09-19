@@ -21,6 +21,6 @@ public class Photo {
     @JoinColumn(name = "product_id")
     private Product product; // 상품 아이디
 
-    @URL
+//    @URL
     private String url; // 사진 url
 }

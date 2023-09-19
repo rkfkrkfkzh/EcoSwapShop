@@ -14,6 +14,7 @@ import shop.ecoswapshop.exception.NotFoundException;
 import shop.ecoswapshop.repository.PhotoRepository;
 import shop.ecoswapshop.repository.ProductRepository;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -34,6 +35,11 @@ public class ProductService {
     public Long registerProduct(Product product, List<MultipartFile> files) throws IOException {
 
         Product savedProduct = productRepository.save(product);
+
+        File directory = new File("uploads");
+        if (!directory.exists()) {
+            directory.mkdir(); //디렉터리 생성
+        }
         for (MultipartFile file :files){
             byte[] bytes = file.getBytes();
             Path path = Paths.get("uploads/" + file.getOriginalFilename());

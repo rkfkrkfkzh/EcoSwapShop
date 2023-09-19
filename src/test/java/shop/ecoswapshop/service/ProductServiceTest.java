@@ -7,11 +7,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import shop.ecoswapshop.domain.Photo;
 import shop.ecoswapshop.domain.Product;
 import shop.ecoswapshop.repository.MemberRepository;
 import shop.ecoswapshop.repository.ProductRepository;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -41,7 +43,8 @@ public class ProductServiceTest {
         product.setPrice(1000);
 
         // When
-        Long productId = productService.registerProduct(product);
+        List<MultipartFile> files = null;
+        Long productId = productService.registerProduct(product, files);
 
         // Then
         assertNotNull(productId);
@@ -116,14 +119,14 @@ public class ProductServiceTest {
     }
 
     @Test
-    public void 특정상품_사진추가() {
+    public void 특정상품_사진추가() throws IOException {
         // Given
         Product product = new Product(); // 상품 생성 로직에 맞게 조정해야 함.
         Long productId = productRepository.save(product).getId();
 
         // When
-        Photo photo = new Photo();
-        Long photoId = productService.addPhotoToProduct(productId, photo);
+        List<MultipartFile> files = null;
+        Long photoId = productService.registerProduct(product, files);
 
         // Then
         assertNotNull(photoId);
@@ -131,12 +134,13 @@ public class ProductServiceTest {
     }
 
     @Test
-    public void 특정상품_모든사진조회() {
+    public void 특정상품_모든사진조회() throws IOException {
         // Given
         Product product = new Product(); // 상품 생성 로직에 맞게 조정해야 함.
         Long productId = productRepository.save(product).getId();
-        Photo photo = new Photo();
-        productService.addPhotoToProduct(productId, photo);
+
+        List<MultipartFile> files = null;
+        productService.registerProduct(product, files);
 
         // When
         List<Photo> photos = productService.getPhotoByProductId(productId);
@@ -146,18 +150,18 @@ public class ProductServiceTest {
     }
 
     @Test
-    public void 특정상품_사진제거() {
+    public void 특정상품_사진제거() throws IOException {
         // Given
         Product product = new Product(); // 상품 생성 로직에 맞게 조정해야 함.
-        Long productId = productRepository.save(product).getId();
-        Photo photo = new Photo();
-        Long photoId = productService.addPhotoToProduct(productId, photo);
+        Product product1 = productRepository.save(product);
+        List<MultipartFile> files = null;
+        Long product2 = productService.registerProduct(product1, files);
 
         // When
-        productService.removePhotoFromProduct(productId, photoId);
+        productService.deleteProductById(product2);
 
         // Then
-        assertEquals(0, productService.getPhotoByProductId(productId).size());
+        assertEquals(0, productService.getPhotoByProductId(product2).size());
     }
 
 }
