@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home - 중고거래 웹사이트</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}"> <!-- Link to your custom CSS file -->
 </head>
 <body>
 <!-- Header inclusion -->
@@ -27,6 +28,9 @@
                 <div th:each="product : ${pagedProducts.content}" class="col-md-4">
                     <div class="card">
                         <!-- 'product.imageURL'은 Product 객체의 이미지 URL을 가리킵니다. -->
+                        <div class="text-center mt-4" th:if="${#lists.size(product.photoList) > 0}">
+                            <img th:src="${product.photoList[0].url}" alt="Product Image" class="img-fluid fixed-size-image"/>
+                        </div>
                         <div class="card-body">
                             <!-- 'product.name'은 Product 객체의 이름을 가리킵니다. -->
                             <h5 th:text="${product.productName}" class="card-title">상품명</h5>
