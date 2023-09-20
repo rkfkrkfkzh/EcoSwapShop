@@ -36,6 +36,12 @@
                 </tr>
                 </tbody>
             </table>
+            <!-- 제품 이미지 -->
+            <div class="text-center mt-4">
+                <th:block th:each="url : ${imageUrls}">
+                    <img th:src="@{${url}}" alt="Product Image" class="img-fluid" style="max-width: 200px;"/>
+                </th:block>
+            </div>
             <div class="text-center mt-4">
                 <!-- 수정 및 삭제 버튼 조건 추가 -->
                 <!-- 찜하기 버튼 추가 -->

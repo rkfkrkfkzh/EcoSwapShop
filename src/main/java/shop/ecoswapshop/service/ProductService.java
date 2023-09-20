@@ -43,6 +43,7 @@ public class ProductService {
         for (MultipartFile file :files){
             byte[] bytes = file.getBytes();
             Path path = Paths.get("uploads/" + file.getOriginalFilename());
+
             Files.write(path, bytes);
 
             String photoUrl = "/uploads/" + file.getOriginalFilename();

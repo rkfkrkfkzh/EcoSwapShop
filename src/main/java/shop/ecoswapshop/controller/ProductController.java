@@ -26,6 +26,7 @@ public class ProductController {
 
     private final ProductService productService;
     private final MemberService memberService;
+    private final PhotoService photoService;
 
     // 로그인한 사용자의 memberId를 가져옵니다.
     private Optional<Long> getLoggedInMemberId() {
@@ -63,6 +64,10 @@ public class ProductController {
             return "redirect:/error";
         }
         model.addAttribute("product", product.get());
+        // 이 부분에서 해당 상품에 연결된 이미지 정보를 불러옵니다.
+        List<String> imageUrls = photoService.findImageUrlsByProductId(productId);
+        model.addAttribute("imageUrls", imageUrls);
+
         getLoggedInMemberId().ifPresent(memberId -> model.addAttribute("loggedInMemberId", memberId));
         return "products/productsDetails"; //Thymeleaf view
     }
@@ -82,6 +87,7 @@ public class ProductController {
     public String create(@ModelAttribute ProductForm productForm, @RequestParam("files")List<MultipartFile>files)throws IOException {
         Member loggedInMember = getLoggedInMember();
         Product product = new Product();
+
         product.setProductName(productForm.getProductName());
         product.setPrice(productForm.getPrice());
         product.setProductDescription(productForm.getProductDescription());
@@ -91,7 +97,7 @@ public class ProductController {
         // Product 객체와 Member 객체를 연결하는 로직 추가 (예: foreign key 설정 등)
         // 예: product.setMember(member);
 
-        productService.registerProduct(product, files);
+        productService.registerProduct(product, files); // 이 함수 내에서 파일 정보를 DB에 저장
 
         return "redirect:/products";
     }
