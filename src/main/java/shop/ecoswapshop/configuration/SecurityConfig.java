@@ -38,6 +38,7 @@ public class SecurityConfig {
                         .deleteCookies("JSESSIONID") // 세션 쿠키 삭제
                         .permitAll());
 
+
         return http.build();
     }
 }

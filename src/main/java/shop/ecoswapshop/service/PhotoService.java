@@ -59,7 +59,7 @@ public class PhotoService {
         return photoRepository.findById(photoId);
     }
 
-    private String storeFile(MultipartFile file)throws IOException {
+    public String storeFile(MultipartFile file)throws IOException {
         String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
         Path filePath = Paths.get(uploadDir).resolve(fileName);
         Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
