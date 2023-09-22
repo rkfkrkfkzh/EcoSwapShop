@@ -7,49 +7,54 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 </head>
 <body>
-<div th:replace="fragments/header :: header"></div>
-<div class="container mt-4">
-    <div class="row">
-        <div class="col-md-9">
-            <div class="form-container mb-4">
-                <h1 class="text-center mb-4">제품 등록</h1>
-                <form action="#" th:action="@{/products/create}" th:object="${product}" method="post" enctype="multipart/form-data"
-                      class="needs-validation" novalidate>
-                    <div class="mb-3">
-                        <label for="productName" class="form-label">제품명</label>
-                        <input type="text" class="form-control" id="productName" th:field="*{productName}" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="price" class="form-label">제품 가격</label>
-                        <input type="text" class="form-control" id="price" th:field="*{price}" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="productDescription" class="form-label">제품 설명</label>
-                        <textarea class="form-control" id="productDescription" th:field="*{productDescription}" rows="3"
-                                  required></textarea>
-                    </div>
-                    <div class="mb-3">
-                        <label for="photoList" class="form-label">제품 이미지</label>
-                        <!-- name and multiple attributes added here -->
-                        <input type="file" class="form-control" id="photoList" name="files" multiple>
-                    </div>
-                    <div class="mb-3">
-                        <label for="productCondition" class="form-label">제품 상태</label>
-                        <select class="form-select" id="productCondition" th:field="*{productCondition}" required>
-                            <option value="S급">S급</option>
-                            <option value="A급">A급</option>
-                            <!-- 다른 옵션들도 추가 -->
-                        </select>
-                    </div>
-                    <button type="submit" class="btn btn-primary">등록</button>
-                </form>
+<div class="main-container">
+
+    <div th:replace="fragments/header :: header"></div>
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-md-9">
+                <div class="form-container mb-4">
+                    <h1 class="text-center mb-4">제품 등록</h1>
+                    <form action="#" th:action="@{/products/create}" th:object="${product}" method="post"
+                          enctype="multipart/form-data"
+                          class="needs-validation" novalidate>
+                        <div class="mb-3">
+                            <label for="productName" class="form-label">제품명</label>
+                            <input type="text" class="form-control" id="productName" th:field="*{productName}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="price" class="form-label">제품 가격</label>
+                            <input type="text" class="form-control" id="price" th:field="*{price}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="productDescription" class="form-label">제품 설명</label>
+                            <textarea class="form-control" id="productDescription" th:field="*{productDescription}"
+                                      rows="3"
+                                      required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="photoList" class="form-label">제품 이미지</label>
+                            <!-- name and multiple attributes added here -->
+                            <input type="file" class="form-control" id="photoList" name="files" multiple>
+                        </div>
+                        <div class="mb-3">
+                            <label for="productCondition" class="form-label">제품 상태</label>
+                            <select class="form-select" id="productCondition" th:field="*{productCondition}" required>
+                                <option value="S급">S급</option>
+                                <option value="A급">A급</option>
+                                <!-- 다른 옵션들도 추가 -->
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">등록</button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-<!-- Footer inclusion -->
-<div th:replace="fragments/footer :: footer"></div>
+    <!-- Footer inclusion -->
+    <div th:replace="fragments/footer :: footer"></div>
+</div>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function () {

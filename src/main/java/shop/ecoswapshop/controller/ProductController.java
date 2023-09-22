@@ -9,6 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import shop.ecoswapshop.domain.Condition;
 import shop.ecoswapshop.domain.Member;
+import shop.ecoswapshop.domain.Photo;
 import shop.ecoswapshop.domain.Product;
 import shop.ecoswapshop.service.MemberService;
 import shop.ecoswapshop.service.PhotoService;
@@ -37,7 +38,7 @@ public class ProductController {
         return getLoggedInMemberId()
                 .map(memberService::findMemberById)
                 .orElseThrow(() -> new RuntimeException("Logged in member not found"))
-                .orElseThrow(()-> new RuntimeException("Member Not Found"));
+                .orElseThrow(() -> new RuntimeException("Member Not Found"));
     }
 
     private boolean isUserAuthorized(Long memberId) {
@@ -46,7 +47,7 @@ public class ProductController {
     }
 
     @GetMapping
-    public String list(@RequestParam(defaultValue = "0")int page, Model model) {
+    public String list(@RequestParam(defaultValue = "0") int page, Model model) {
         // 모든 상품을 조회합니다.
         Page<Product> pagedProducts = productService.getPagedProducts(page, 8);
         // 상품 목록을 모델에 추가합니다.
@@ -84,7 +85,7 @@ public class ProductController {
     }
 
     @PostMapping("/create")
-    public String create(@ModelAttribute ProductForm productForm, @RequestParam("files")List<MultipartFile>files)throws IOException {
+    public String create(@ModelAttribute ProductForm productForm, @RequestParam("files") List<MultipartFile> files) throws IOException {
         Member loggedInMember = getLoggedInMember();
         Product product = new Product();
 
@@ -104,6 +105,8 @@ public class ProductController {
 
     @GetMapping("/edit/{productId}")
     public String editForm(@PathVariable Long productId, Model model) {
+        List<String> imageUrls = photoService.findImageUrlsByProductId(productId);
+        model.addAttribute("imageUrls", imageUrls);
         return processEditForm(productId, model);
     }
 
@@ -163,5 +166,47 @@ public class ProductController {
         }
         productService.deleteProductById(productId);
         return "redirect:/products";
+    }
+
+    //이미지 수정
+    @PostMapping("/edit/photo/{photoId}")
+    public String editPhoto(@PathVariable Long photoId, @RequestParam("file") MultipartFile file, RedirectAttributes redirectAttributes) {
+        Optional<Photo> optionalPhoto = photoService.findPhotoById(photoId);
+        if (!optionalPhoto.isPresent()) {
+            redirectAttributes.addFlashAttribute("message", "Photo not found for given Id");
+            return "redirect:/error";
+        }
+
+        Photo photo = optionalPhoto.get();
+        if (!isUserAuthorized(photo.getProduct().getMember().getId())) {
+            redirectAttributes.addFlashAttribute("message", "Not authorized to edit the photo");
+            return "redirect:/error";
+        }
+        try {
+            photoService.updatePhoto(photoId, file); // 이미지 파일 업데이트
+            redirectAttributes.addFlashAttribute("message", "Photo updated successfully!");
+        } catch (IOException e) {
+            redirectAttributes.addFlashAttribute("message", "Error occurred while updating photo");
+            return "redirect:/error";
+        }
+        return "redirect:/products/details/" + photo.getProduct().getId();
+    }
+
+    // 이미지 삭제
+    @PostMapping("/delete/photo/{photoId}")
+    public String deletePhoto(@PathVariable Long photoId, RedirectAttributes redirectAttributes) {
+        Optional<Photo> optionalPhoto = photoService.findPhotoById(photoId);
+        if (!optionalPhoto.isPresent()) {
+            redirectAttributes.addFlashAttribute("message", "Photo not found for given Id");
+            return "redirect:/error";
+        }
+        Photo photo = optionalPhoto.get();
+        if (!isUserAuthorized(photo.getProduct().getMember().getId())) {
+            redirectAttributes.addFlashAttribute("message", "Not authorized to delete the photo");
+            return "redirecct:/error";
+        }
+        photoService.deletePhoto(photoId);
+        redirectAttributes.addFlashAttribute("message", "Photo deleted successfully!");
+        return "redirect:/products/details/" + photo.getProduct().getId();
     }
 }

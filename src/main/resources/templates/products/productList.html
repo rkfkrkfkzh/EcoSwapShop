@@ -7,58 +7,65 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 </head>
 <body>
-<div th:replace="fragments/header :: header"></div> <!-- Header inclusion -->
+<div class="main-container">
+    <div th:replace="fragments/header :: header"></div> <!-- Header inclusion -->
 
-<div class="container mt-4 text-center">
-    <div class="d-flex justify-content-between align-items-center">
-        <h1>상품 리스트</h1>
-        <a href="/products/new" class="btn btn-primary">상품 등록</a>
+    <div class="container mt-4 text-center">
+        <div class="d-flex justify-content-between align-items-center">
+            <h1>상품 리스트</h1>
+            <a href="/products/new" class="btn btn-primary">상품 등록</a>
+        </div>
+
+        <table class="table table-striped mt-4 mx-auto">
+            <thead>
+            <tr>
+                <th>상품명</th>
+                <th>설명</th>
+                <th>가격</th>
+                <th>상품등급</th>
+                <th>옵션</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="product : ${pagedProducts.content}">
+                <td th:text="${product.productName}"></td>
+                <td>
+                    <pre th:text="${product.productDescription.split('\n')[0]}" style="white-space: pre-wrap;"></pre>
+                </td>
+                <td th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + '원'"></td>
+                <td th:text="${product.productCondition}"></td>
+                <td>
+                    <a th:href="@{/products/details/{id}(id=${product.id})}" class="btn btn-info">상세보기</a>
+                    <!-- 수정 및 삭제 버튼 조건 추가 -->
+                    <a th:if="${loggedInMemberId == product.member.id}"
+                       th:href="@{/products/edit/{id}(id=${product.id})}" class="btn btn-warning">수정</a>
+                    <a th:if="${loggedInMemberId == product.member.id}"
+                       th:href="@{/products/delete/{id}(id=${product.id})}" class="btn btn-danger">삭제</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <!-- Pagination Section -->
+        <div class="pagination-container">
+            <ul class="pagination">
+                <li th:if="${pagedProducts.number > 0}" class="page-item">
+                    <a class="page-link" th:href="@{/products(page=${pagedProducts.number - 1})}">이전</a>
+                </li>
+                <li th:each="pageNumber : ${#numbers.sequence(0, pagedProducts.totalPages - 1)}" class="page-item">
+                    <a class="page-link" th:href="@{/products(page=${pageNumber})}" th:text="${pageNumber + 1}"></a>
+                </li>
+                <li th:if="${pagedProducts.number < pagedProducts.totalPages - 1}" class="page-item">
+                    <a class="page-link" th:href="@{/products(page=${pagedProducts.number + 1})}">다음</a>
+                </li>
+            </ul>
+        </div>
     </div>
-
-    <table class="table table-striped mt-4 mx-auto">
-        <thead>
-        <tr>
-            <th>상품명</th>
-            <th>설명</th>
-            <th>가격</th>
-            <th>상품등급</th>
-            <th>옵션</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="product : ${pagedProducts.content}">
-            <td th:text="${product.productName}"></td>
-            <td><pre th:text="${product.productDescription.split('\n')[0]}" style="white-space: pre-wrap;"></pre></td>
-            <td th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + '원'"></td>
-            <td th:text="${product.productCondition}"></td>
-            <td>
-                <a th:href="@{/products/details/{id}(id=${product.id})}" class="btn btn-info">상세보기</a>
-                <!-- 수정 및 삭제 버튼 조건 추가 -->
-                <a th:if="${loggedInMemberId == product.member.id}" th:href="@{/products/edit/{id}(id=${product.id})}" class="btn btn-warning">수정</a>
-                <a th:if="${loggedInMemberId == product.member.id}" th:href="@{/products/delete/{id}(id=${product.id})}" class="btn btn-danger">삭제</a>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-    <!-- Pagination Section -->
-    <div class="pagination-container">
-        <ul class="pagination">
-            <li th:if="${pagedProducts.number > 0}" class="page-item">
-                <a class="page-link" th:href="@{/products(page=${pagedProducts.number - 1})}">이전</a>
-            </li>
-            <li th:each="pageNumber : ${#numbers.sequence(0, pagedProducts.totalPages - 1)}" class="page-item">
-                <a class="page-link" th:href="@{/products(page=${pageNumber})}" th:text="${pageNumber + 1}"></a>
-            </li>
-            <li th:if="${pagedProducts.number < pagedProducts.totalPages - 1}" class="page-item">
-                <a class="page-link" th:href="@{/products(page=${pagedProducts.number + 1})}">다음</a>
-            </li>
-        </ul>
+    <!-- Footer inclusion -->
+    <div class="mb-5">
+        <div th:replace="fragments/footer :: footer"></div>
     </div>
 </div>
-<!-- Footer inclusion -->
-<div class="mb-5">
-    <div th:replace="fragments/footer :: footer"></div>
-</div>
+
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 
 </body>

@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 </head>
 <body>
-
+<div class="main-container">
 <div th:replace="fragments/header :: header"></div> <!-- Header inclusion -->
 
 <div class="container mt-4">
@@ -38,15 +38,29 @@
                             <!-- 다른 옵션들도 추가 -->
                         </select>
                     </div>
+                    <div class="mb-4">
+                        <label for="productImages" class="form-label">제품 이미지</label>
+                        <div>
+                            <th:block th:each="url : ${imageUrls}">
+                                <img th:src="@{${url}}" alt="Product Image" class="img-thumbnail" style="max-width: 200px; margin-right: 10px;"/>
+                                <button type="button" class="btn btn-danger btn-sm" th:data-url="${url}">삭제</button>
+                                <!-- 수정 버튼 추가 -->
+                                <button type="button" class="btn btn-info btn-sm" th:data-url="${url}">수정</button>
+                            </th:block>
+                        </div>
+                        <input type="file" id="productImages" name="productImages" class="form-control mt-3" multiple>
+                    </div>
+
                     <button type="submit" class="btn btn-primary">수정 완료</button>
                 </form>
-            </div>
+t            </div>
         </div>
     </div>
 </div>
 <!-- Footer inclusion -->
 <div class="fixed-bottom">
     <div th:replace="fragments/footer :: footer"></div>
+</div>
 </div>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 <script>
@@ -68,6 +82,22 @@
         form.addEventListener("submit", function () {
             const rawValue = priceInput.value.replace(/,/g, "");
             priceInput.value = rawValue;
+        });
+    });
+    // 이미지 수정 버튼에 대한 이벤트 리스너
+    document.querySelectorAll("button[data-url]").forEach(function(button) {
+        button.addEventListener("click", function() {
+            const imageUrl = button.getAttribute("data-url");
+            // 여기에서 AJAX 요청을 사용하여 서버에 이미지 수정을 요청하거나
+            // 이미지 수정을 위한 팝업 또는 다른 동작을 수행할 수 있습니다.
+        });
+    });
+    // 이미지 삭제 버튼에 대한 이벤트 리스너
+    document.querySelectorAll("button[data-url]").forEach(function(button) {
+        button.addEventListener("click", function() {
+            const imageUrl = button.getAttribute("data-url");
+            // 여기에서 AJAX 요청을 사용하여 서버에 이미지 삭제를 요청할 수 있습니다.
+            // 요청이 성공하면 이미지를 DOM에서 제거합니다.
         });
     });
 </script>

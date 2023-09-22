@@ -8,63 +8,67 @@
     <link rel="stylesheet" th:href="@{/css/style.css}"> <!-- Link to your custom CSS file -->
 </head>
 <body>
-<!-- Header inclusion -->
-<div th:replace="fragments/header :: header"></div>
-<!-- Main content -->
-<div class="container mt-4">
-    <div class="row">
-        <!-- Sidebar inclusion -->
-        <div class="col-md-3">
-            <div th:replace="fragments/sidebar :: sidebar"></div>
-        </div>
-        <!-- Main Section -->
-        <div class="col-md-9">
-            <h1>Eco Swap SHOP에 오신 것을 환영합니다.</h1>
-            <p>신뢰할 수 있는 판매자의 중고 제품에 대한 최고의 거래를 살펴보십시오.</p>
-            <!-- Featured Products Section -->
-            <h2>주요 제품</h2>
-            <div class="row">
-                <!-- Thymeleaf로 상품 반복 -->
-                <div th:each="product : ${pagedProducts.content}" class="col-md-4">
-                    <div class="card">
-                        <!-- 'product.imageURL'은 Product 객체의 이미지 URL을 가리킵니다. -->
-                        <div class="text-center mt-4" th:if="${#lists.size(product.photoList) > 0}">
-                            <img th:src="${product.photoList[0].url}" alt="Product Image" class="img-fluid fixed-size-image"/>
-                        </div>
-                        <div class="card-body">
-                            <!-- 'product.name'은 Product 객체의 이름을 가리킵니다. -->
-                            <h5 th:text="${product.productName}" class="card-title">상품명</h5>
-                            <!-- 'product.description'은 Product 객체의 설명을 가리킵니다. -->
-                            <p th:text="${product.productDescription.split('\n')[0]}" class="card-text"
-                               style="white-space: pre-wrap;">설명</p>
-                            <!-- 'product.id'로 각 제품의 세부 정보 페이지로 연결 -->
-                            <a th:href="@{/products/details/{productId}(productId=${product.id})}"
-                               class="btn btn-primary">세부 정보보기</a>
+<div class="main-container">
+    <!-- Header inclusion -->
+    <div th:replace="fragments/header :: header"></div>
+    <!-- Main content -->
+    <div class="container mt-4">
+        <div class="row">
+            <!-- Sidebar inclusion -->
+            <div class="col-md-3">
+                <div th:replace="fragments/sidebar :: sidebar"></div>
+            </div>
+            <!-- Main Section -->
+            <div class="col-md-9">
+                <h1>Eco Swap SHOP에 오신 것을 환영합니다.</h1>
+                <p>신뢰할 수 있는 판매자의 중고 제품에 대한 최고의 거래를 살펴보십시오.</p>
+                <!-- Featured Products Section -->
+                <h2>주요 제품</h2>
+                <div class="row">
+                    <!-- Thymeleaf로 상품 반복 -->
+                    <div th:each="product : ${pagedProducts.content}" class="col-md-4">
+                        <div class="card">
+                            <!-- 'product.imageURL'은 Product 객체의 이미지 URL을 가리킵니다. -->
+                            <div class="text-center mt-4" th:if="${#lists.size(product.photoList) > 0}">
+                                <img th:src="${product.photoList[0].url}" alt="Product Image"
+                                     class="img-fluid fixed-size-image"/>
+                            </div>
+                            <div class="card-body">
+                                <!-- 'product.name'은 Product 객체의 이름을 가리킵니다. -->
+                                <h5 th:text="${product.productName}" class="card-title">상품명</h5>
+                                <!-- 'product.description'은 Product 객체의 설명을 가리킵니다. -->
+                                <p th:text="${product.productDescription.split('\n')[0]}" class="card-text"
+                                   style="white-space: pre-wrap;">설명</p>
+                                <!-- 'product.id'로 각 제품의 세부 정보 페이지로 연결 -->
+                                <a th:href="@{/products/details/{productId}(productId=${product.id})}"
+                                   class="btn btn-primary">세부 정보보기</a>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <!-- Pagination Section -->
-            <div class="pagination-container">
-                <ul class="pagination">
-                    <li th:if="${pagedProducts.number > 0}" class="page-item">
-                        <a class="page-link" th:href="@{/(page=${pagedProducts.number - 1})}">이전</a>
-                    </li>
-                    <li th:each="pageNumber : ${#numbers.sequence(0, pagedProducts.totalPages - 1)}" class="page-item">
-                        <a class="page-link" th:href="@{/(page=${pageNumber})}" th:text="${pageNumber + 1}"></a>
-                    </li>
-                    <li th:if="${pagedProducts.number < pagedProducts.totalPages - 1}" class="page-item">
-                        <a class="page-link" th:href="@{/(page=${pagedProducts.number + 1})}">다음</a>
-                    </li>
-                </ul>
-            </div>
+                <!-- Pagination Section -->
+                <div class="pagination-container">
+                    <ul class="pagination">
+                        <li th:if="${pagedProducts.number > 0}" class="page-item">
+                            <a class="page-link" th:href="@{/(page=${pagedProducts.number - 1})}">이전</a>
+                        </li>
+                        <li th:each="pageNumber : ${#numbers.sequence(0, pagedProducts.totalPages - 1)}"
+                            class="page-item">
+                            <a class="page-link" th:href="@{/(page=${pageNumber})}" th:text="${pageNumber + 1}"></a>
+                        </li>
+                        <li th:if="${pagedProducts.number < pagedProducts.totalPages - 1}" class="page-item">
+                            <a class="page-link" th:href="@{/(page=${pagedProducts.number + 1})}">다음</a>
+                        </li>
+                    </ul>
+                </div>
 
+            </div>
         </div>
     </div>
-</div>
-<!-- Footer inclusion -->
-<div>
-    <div th:replace="fragments/footer :: footer"></div>
+    <!-- Footer inclusion -->
+    <div>
+        <div th:replace="fragments/footer :: footer"></div>
+    </div>
 </div>
 <!-- Optional JavaScript -->
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
