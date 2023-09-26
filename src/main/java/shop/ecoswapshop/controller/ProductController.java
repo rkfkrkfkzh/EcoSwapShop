@@ -6,7 +6,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import shop.ecoswapshop.domain.Condition;
 import shop.ecoswapshop.domain.Member;
 import shop.ecoswapshop.domain.Photo;
@@ -17,7 +16,7 @@ import shop.ecoswapshop.service.ProductService;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.ArrayList;
 import java.util.Optional;
 
 @Controller
@@ -65,10 +64,6 @@ public class ProductController {
             return "redirect:/error";
         }
         model.addAttribute("product", product.get());
-        // 이 부분에서 해당 상품에 연결된 이미지 정보를 불러옵니다.
-
-        List<String> imageUrls = photoService.findImageUrlsByProductId(productId);
-        model.addAttribute("imageUrls", imageUrls);
 
         getLoggedInMemberId().ifPresent(memberId -> model.addAttribute("loggedInMemberId", memberId));
         return "products/productsDetails"; //Thymeleaf view
@@ -86,7 +81,7 @@ public class ProductController {
     }
 
     @PostMapping("/create")
-    public String create(@ModelAttribute ProductForm productForm, @RequestParam("files") List<MultipartFile> files) throws IOException {
+    public String create(@ModelAttribute ProductForm productForm) throws IOException {
         Member loggedInMember = getLoggedInMember();
         Product product = new Product();
 
@@ -96,19 +91,24 @@ public class ProductController {
         product.setProductCondition(productForm.getProductCondition());
         product.setCreationDate(LocalDateTime.now());
         product.setMember(loggedInMember);
-        // Product 객체와 Member 객체를 연결하는 로직 추가 (예: foreign key 설정 등)
-        // 예: product.setMember(member);
 
-        productService.registerProduct(product, files); // 이 함수 내에서 파일 정보를 DB에 저장
+        // 이미지 파일 처리 및 상품 저장
+        MultipartFile productImage = productForm.getPhoto();
+        if (productImage != null && !productImage.isEmpty()) {
+            String fileName = photoService.storeFile(productImage);
+            String imagePath = "/uploads/" + fileName;
 
+            Photo photo = new Photo();
+            photo.setUrl(imagePath);
+
+            product.addPhoto(photo);
+        }
+        productService.registerProduct(product);
         return "redirect:/products";
     }
 
     @GetMapping("/edit/{productId}")
     public String editForm(@PathVariable Long productId, Model model) {
-        // 이미지 정보처리
-        List<String> photos = photoService.findImageUrlsByProductId(productId);
-        model.addAttribute("photos", photos);
         return processEditForm(productId, model);
     }
 
@@ -128,22 +128,9 @@ public class ProductController {
     }
 
     @PostMapping("/edit/{productId}")
-    public String edit(@PathVariable Long productId, @ModelAttribute ProductForm productForm,
-                       @RequestParam("files") List<MultipartFile> files) throws IOException {
-        String redirectTo = processEdit(productId, productForm);
+    public String edit(@PathVariable Long productId, @ModelAttribute ProductForm productForm) {
 
-        // 이미지 처리 로직
-        for (MultipartFile file : files) {
-            if (!file.isEmpty()) {
-                //파일처리 빛 DB에 이미지 정보 저장
-                Photo photo = new Photo();
-                photo.setProduct(productService.findProductById(productId).orElseThrow());
-                String fileName = photoService.storeFile(file);
-                photo.setUrl("/uploads/" + fileName);
-                photoService.savePhoto(photo);
-            }
-        }
-        return redirectTo;
+        return processEdit(productId, productForm);
     }
 
     private String processEdit(Long productId, ProductForm productForm) {
@@ -164,12 +151,6 @@ public class ProductController {
         return "redirect:/products";
     }
 
-    @PostMapping("/upload")
-    public String handleFileUpload(@RequestParam("productImage") MultipartFile file, RedirectAttributes redirectAttributes) {
-        // 파일 처리 로직 (저장 등)
-        return "redirect:/success";
-    }
-
     // 상품 삭제
     @GetMapping("delete/{productId}")
     public String delete(@PathVariable Long productId) {
@@ -183,17 +164,5 @@ public class ProductController {
         }
         productService.deleteProductById(productId);
         return "redirect:/products";
-    }
-
-    // 이미지 삭제
-    @PostMapping("delete/{photoId}")
-    public String deleteImage(@PathVariable Long photoId) {
-        //삭제 권한 확인
-        Photo photo = photoService.findPhotoById(photoId).orElseThrow();
-        if (!isUserAuthorized(photo.getProduct().getMember().getId())) {
-            return "redirect:/error";
-        }
-        photoService.deletePhoto(photoId);
-        return "redirect:/edit/" + photo.getProduct().getId(); // 사용자를 동일한 편집 페이지로 리다이렉트
     }
 }

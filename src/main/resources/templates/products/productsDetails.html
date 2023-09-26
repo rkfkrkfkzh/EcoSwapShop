@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Product Details</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}"> <!-- Link to your custom CSS file -->
 </head>
 <body>
 <div th:replace="fragments/header :: header"></div> <!-- Header inclusion -->
@@ -36,9 +37,9 @@
                 </tbody>
             </table>
             <!-- 제품 이미지 -->
-            <div class="text-center mt-4">
-                <th:block th:each="url : ${imageUrls}">
-                    <img th:src="@{${url}}" alt="Product Image" class="img-fluid" style="max-width: 200px;"/>
+            <div class="product-images">
+                <th:block th:each="photo : ${product.photoList}">
+                    <img th:src="${photo.url}" alt="Product Image" class="product-image"/>
                 </th:block>
             </div>
             <div class="text-center mt-4">

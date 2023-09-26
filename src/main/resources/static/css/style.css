@@ -65,3 +65,7 @@
     height: 100px;  /* or whatever height you want */
     object-fit: cover;  /* this will make sure to cover the 100x100 box without stretching */
 }
+.product-image {
+    width: 300px;
+    height: auto;
+}

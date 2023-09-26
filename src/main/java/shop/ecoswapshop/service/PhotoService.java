@@ -32,15 +32,6 @@ public class PhotoService {
         return savePhoto.getId();
     }
 
-    public List<String> findImageUrlsByProductId(Long productId) {
-        // db로 부터 해당 상품 ID와 연결된 모든 photo 엔티티 불러옴
-        List<Photo> photos = photoRepository.findByProductId(productId);
-
-        // photo 엔티티 목록을 image URL로 변환
-        return photos.stream().map(Photo::getUrl)
-                .collect(Collectors.toList());
-    }
-
     @Transactional
     public void updatePhoto(Long photoId, MultipartFile file)throws IOException {
         Photo photo = photoRepository.findById(photoId).orElseThrow(NoSuchElementException::new);
@@ -59,8 +50,13 @@ public class PhotoService {
         return photoRepository.findById(photoId);
     }
 
+    @Transactional
     public String storeFile(MultipartFile file)throws IOException {
         String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
+        File directory = new File(uploadDir);
+        if (!directory.exists()) {
+            directory.mkdir();
+        }
         Path filePath = Paths.get(uploadDir).resolve(fileName);
         Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
         return fileName;

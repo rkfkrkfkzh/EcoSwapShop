@@ -106,7 +106,6 @@
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': csrfToken, // CSRF 토큰을 헤더에 포함
                     },
                 }).then(response => {
                     if (response.ok) {
@@ -133,9 +132,6 @@
             fetch(this.action, {
                 method: 'POST',
                 body: formData,
-                headers: {
-                    'X-CSRF-TOKEN': csrfToken, // CSRF 토큰을 헤더에 포함
-                },
             }).then(response => {
                 if (response.ok) {
                     // 업로드가 성공하면 페이지를 새로고침합니다.
@@ -147,5 +143,6 @@
         });
     });
 </script>
+
 </body>
 </html>

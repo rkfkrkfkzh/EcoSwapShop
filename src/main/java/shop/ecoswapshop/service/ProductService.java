@@ -32,27 +32,9 @@ public class ProductService {
 
     // 상품 등록
     @Transactional
-    public Long registerProduct(Product product, List<MultipartFile> files) throws IOException {
+    public Long registerProduct(Product product) throws IOException {
 
-        Product savedProduct = productRepository.save(product);
-
-        File directory = new File("uploads");
-        if (!directory.exists()) {
-            directory.mkdir(); //디렉터리 생성
-        }
-        for (MultipartFile file :files){
-            byte[] bytes = file.getBytes();
-            Path path = Paths.get("uploads/" + file.getOriginalFilename());
-
-            Files.write(path, bytes);
-
-            String photoUrl = "/uploads/" + file.getOriginalFilename();
-            Photo photo = new Photo();
-            photo.setUrl(photoUrl);
-            photo.setProduct(savedProduct);
-            photoRepository.save(photo);
-        }
-        return savedProduct.getId();
+        return productRepository.save(product).getId();
     }
 
     // 상품 조회
