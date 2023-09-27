@@ -43,13 +43,11 @@
                         <div class="mb-4">
                             <label for="productImages" class="form-label">제품 이미지</label>
                             <div>
-                                <th:block th:each="url, photoId : ${photos}">
-                                    <img th:src="@{${url}}" alt="Product Image" class="img-thumbnail"
+                                <th:block th:each="photo : ${productForm.photoList}">
+                                    <img th:src="@{${photo.url}}" alt="Product Image" class="img-thumbnail"
                                          style="max-width: 200px; margin-right: 10px;"/>
-                                    <!-- 이미지 삭제 버튼에 대한 Thymeleaf 데이터 속성 추가 -->
                                     <button type="button" class="btn btn-danger btn-sm delete"
-                                            th:data-photo-id="${photoId}">삭제
-                                    </button>
+                                            th:data-photo-id="${photo.id}">삭제</button>
                                 </th:block>
                             </div>
                         </div>
@@ -93,56 +91,5 @@
         });
     });
 </script>
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        // 이미지 삭제 버튼 클릭 이벤트 핸들러
-        const deleteButtons = document.querySelectorAll("button.delete");
-        deleteButtons.forEach(function (button) {
-            button.addEventListener("click", function () {
-                const photoId = button.getAttribute("data-photo-id");
-
-                // AJAX 요청을 사용하여 이미지 삭제를 서버에 요청합니다.
-                fetch(`/products/edit/delete/${photoId}`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                }).then(response => {
-                    if (response.ok) {
-                        // 성공하면 이미지를 DOM에서 제거합니다.
-                        const imageElement = button.previousElementSibling; // 이미지 엘리먼트 가져오기
-                        if (imageElement) {
-                            imageElement.remove(); // 이미지 제거
-                        }
-                        button.remove(); // 버튼 자체를 제거
-                    } else {
-                        alert('이미지를 삭제하는데 실패했습니다.');
-                    }
-                });
-            });
-        });
-
-        // 이미지 업로드 폼의 이벤트 리스너
-        const imageUploadForm = document.getElementById("imageUploadForm");
-        imageUploadForm.addEventListener("submit", function (event) {
-            event.preventDefault();
-            const formData = new FormData(this);
-
-            // AJAX 요청을 사용하여 이미지 업로드를 서버에 요청합니다.
-            fetch(this.action, {
-                method: 'POST',
-                body: formData,
-            }).then(response => {
-                if (response.ok) {
-                    // 업로드가 성공하면 페이지를 새로고침합니다.
-                    location.reload();
-                } else {
-                    alert('이미지 업로드에 실패했습니다.');
-                }
-            });
-        });
-    });
-</script>
-
 </body>
 </html>

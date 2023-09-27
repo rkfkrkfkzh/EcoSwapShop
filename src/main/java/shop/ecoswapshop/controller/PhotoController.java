@@ -41,7 +41,7 @@ public class PhotoController {
         return getLoggedInMemberId().isPresent() && getLoggedInMemberId().get().equals(memberId);
     }
 
-    @GetMapping("/uploads/{filename:.+")
+    @GetMapping("/uploads/{filename:.+}")
     public ResponseEntity<Resource> serveFile(@PathVariable String filename) {
         try {
             Path file = Paths.get(UPLOAD_DIR).resolve(filename);
