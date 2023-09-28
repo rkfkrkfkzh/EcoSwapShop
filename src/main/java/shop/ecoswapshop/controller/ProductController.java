@@ -16,7 +16,6 @@ import shop.ecoswapshop.service.ProductService;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Optional;
 
 @Controller
@@ -43,6 +42,14 @@ public class ProductController {
     private boolean isUserAuthorized(Long memberId) {
         return getLoggedInMemberId().isPresent() && getLoggedInMemberId().get().equals(memberId);
 
+    }
+
+    private Product getAuthorizedProduct(Long productId) {
+        Product product = productService.findProductById(productId).orElseThrow(() -> new RuntimeException("상품을 찾을 수 없습니다."));
+        if (!isUserAuthorized(product.getMember().getId())) {
+            throw new RuntimeException("수정권한이 없습니다.");
+        }
+        return product;
     }
 
     @GetMapping
@@ -95,6 +102,9 @@ public class ProductController {
         // 이미지 파일 처리 및 상품 저장
         MultipartFile productImage = productForm.getPhoto();
         if (productImage != null && !productImage.isEmpty()) {
+            if (!productImage.getContentType().startsWith("image/")) {
+                throw new RuntimeException("업로드한 이미지 파일이 아닙니다.");
+            }
             String fileName = photoService.storeFile(productImage);
             String imagePath = "/uploads/" + fileName;
 
@@ -113,16 +123,8 @@ public class ProductController {
     }
 
     private String processEditForm(Long productId, Model model) {
-        Optional<Product> product = productService.findProductById(productId);
-        if (!product.isPresent()) {
-            return "redirect:/error";
-        }
-        // 추가: 현재 로그인한 사용자의 정보 가져오기
-        if (!isUserAuthorized(product.get().getMember().getId())) {
-            return "redirect:/error";
-        }
-
-        model.addAttribute("productForm", product.get());
+        Product product = getAuthorizedProduct(productId);
+        model.addAttribute("productForm", product);
         model.addAttribute("conditions", Condition.values());
         return "products/productEdit";
     }
@@ -134,14 +136,7 @@ public class ProductController {
     }
 
     private String processEdit(Long productId, ProductForm productForm) {
-        Optional<Product> productById = productService.findProductById(productId);
-        if (!productById.isPresent()) {
-            return "redirect:/error";
-        }
-        Product product = productById.get();
-        if (!isUserAuthorized(product.getMember().getId())) {
-            return "redirect:/error";
-        }
+        Product product = getAuthorizedProduct(productId);
         product.setProductName(productForm.getProductName());
         product.setProductDescription(productForm.getProductDescription());
         product.setPrice(productForm.getPrice());
@@ -154,14 +149,7 @@ public class ProductController {
     // 상품 삭제
     @GetMapping("delete/{productId}")
     public String delete(@PathVariable Long productId) {
-        Optional<Product> productById = productService.findProductById(productId);
-        if (!productById.isPresent()) {
-            return "redirect:/error";
-        }
-        Product product = productById.get();
-        if (!isUserAuthorized(product.getMember().getId())) {
-            return "redirect:/error";
-        }
+        Product product = getAuthorizedProduct(productId);
         productService.deleteProductById(productId);
         return "redirect:/products";
     }

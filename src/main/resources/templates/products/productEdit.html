@@ -91,5 +91,27 @@
         });
     });
 </script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('.delete').on('click', function() {
+            const photoId = $(this).data('photo-id');
+
+            $.ajax({
+                url: '/photos/delete/' + photoId,
+                type: 'POST',
+                success: function(response) {
+                    // 예: 삭제 성공시 이미지 숨기기
+                    $('[data-photo-id="' + photoId + '"]').prev('img').hide();
+                    $('[data-photo-id="' + photoId + '"]').hide();
+                },
+                error: function(error) {
+                    console.error('Error:', error);
+                }
+            });
+        });
+    });
+</script>
+
 </body>
 </html>

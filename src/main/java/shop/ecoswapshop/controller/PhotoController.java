@@ -73,7 +73,7 @@ public class PhotoController {
         return "redirect:/success";
     }
 
-    @PostMapping("/upload/{productId}")
+    @PostMapping("/products/edit/{productId}")
     public String uploadProductImages(@PathVariable Long productId, @RequestParam("files") List<MultipartFile> files) throws IOException {
         Product product = productService.findProductById(productId).orElseThrow();
         for (MultipartFile file : files) {
