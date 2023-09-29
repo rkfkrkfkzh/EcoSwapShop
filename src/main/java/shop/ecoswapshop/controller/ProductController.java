@@ -1,7 +1,9 @@
 package shop.ecoswapshop.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.dom4j.rule.Mode;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -172,5 +174,16 @@ public class ProductController {
         Product product = getAuthorizedProduct(productId);
         productService.deleteProductById(productId);
         return "redirect:/products";
+    }
+
+    // 상품 검색
+    @GetMapping("/search")
+    public String search(@RequestParam String keyword, @RequestParam(defaultValue = "0") int page, Model model) {
+        Page<Product> searchProducts = productService.searchProducts(keyword, PageRequest.of(page, 8));
+        model.addAttribute("pagedProducts", searchProducts);
+        model.addAttribute("keyword", keyword);
+        getLoggedInMemberId().ifPresent(memberId->model.addAttribute("loggedInMemberId",memberId));
+        return "products/productList";
+
     }
 }

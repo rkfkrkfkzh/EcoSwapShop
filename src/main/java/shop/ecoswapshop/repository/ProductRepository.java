@@ -12,8 +12,8 @@ import java.util.List;
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
 
-    // 상품 이름으로 조회
-    List<Product> findByProductName(String productName);
+    // 상품 제목과 내용에 해당하는 문자열을 포함하는 상품들 조회
+    Page<Product> findByProductNameContaining(String productName, Pageable pageable);
 
     // 판매자 이름으로 조회
     List<Product> findByMemberFullName(String fullName);

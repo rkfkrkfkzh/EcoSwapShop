@@ -83,6 +83,10 @@ public class ProductService {
         }
     }
 
+    // 검색
+    public Page<Product> searchProducts(String keyword, Pageable pageable) {
+        return productRepository.findByProductNameContaining(keyword, pageable);
+    }
     // 페이징 처리
     public Page<Product> getPagedProducts(int page, int pageSize) {
         Pageable pageable = PageRequest.of(page, pageSize);
