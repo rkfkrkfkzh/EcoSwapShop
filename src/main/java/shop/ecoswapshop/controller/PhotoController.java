@@ -1,6 +1,8 @@
 package shop.ecoswapshop.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
@@ -32,7 +34,7 @@ public class PhotoController {
     private final MemberService memberService;
 
     private static final String UPLOAD_DIR = "uploads";
-
+    private static final Logger logger = LoggerFactory.getLogger(Photo.class);
     private Optional<Long> getLoggedInMemberId() {
         return memberService.findLoggedInMemberId();
     }
@@ -73,7 +75,7 @@ public class PhotoController {
         return "redirect:/success";
     }
 
-    @PostMapping("/products/edit/{productId}")
+    @PostMapping("/edit/{productId}")
     public String uploadProductImages(@PathVariable Long productId, @RequestParam("files") List<MultipartFile> files) throws IOException {
         Product product = productService.findProductById(productId).orElseThrow();
         for (MultipartFile file : files) {
@@ -88,13 +90,26 @@ public class PhotoController {
         return "redirect:/products/details/" + productId;
     }
 
-    @PostMapping("delete/{photoId}")
-    public String deleteImage(@PathVariable Long photoId) {
-        Photo photo = photoService.findPhotoById(photoId).orElseThrow();
-        if (!isUserAuthorized(photo.getProduct().getMember().getId())) {
+    @PostMapping("/delete/{photoId}")
+    public String deleteImage(@PathVariable Long photoId, RedirectAttributes redirectAttributes) {
+        logger.info("DeleteImage 메서드 호출됨. photoId : {}", photoId);
+
+        Optional<Photo> photoOptional = photoService.findPhotoById(photoId);
+
+        if (!photoOptional.isPresent()) {
+            redirectAttributes.addFlashAttribute("message", "Photo not found!");
             return "redirect:/error";
         }
+
+        Photo photo = photoOptional.get();
+        if (!isUserAuthorized(photo.getProduct().getMember().getId())) {
+            redirectAttributes.addFlashAttribute("message", "Not authorized to delete this photo!");
+            return "redirect:/error";
+        }
+
         photoService.deletePhoto(photoId);
+        redirectAttributes.addFlashAttribute("message", "Photo deleted successfully!");
         return "redirect:/products/edit/" + photo.getProduct().getId();
     }
+
 }

@@ -1,7 +1,9 @@
 package shop.ecoswapshop.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.dom4j.rule.Mode;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -203,4 +205,13 @@ public class PostController {
         }
     }
 
+    // 게시글 검색
+    @GetMapping("/search")
+    public String searchPosts(@RequestParam String keyword, @RequestParam(defaultValue = "0") int page, Model model) {
+        Page<Post> searchPosts = postService.searchPosts(keyword, PageRequest.of(page, 8));
+        model.addAttribute("pagedPosts", searchPosts);
+        getLoggedInMemberId().ifPresent(memberId -> model.addAttribute("loggedInMemberId", memberId));
+        model.addAttribute("searchedKeyword", keyword); // 검색한 키워드 view 전달
+        return "posts/postList"; // 검색결과 보여주기위해 기존 게시글 목록페이지 재사용
+    }
 }

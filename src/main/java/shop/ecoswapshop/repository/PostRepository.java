@@ -23,7 +23,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     List<Post> findByContentContaining(String keyword);
 
     // 게시글 제목과 내용에 해당하는 문자열을 포함하는 게시글 조회
-    List<Post> findByTitleContainingOrContentContaining(String title, String content);
+    Page<Post> findByTitleContainingOrContentContaining(String title, String content, Pageable pageable);
 
     // 페이징 처리를 위한 메서드
     Page<Post> findAll(Pageable pageable);

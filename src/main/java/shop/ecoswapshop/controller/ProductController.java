@@ -130,18 +130,38 @@ public class ProductController {
     }
 
     @PostMapping("/edit/{productId}")
-    public String edit(@PathVariable Long productId, @ModelAttribute ProductForm productForm) {
+    public String edit(@PathVariable Long productId, @ModelAttribute ProductForm productForm) throws IOException {
 
         return processEdit(productId, productForm);
     }
 
-    private String processEdit(Long productId, ProductForm productForm) {
+    private String processEdit(Long productId, ProductForm productForm) throws IOException {
         Product product = getAuthorizedProduct(productId);
+        // 상품 기본정보 업데이트
         product.setProductName(productForm.getProductName());
         product.setProductDescription(productForm.getProductDescription());
         product.setPrice(productForm.getPrice());
         product.setProductCondition(productForm.getProductCondition());
+        // 이미지 업로드 및 기존 이미지 삭제 로직 추가
+        MultipartFile newProductImage = productForm.getPhoto();
+        if (newProductImage != null && !newProductImage.isEmpty()) {
+            if (!newProductImage.getContentType().startsWith("image/")) {
+                throw new RuntimeException("업로드한 파일이 이미지가 아닙니다.");
+            }
+            // 기존에 연결된 사진 삭제
+            for (Photo oldPhoto : product.getPhotoList()) {
+                photoService.deletePhoto(oldPhoto.getId());
+            }
+            product.getPhotoList().clear();
 
+            // 새로운 사진 업로드
+            String fileName = photoService.storeFile(newProductImage);
+            String imagePath = "/uploads/" + fileName;
+            Photo newPhoto = new Photo();
+            newPhoto.setUrl(imagePath);
+
+            product.addPhoto(newPhoto);
+        }
         productService.updateProduct(product);
         return "redirect:/products";
     }

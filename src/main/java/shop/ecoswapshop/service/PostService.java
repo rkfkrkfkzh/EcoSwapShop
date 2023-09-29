@@ -60,11 +60,6 @@ public class PostService {
         return postRepository.findByContentContaining(keyword);
     }
 
-    // 게시글 제목과 내용에 해당하는 문자열을 포함하는 게시글 조회
-    public List<Post> findPostsByTitleOrContent(String title, String content) {
-        return postRepository.findByTitleContainingOrContentContaining(title, content);
-    }
-
     // 게시글 삭제
     @Transactional
     public void deletePostById(Long postId) {
@@ -168,6 +163,11 @@ public class PostService {
             throw new AccessDeniedException("You are not authorized to delete this reply");
         }
         commentRepository.delete(comment);
+    }
+
+    // 검색 기능
+    public Page<Post> searchPosts(String keyword, Pageable pageable) {
+        return postRepository.findByTitleContainingOrContentContaining(keyword, keyword, pageable);
     }
 
     // 페이징 처리

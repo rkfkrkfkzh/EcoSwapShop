@@ -46,8 +46,9 @@
                                 <th:block th:each="photo : ${productForm.photoList}">
                                     <img th:src="@{${photo.url}}" alt="Product Image" class="img-thumbnail"
                                          style="max-width: 200px; margin-right: 10px;"/>
-                                    <button type="button" class="btn btn-danger btn-sm delete"
-                                            th:data-photo-id="${photo.id}">삭제</button>
+                                    <form th:action="@{/photos/delete/{photoId}(photoId=${photo.id})}" method="post" style="display:inline;">
+                                        <button type="submit" class="btn btn-danger btn-sm">삭제</button>
+                                    </form>
                                 </th:block>
                             </div>
                         </div>

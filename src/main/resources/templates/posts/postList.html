@@ -14,7 +14,19 @@
             <h1>게시물 리스트</h1>
             <a href="/posts/new" class="btn btn-primary">게시물 등록</a>
         </div>
+        <!-- 검색 폼 추가 시작 -->
+        <div class="mb-4">
+            <form action="/posts/search" method="get" class="form-inline justify-content-center">
 
+                <label for="keywordInput" class="sr-only">게시글 검색</label> <!-- 접근성을 위한 레이블 추가 (화면에는 보이지 않음) -->
+                <input type="text" id="keywordInput" name="keyword" th:value="${searchedKeyword != null ? searchedKeyword : ''}" placeholder="게시글 검색..." class="form-control mr-2">
+
+                <label for="searchSubmit" class="sr-only">검색 버튼</label> <!-- 접근성을 위한 레이블 추가 (화면에는 보이지 않음) -->
+                <input type="submit" id="searchSubmit" value="검색" class="btn btn-secondary">
+
+            </form>
+        </div>
+        <!-- 검색 폼 추가 끝 -->
         <table class="table table-striped mt-4 mx-auto">
             <thead>
             <tr>
