@@ -1,9 +1,9 @@
 package shop.ecoswapshop.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.dom4j.rule.Mode;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -55,9 +55,16 @@ public class ProductController {
     }
 
     @GetMapping
-    public String list(@RequestParam(defaultValue = "0") int page, Model model) {
+    public String list(@RequestParam(defaultValue = "0") int page, @RequestParam(required = false) String sort, Model model) {
+        Sort sortOrder = Sort.unsorted();
+        if (sort != null && !sort.isEmpty()) {
+            String[] sortParams = sort.split(",");
+            sortOrder = Sort.by(sortParams[1].equalsIgnoreCase("asc")
+                    ? Sort.Order.asc(sortParams[0])
+                    : Sort.Order.desc(sortParams[0]));
+        }
         // 모든 상품을 조회합니다.
-        Page<Product> pagedProducts = productService.getPagedProducts(page, 8);
+        Page<Product> pagedProducts = productService.getPagedProducts(page, 8, sortOrder);
         // 상품 목록을 모델에 추가합니다.
         model.addAttribute("pagedProducts", pagedProducts);
         // 로그인한 사용자의 memberId가 있다면 모델에 추가합니다.
@@ -182,7 +189,7 @@ public class ProductController {
         Page<Product> searchProducts = productService.searchProducts(keyword, PageRequest.of(page, 8));
         model.addAttribute("pagedProducts", searchProducts);
         model.addAttribute("keyword", keyword);
-        getLoggedInMemberId().ifPresent(memberId->model.addAttribute("loggedInMemberId",memberId));
+        getLoggedInMemberId().ifPresent(memberId -> model.addAttribute("loggedInMemberId", memberId));
         return "products/productList";
 
     }

@@ -1,24 +1,19 @@
 package shop.ecoswapshop.service;
 
 import lombok.RequiredArgsConstructor;
-import org.dom4j.XPathException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 import shop.ecoswapshop.domain.Photo;
 import shop.ecoswapshop.domain.Product;
 import shop.ecoswapshop.exception.NotFoundException;
 import shop.ecoswapshop.repository.PhotoRepository;
 import shop.ecoswapshop.repository.ProductRepository;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 
@@ -87,6 +82,13 @@ public class ProductService {
     public Page<Product> searchProducts(String keyword, Pageable pageable) {
         return productRepository.findByProductNameContaining(keyword, pageable);
     }
+
+    // 페이징 처리
+    public Page<Product> getPagedProducts(int page, int pageSize, Sort sort) {
+        Pageable pageable = PageRequest.of(page, pageSize, sort);
+        return productRepository.findAll(pageable);
+    }
+
     // 페이징 처리
     public Page<Product> getPagedProducts(int page, int pageSize) {
         Pageable pageable = PageRequest.of(page, pageSize);
