@@ -1,6 +1,7 @@
 package shop.ecoswapshop.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -19,6 +20,7 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @Transactional(readOnly = true) //조회만 하고 수정은 하지 않는다는 의미
@@ -27,6 +29,7 @@ public class MemberService implements UserDetailsService {
 
     private final MemberRepository memberRepository;
     private final BCryptPasswordEncoder passwordEncoder;
+    private final EmailService emailService;
 
     // 회원 가입
     @Transactional(readOnly = false) // 회원 가입은 읽기 전용이 아닌 트랜잭션에서 실행
@@ -96,11 +99,6 @@ public class MemberService implements UserDetailsService {
         memberRepository.deleteById(memberId);
     }
 
-    // 로그인 기능 - 이메일과 비밀번호로 회원 조회
-    public Optional<Member> findByEmailAndPassword(String email, String password) {
-        return memberRepository.findByEmailAndPassword(email, password);
-    }
-
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         // 로그 추가
@@ -111,7 +109,7 @@ public class MemberService implements UserDetailsService {
         }
         return new User(
                 member.getUsername(), member.getPassword(), Collections.singletonList(
-                        new SimpleGrantedAuthority("ROLE_USER")));
+                new SimpleGrantedAuthority("ROLE_USER")));
     }
 
     // id 중복체크

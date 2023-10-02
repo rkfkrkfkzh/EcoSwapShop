@@ -51,8 +51,8 @@ public class MemberController {
 
     @GetMapping("/members")
     public String list(Model model) {
-        List<Member> Members = memberService.findAllMembers();
-        model.addAttribute("members", Members);
+        List<Member> members = memberService.findAllMembers();
+        model.addAttribute("members", members);
         return "members/memberList";
     }
 
@@ -68,11 +68,11 @@ public class MemberController {
         memberService.deleteMemberById(memberId);
         return "redirect:/members";
     }
+
     // 아이디 중복 검사
     @GetMapping("/members/exists/{username}")
     public ResponseEntity<Boolean> checkUsernameExists(@PathVariable String username) {
         boolean exists = memberService.existsByUsername(username);
         return new ResponseEntity<>(exists, HttpStatus.OK);
     }
-    //로그인, 수정, 이메일, 전화번호, 등급 등으로 회원 검색과 같은 추가 기능을 구현
 }

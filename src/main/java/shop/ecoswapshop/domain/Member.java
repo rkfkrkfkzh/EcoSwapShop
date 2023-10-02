@@ -55,9 +55,6 @@ public class Member {
     @OneToMany(mappedBy = "member", cascade = ALL)
     private List<Favorite> favorites = new ArrayList<>();
 
-
-    // 기타 필드들 (옵션에 따라 생년월일, 프로필 사진 등 추가 가능)
-
     // 연관관계 메서드
     public void addPost(Post post) {
         this.postList.add(post);
