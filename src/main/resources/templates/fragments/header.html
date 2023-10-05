@@ -9,25 +9,31 @@
 <div th:fragment="header">
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <a class="navbar-brand" href="/" style="font-weight: bold;">Eco Swap SHOP</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item"><a class="nav-link" th:href="@{/products}">상품</a></li>
                 <li class="nav-item"><a class="nav-link" th:href="@{/posts}">게시글</a></li>
-                <!-- 찜리스트 추가 -->
                 <li class="nav-item"><a class="nav-link" th:href="@{/favorites}">찜리스트</a></li>
             </ul>
-            <ul class="navbar-nav ml-auto">
+            <ul class="navbar-nav ml-auto user-actions">
                 <!-- 로그인 상태인 경우 -->
-                <div th:if="${#authorization.expression('isAuthenticated()')}">
-                    <li><a th:href="@{/members/logout}">로그아웃</a></li>
-                </div>
+                <li th:if="${#authorization.expression('isAuthenticated()')}" class="nav-item"><a class="nav-link"
+                                                                                                  th:href="@{/members/edit/{memberId}(memberId=${loggedInMemberId})}">프로필
+                    수정</a></li>
+                <li th:if="${#authorization.expression('isAuthenticated()')}" class="nav-item"><a class="nav-link"
+                                                                                                  th:href="@{/members/detail/{memberId}(memberId=${loggedInMemberId})}">회원
+                    상세 정보</a></li>
+                <li th:if="${#authorization.expression('isAuthenticated()')}" class="nav-item"><a class="nav-link"
+                                                                                                  th:href="@{/members/logout}">로그아웃</a>
+                </li>
                 <!-- 로그인 상태가 아닌 경우 -->
-                <div th:unless="${#authorization.expression('isAuthenticated()')}">
-                    <li><a th:href="@{/members/login}">로그인</a></li>
-                </div>
+                <li th:unless="${#authorization.expression('isAuthenticated()')}" class="nav-item"><a class="nav-link"
+                                                                                                      th:href="@{/members/login}">로그인</a>
+                </li>
             </ul>
         </div>
     </nav>

@@ -88,9 +88,7 @@ public class ProductController {
     @GetMapping("/new")
     public String createForm(Model model) {
         Member loggedInMember = getLoggedInMember();
-        Product product = new Product();
         model.addAttribute("productForm", new ProductForm());
-        model.addAttribute("product", product);
         model.addAttribute("conditions", Condition.values()); // Condition 열거형의 값들을 모델에 추가
 
         return "products/createProductForm";

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <title>회원 상세보기</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+  </style>
+</head>
+<body class="bg-light">
+
+<div th:replace="fragments/header :: header"></div>
+
+<div class="content container">
+  <h2 class="my-4 text-center">프로필 상세보기</h2>
+  <div class="member-details shadow-lg p-3 mb-5 bg-white rounded">
+    <div class="detail-item"><strong>ID:</strong> <span th:text="${member.username}"></span></div>
+    <div class="detail-item"><strong>Name:</strong> <span th:text="${member.fullName}"></span></div>
+    <div class="detail-item"><strong>Email:</strong> <span th:text="${member.email}"></span></div>
+    <div class="detail-item"><strong>Phone:</strong> <span th:text="${member.phoneNumber}"></span></div>
+    <div class="detail-item">
+      <strong>Address:</strong>
+      <span th:text="${member.address.city} + ', ' + ${member.address.street} + ', ' + ${member.address.zipcode}"></span>
+    </div>
+  </div>
+</div>
+
+<footer class="mt-auto">
+  <div th:replace="fragments/footer :: footer"></div>
+</footer>
+
+</body>
+</html>

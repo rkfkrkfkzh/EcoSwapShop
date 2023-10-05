@@ -12,6 +12,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import shop.ecoswapshop.domain.Address;
 import shop.ecoswapshop.domain.Member;
 import shop.ecoswapshop.domain.UserType;
 import shop.ecoswapshop.repository.MemberRepository;
@@ -92,6 +93,27 @@ public class MemberService implements UserDetailsService {
     public List<Member> findMembersRegisteredAfterAndTypeAndName(LocalDateTime registrationDate, UserType type, String fullName) {
         return memberRepository.findByRegistrationDateAfterAndTypeAndFullName(registrationDate, type, fullName);
     }
+
+    // 회원 정보 수정
+    @Transactional
+    public void updateMember(Long memberId, String username, String password, String email,
+                             String fullName, String phoneNumber, Address address) {
+        Member existingMember = memberRepository.findById(memberId)
+                .orElseThrow(() -> new IllegalArgumentException("No member found with id: " + memberId));
+
+        if (username != null && !username.isEmpty()) existingMember.setUsername(username);
+        if (password != null && !password.isEmpty()) {
+            String encodedPassword = passwordEncoder.encode(password);
+            existingMember.setPassword(encodedPassword);
+        }
+        if (email != null && !email.isEmpty()) existingMember.setEmail(email);
+        if (fullName != null && !fullName.isEmpty()) existingMember.setFullName(fullName);
+        if (phoneNumber != null && !phoneNumber.isEmpty()) existingMember.setPhoneNumber(phoneNumber);
+        if (address != null) existingMember.setAddress(address);
+    }
+
+// ... 기존의 코드 ...
+
 
     // 회원 삭제
     @Transactional
