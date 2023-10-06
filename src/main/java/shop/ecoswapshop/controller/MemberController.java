@@ -23,6 +23,22 @@ public class MemberController {
 
     private final MemberService memberService;
 
+    // 로그인한 사용자의 memberId를 가져옵니다.
+    private Optional<Long> getLoggedInMemberId() {
+        return memberService.findLoggedInMemberId();
+    }
+
+    private Member getLoggedInMember() {
+        return getLoggedInMemberId()
+                .map(memberService::findMemberById)
+                .orElseThrow(() -> new RuntimeException("Logged in member not found"))
+                .orElseThrow(() -> new RuntimeException("Member Not Found"));
+    }
+
+    private boolean isUserAuthorized(Long memberId) {
+        return getLoggedInMemberId().isPresent() && getLoggedInMemberId().get().equals(memberId);
+    }
+
     @GetMapping("/new")
     public String createForm(Model model) {
         model.addAttribute("memberForm", new MemberForm());
@@ -62,6 +78,10 @@ public class MemberController {
         }
         Member member = optionalMember.get();
         model.addAttribute("member", member);
+
+        // 로그인한 사용자의 ID를 모델에 추가합니다.
+        getLoggedInMemberId().ifPresent(id -> model.addAttribute("loggedInMemberId", id));
+
         return "members/memberDetail";
     }
 
@@ -109,7 +129,7 @@ public class MemberController {
             return "/members/editMemberForm"; // 비밀번호가 다르거나, 양식 유효성 검사요류가 발생할때
         }
         Address address = new Address(form.getCity(), form.getStreet(), form.getZipcode());
-        memberService.updateMember(memberId,form.getUsername(),form.getPassword(),form.getEmail(),form.getFullName(),form.getPhoneNumber(),address);
+        memberService.updateMember(memberId, form.getUsername(), form.getPassword(), form.getEmail(), form.getFullName(), form.getPhoneNumber(), address);
         return "redirect:/members/detail/" + memberId;
     }
 }
