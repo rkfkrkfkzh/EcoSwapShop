@@ -1,7 +1,6 @@
 package shop.ecoswapshop.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -14,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import shop.ecoswapshop.domain.Address;
 import shop.ecoswapshop.domain.Member;
+import shop.ecoswapshop.domain.MemberStatus;
 import shop.ecoswapshop.domain.UserType;
 import shop.ecoswapshop.repository.MemberRepository;
 
@@ -21,7 +21,6 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 @Transactional(readOnly = true) //조회만 하고 수정은 하지 않는다는 의미
@@ -129,6 +128,10 @@ public class MemberService implements UserDetailsService {
         if (member == null) {
             throw new UsernameNotFoundException("이런 유저 없습니다잉");
         }
+        // 여기서 회원의 상태를 체크하여 DEACTIVATED 상태인 경우 로그인을 방지합니다.
+        if (member.getStatus() == MemberStatus.DEACTIVATED) {
+            throw new UsernameNotFoundException("비활성화된 회원입니다.");
+        }
         return new User(
                 member.getUsername(), member.getPassword(), Collections.singletonList(
                 new SimpleGrantedAuthority("ROLE_USER")));
@@ -149,5 +152,19 @@ public class MemberService implements UserDetailsService {
         } else {
             return Optional.empty();
         }
+    }
+
+    // 회원 비활성화
+    @Transactional
+    public void deactivateMember(Long memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new IllegalArgumentException("No member found with id: " + memberId));
+
+        member.setStatus(MemberStatus.DEACTIVATED); // 회원 상태를 DEACTIVATED로 변경
+    }
+
+    // 비밀번호 검증
+    public boolean validatePassword(Member member, String rawPassword) {
+        return passwordEncoder.matches(rawPassword, member.getPassword());
     }
 }

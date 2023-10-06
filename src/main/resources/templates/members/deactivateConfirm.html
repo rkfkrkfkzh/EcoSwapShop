@@ -1,0 +1,13 @@
+<!-- members/deactivateConfirm.html -->
+<h2>회원 비활성화</h2>
+<form action="/members/deactivate" method="post">
+    <!-- CSRF 토큰 추가 -->
+    <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
+    <div>
+        <label for="password">비밀번호 확인:</label>
+        <input type="password" name="password" required>
+    </div>
+    <div>
+        <button type="submit">비활성화하기</button>
+    </div>
+</form>

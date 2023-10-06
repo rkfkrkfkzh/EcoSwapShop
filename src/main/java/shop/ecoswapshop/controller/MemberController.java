@@ -132,4 +132,23 @@ public class MemberController {
         memberService.updateMember(memberId, form.getUsername(), form.getPassword(), form.getEmail(), form.getFullName(), form.getPhoneNumber(), address);
         return "redirect:/members/detail/" + memberId;
     }
+
+    // 회원 비활성화 화면 요청 처리
+    @GetMapping("/deactivate")
+    public String deactivateForm() {
+        return "members/deactivateConfirm";
+    }
+
+    // 회원 비활성화 처리
+    @PostMapping("deactivate")
+    public String deactivate(@RequestParam String password) {
+        Member loggedInMember = getLoggedInMember();
+
+        if (!memberService.validatePassword(loggedInMember, password)) {
+            return "redirect:/error";
+        }
+        memberService.deactivateMember(loggedInMember.getId());
+        // 비활성화 처리후 메인 페이지로 리다이렉트
+        return "redirect:/";
+    }
 }

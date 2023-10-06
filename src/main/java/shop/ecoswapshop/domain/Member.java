@@ -55,6 +55,9 @@ public class Member {
     @OneToMany(mappedBy = "member", cascade = ALL)
     private List<Favorite> favorites = new ArrayList<>();
 
+    @Enumerated(EnumType.STRING)
+    private MemberStatus status = MemberStatus.ACTIVE; // 기본값은 활성 상태
+
     // 연관관계 메서드
     public void addPost(Post post) {
         this.postList.add(post);

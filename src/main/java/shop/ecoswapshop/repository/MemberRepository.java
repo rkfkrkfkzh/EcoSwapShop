@@ -3,6 +3,7 @@ package shop.ecoswapshop.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import shop.ecoswapshop.domain.Member;
+import shop.ecoswapshop.domain.MemberStatus;
 import shop.ecoswapshop.domain.UserType;
 
 import java.time.LocalDateTime;
@@ -42,4 +43,5 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     // 아이디 중복체크
     boolean existsByUsername(String username);
 
+    List<Member> findByStatus(MemberStatus status); // 상태에 따른 회원 조회 메서드
 }
