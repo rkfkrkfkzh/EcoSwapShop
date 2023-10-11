@@ -34,6 +34,13 @@
                     <th>상태</th>
                     <td th:text="${product.productCondition}"></td>
                 </tr>
+                <tr th:if="${product != null && product.category != null}">
+                    <th>카테고리</th>
+                    <td>
+                        <a th:href="@{/categories/{id}(id=${product.category.id})}"
+                           th:text="${product.category.name}"></a>
+                    </td>
+                </tr>
                 </tbody>
             </table>
             <!-- 제품 이미지 -->

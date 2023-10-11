@@ -18,6 +18,17 @@
                 <li class="nav-item"><a class="nav-link" th:href="@{/products}">상품</a></li>
                 <li class="nav-item"><a class="nav-link" th:href="@{/posts}">게시글</a></li>
                 <li class="nav-item"><a class="nav-link" th:href="@{/favorites}">찜리스트</a></li>
+                <!-- 카테고리 드롭다운 메뉴 추가 시작 -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="categoryDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        카테고리
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="categoryDropdown">
+                        <a class="dropdown-item" th:href="@{/categories}">목록 보기</a>
+                        <a class="dropdown-item" th:href="@{/categories/new}">새로 만들기</a>
+                    </div>
+                </li>
+                <!-- 카테고리 드롭다운 메뉴 추가 끝 -->
             </ul>
             <ul class="navbar-nav ml-auto user-actions">
                 <!-- 로그인 상태인 경우 -->
