@@ -25,6 +25,8 @@
                         <p class="text-danger text-center" th:if="${param.error}">없는 회원이거나, 비활성화 회원입니다.</p>
                     </form>
                     <div class="text-center mt-3">
+                        <a href="/members/findUsernameForm" class="btn btn-light">아이디 찾기</a>
+                        <a href="/members/resetPasswordForm" class="btn btn-light">비밀번호 찾기</a>
                         <a href="/members/new" class="btn btn-primary btn-block">회원가입</a>
                     </div>
                 </div>

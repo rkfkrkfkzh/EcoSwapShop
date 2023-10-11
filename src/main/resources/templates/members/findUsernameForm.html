@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>아이디 찾기</title>
+</head>
+<body>
+<h2>아이디 찾기</h2>
+<form th:action="@{/members/findUsername}" method="post">
+    <label>Email: </label><input type="email" name="email"><br>
+    <label>Phone Number: </label><input type="text" name="phoneNumber"><br>
+    <button type="submit">찾기</button>
+</form>
+<p th:if="${errorMessage}" th:text="${errorMessage}"></p>
+</body>
+</html>

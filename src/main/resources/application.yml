@@ -19,16 +19,16 @@ spring:
         format_sql: true
   thymeleaf:
     cache: false
-  mail: # <-- 여기부터 메일 설정 추가
-    host: smtp.gmail.com
-    port: 587
-    username: YOUR_EMAIL@gmail.com
-    password: YOUR_PASSWORD
+  mail:
+    host: smtp.naver.com
+    port: 465
+    username: Email@naver.com
+    password: password
     properties:
       mail:
         smtp:
           auth: true
-          starttls:
+          ssl:
             enable: true
 
 logging:

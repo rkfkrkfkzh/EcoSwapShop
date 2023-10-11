@@ -17,6 +17,7 @@ import shop.ecoswapshop.domain.MemberStatus;
 import shop.ecoswapshop.domain.UserType;
 import shop.ecoswapshop.repository.MemberRepository;
 
+import javax.persistence.ManyToOne;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
@@ -166,5 +167,44 @@ public class MemberService implements UserDetailsService {
     // 비밀번호 검증
     public boolean validatePassword(Member member, String rawPassword) {
         return passwordEncoder.matches(rawPassword, member.getPassword());
+    }
+
+    // 아이디 찾기
+    public Optional<String> findUsernameByEmailOrPhoneNumber(String email,String phoneNumber) {
+        Member member = null;
+
+        if (email != null && !email.isEmpty()) {
+            Optional<Member> emailMember = memberRepository.findByEmail(email);
+            if (emailMember.isPresent()) {
+                member = emailMember.get();
+            }
+        }
+        if (phoneNumber != null && !phoneNumber.isEmpty()) {
+            Optional<Member> phoneMemmber = memberRepository.findByPhoneNumber(phoneNumber);
+            if (phoneMemmber.isPresent()) {
+                member = phoneMemmber.get();
+            }
+        }
+        return Optional.ofNullable(member).map(Member::getUsername);
+    }
+
+    // 비밀번호 찾기: 임시 비밀번호 발급 및 이메일 전송 (비밀번호 재설정 링크 전송도 고려해볼 수 있습니다.)
+    @Transactional
+    public void resetPassword(String username, String email) {
+        Member member = memberRepository.findByUsername(username);
+        if (member == null || !member.getEmail().equals(email)) {
+            throw new IllegalStateException("제공된 정보와 일치하는 회원을 찾을 수 없습니다.");
+        }
+        String tempPassword = generateTempPassword(); // 임시 비밀번호 생성
+        String encodedPassword = passwordEncoder.encode(tempPassword);
+        member.setPassword(encodedPassword);
+
+        // 임시 비밀번호를 해당 이메일로 전송
+        emailService.sendEmail(email, "임시 비밀번호 발금", "귀하의 임시 비밀번호는 " + tempPassword + "입니다.");
+    }
+
+    private String generateTempPassword() {
+        // 임의의 문자열을 생성하여 임시 비밀번호로 사용. 실제 구현에서는 더 안전한 방식을 고려
+        return Long.toHexString(Double.doubleToLongBits(Math.random()));
     }
 }

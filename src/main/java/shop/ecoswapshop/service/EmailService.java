@@ -13,12 +13,12 @@ public class EmailService {
 
     private final JavaMailSender javaMailSender;
 
-    @Transactional
-    public void sendTemporaryPassword(String toEmail, String tempPassword) {
+    public void sendEmail(String toEmail, String subject, String content) {
         SimpleMailMessage mailMessage = new SimpleMailMessage();
+        mailMessage.setFrom("여기에 이메일@naver.com");   // <-- 여기에 당신의 네이버 이메일 주소를 추가하세요. application.yml에도 있다
         mailMessage.setTo(toEmail);
-        mailMessage.setSubject("임시 비밀번호 발급 안내");
-        mailMessage.setText("귀하의 임시 비밀번호는 " + tempPassword + " 입니다.");
+        mailMessage.setSubject(subject);
+        mailMessage.setText(content);
 
         javaMailSender.send(mailMessage);
     }

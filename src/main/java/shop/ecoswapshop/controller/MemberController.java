@@ -151,4 +151,41 @@ public class MemberController {
         // 비활성화 처리후 메인 페이지로 리다이렉트
         return "redirect:/";
     }
+
+    // 아이디 찾기 폼
+    @GetMapping("/findUsernameForm")
+    public String findUsernameForm() {
+        return "members/findUsernameForm";
+    }
+
+    // 아이디 찾기 처리
+    @PostMapping("/findUsername")
+    public String findUsername(@RequestParam String email, @RequestParam String phoneNumber, Model model) {
+        Optional<String> username = memberService.findUsernameByEmailOrPhoneNumber(email, phoneNumber);
+        if (username.isPresent()) {
+            model.addAttribute("foundUsername", username.get());
+            return "members/usernameFound";
+        } else {
+            model.addAttribute("errorMessage", "해당 정보와 일치하는 아이디를 찾을 수 없습니다.");
+            return "members/findUsernameForm";
+        }
+    }
+
+    // 비밀번호 찾기 폼
+    @GetMapping("/resetPasswordForm")
+    public String resetPasswordForm() {
+        return "members/resetPasswordForm";
+    }
+
+    // 비밀번호 찾기 처리
+    @PostMapping("/resetPassword")
+    public String resetPassword(@RequestParam String username, @RequestParam String email, Model model) {
+        try {
+            memberService.resetPassword(username, email);
+            return "members/passwordResetSuccess";
+        } catch (IllegalStateException e) {
+            model.addAttribute("errorMessage", e.getMessage());
+            return "members/resetPasswordForm";
+        }
+    }
 }
