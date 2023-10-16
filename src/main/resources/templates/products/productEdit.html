@@ -15,8 +15,7 @@
             <div class="col-md-9">
                 <div class="form-container">
                     <h1 class="text-center mb-4">제품 수정</h1>
-                    <form th:action="@{/products/edit/{id}(id=${productForm.id})}" th:object="${productForm}"
-                          method="post"
+                    <form th:action="@{'/products/edit/' + ${productForm.id}}" th:object="${productForm}" method="post"
                           class="needs-validation" novalidate>
                         <div class="mb-3">
                             <label for="productName" class="form-label">제품명</label>
@@ -40,13 +39,26 @@
                                 <!-- 다른 옵션들도 추가 -->
                             </select>
                         </div>
+                        <div class="form-group">
+                            <label for="categoryId">카테고리</label>
+                            <select class="form-control" id="categoryId" name="categoryId" required>
+                                <!-- 카테고리 목록 반복 -->
+                                <option th:each="category : ${categories}"
+                                        th:value="${category.id}"
+                                        th:text="${category.name}"
+                                        th:selected="${category.id == productForm.category.id}"></option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">수정 완료</button>
+
                         <div class="mb-4">
                             <label for="productImages" class="form-label">제품 이미지</label>
                             <div>
                                 <th:block th:each="photo : ${productForm.photoList}">
                                     <img th:src="@{${photo.url}}" alt="Product Image" class="img-thumbnail"
                                          style="max-width: 200px; margin-right: 10px;"/>
-                                    <form th:action="@{/photos/delete/{photoId}(photoId=${photo.id})}" method="post" style="display:inline;">
+                                    <form th:action="@{/photos/delete/{photoId}(photoId=${photo.id})}" method="post"
+                                          style="display:inline;">
                                         <button type="submit" class="btn btn-danger btn-sm">삭제</button>
                                     </form>
                                 </th:block>
@@ -54,13 +66,14 @@
                         </div>
                         <!-- 이미지  추가 및 업로드 폼 -->
                         <div class="mb-4">
-                        <form id="imageUploadForm" action="/products/edit/${product.id}" method="post" enctype="multipart/form-data">
-                            <label for="newProductImages" class="form-label">새로운 이미지 업로드</label>
-                            <input type="file" id="newProductImages" name="newProductImages" class="form-control" multiple>
-                            <button type="submit" class="btn btn-primary mt-2">이미지 업로드</button>
-                        </form>
-                    </div>
-                        <button type="submit" class="btn btn-primary">수정 완료</button>
+                            <form id="imageUploadForm" action="/products/edit/${product.id}" method="post"
+                                  enctype="multipart/form-data">
+                                <label for="newProductImages" class="form-label">새로운 이미지 업로드</label>
+                                <input type="file" id="newProductImages" name="newProductImages" class="form-control"
+                                       multiple>
+                                <button type="submit" class="btn btn-primary mt-2">이미지 업로드</button>
+                            </form>
+                        </div>
                     </form>
                 </div>
             </div>
@@ -69,7 +82,6 @@
     <!-- Footer inclusion -->
     <div th:replace="fragments/footer :: footer"></div>
 </div>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         const priceInput = document.getElementById("price");
@@ -92,21 +104,20 @@
         });
     });
 </script>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-    $(document).ready(function() {
-        $('.delete').on('click', function() {
+    $(document).ready(function () {
+        $('.delete').on('click', function () {
             const photoId = $(this).data('photo-id');
 
             $.ajax({
                 url: '/photos/delete/' + photoId,
                 type: 'POST',
-                success: function(response) {
+                success: function (response) {
                     // 예: 삭제 성공시 이미지 숨기기
                     $('[data-photo-id="' + photoId + '"]').prev('img').hide();
                     $('[data-photo-id="' + photoId + '"]').hide();
                 },
-                error: function(error) {
+                error: function (error) {
                     console.error('Error:', error);
                 }
             });

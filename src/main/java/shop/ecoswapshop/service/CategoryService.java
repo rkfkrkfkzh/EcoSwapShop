@@ -25,7 +25,7 @@ public class CategoryService {
     }
 
     public Category findById(Long id) {
-        return categoryRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("해당 카테고리가 없습니다. id=" + id));
+        return categoryRepository.findById(id).orElse(null);
     }
 
     @Transactional

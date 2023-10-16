@@ -34,12 +34,9 @@
                     <th>상태</th>
                     <td th:text="${product.productCondition}"></td>
                 </tr>
-                <tr th:if="${product != null && product.category != null}">
+                <tr>
                     <th>카테고리</th>
-                    <td>
-                        <a th:href="@{/categories/{id}(id=${product.category.id})}"
-                           th:text="${product.category.name}"></a>
-                    </td>
+                    <td th:text="${product.category.name}"></td>
                 </tr>
                 </tbody>
             </table>

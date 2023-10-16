@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import shop.ecoswapshop.domain.Category;
 import shop.ecoswapshop.domain.Photo;
 import shop.ecoswapshop.domain.Product;
 import shop.ecoswapshop.exception.NotFoundException;
@@ -24,6 +25,7 @@ public class ProductService {
 
     private final ProductRepository productRepository;
     private final PhotoRepository photoRepository;
+    private final CategoryService categoryService;
 
     // 상품 등록
     @Transactional
@@ -81,6 +83,17 @@ public class ProductService {
     // 검색
     public Page<Product> searchProducts(String keyword, Pageable pageable) {
         return productRepository.findByProductNameContaining(keyword, pageable);
+    }
+
+    public Page<Product> searchProductsByCategory(Long categoryId, Pageable pageable) {
+        // 카테고리를 가져오는 부분
+        Category category = categoryService.findById(categoryId);
+        return productRepository.findByCategory(category, pageable);
+    }
+
+    public Page<Product> getPagedProductsByCategory(Long categoryId, int page, int size, Sort sortOrder) {
+        Category category = categoryService.findById(categoryId);
+        return productRepository.findByCategory(category, PageRequest.of(page, size, sortOrder));
     }
 
     // 페이징 처리

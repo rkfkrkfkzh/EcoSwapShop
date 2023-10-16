@@ -8,16 +8,15 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import shop.ecoswapshop.domain.Condition;
-import shop.ecoswapshop.domain.Member;
-import shop.ecoswapshop.domain.Photo;
-import shop.ecoswapshop.domain.Product;
+import shop.ecoswapshop.domain.*;
+import shop.ecoswapshop.service.CategoryService;
 import shop.ecoswapshop.service.MemberService;
 import shop.ecoswapshop.service.PhotoService;
 import shop.ecoswapshop.service.ProductService;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -28,6 +27,7 @@ public class ProductController {
     private final ProductService productService;
     private final MemberService memberService;
     private final PhotoService photoService;
+    private final CategoryService categoryService;
 
     // 로그인한 사용자의 memberId를 가져옵니다.
     private Optional<Long> getLoggedInMemberId() {
@@ -55,7 +55,7 @@ public class ProductController {
     }
 
     @GetMapping
-    public String list(@RequestParam(defaultValue = "0") int page, @RequestParam(required = false) String sort, Model model) {
+    public String list(@RequestParam(defaultValue = "0") int page, @RequestParam(required = false) String sort,@RequestParam(required = false) Long categoryId, Model model) {
         Sort sortOrder = Sort.unsorted();
         if (sort != null && !sort.isEmpty()) {
             String[] sortParams = sort.split(",");
@@ -64,7 +64,12 @@ public class ProductController {
                     : Sort.Order.desc(sortParams[0]));
         }
         // 모든 상품을 조회합니다.
-        Page<Product> pagedProducts = productService.getPagedProducts(page, 8, sortOrder);
+        Page<Product> pagedProducts;
+        if (categoryId != null) {
+            pagedProducts = productService.getPagedProductsByCategory(categoryId, page, 8, sortOrder);
+        } else {
+            pagedProducts = productService.getPagedProducts(page, 8, sortOrder);
+        }
         // 상품 목록을 모델에 추가합니다.
         model.addAttribute("pagedProducts", pagedProducts);
         // 로그인한 사용자의 memberId가 있다면 모델에 추가합니다.
@@ -90,6 +95,8 @@ public class ProductController {
         Member loggedInMember = getLoggedInMember();
         model.addAttribute("productForm", new ProductForm());
         model.addAttribute("conditions", Condition.values()); // Condition 열거형의 값들을 모델에 추가
+        // 카테고리 데이터를 가져와 모델에 추가
+        model.addAttribute("categories", categoryService.findAll());
 
         return "products/createProductForm";
     }
@@ -105,6 +112,13 @@ public class ProductController {
         product.setProductCondition(productForm.getProductCondition());
         product.setCreationDate(LocalDateTime.now());
         product.setMember(loggedInMember);
+
+        // 카테고리 설정
+        Long categoryId = productForm.getCategoryId();
+        Category category = categoryService.findById(categoryId);
+        if (category != null) {
+            product.setCategory(category);
+        }
 
         // 이미지 파일 처리 및 상품 저장
         MultipartFile productImage = productForm.getPhoto();
@@ -131,6 +145,11 @@ public class ProductController {
 
     private String processEditForm(Long productId, Model model) {
         Product product = getAuthorizedProduct(productId);
+
+        // 카테고리 목록을 모델에 추가
+        List<Category> categories = categoryService.findAll();
+        model.addAttribute("categories", categories);
+
         model.addAttribute("productForm", product);
         model.addAttribute("conditions", Condition.values());
         return "products/productEdit";
@@ -149,6 +168,12 @@ public class ProductController {
         product.setProductDescription(productForm.getProductDescription());
         product.setPrice(productForm.getPrice());
         product.setProductCondition(productForm.getProductCondition());
+        // 카테고리 설정
+        Long categoryId = productForm.getCategoryId();
+        Category category = categoryService.findById(categoryId);
+        if (category != null) {
+            product.setCategory(category);
+        }
         // 이미지 업로드 및 기존 이미지 삭제 로직 추가
         MultipartFile newProductImage = productForm.getPhoto();
         if (newProductImage != null && !newProductImage.isEmpty()) {
@@ -183,12 +208,24 @@ public class ProductController {
 
     // 상품 검색
     @GetMapping("/search")
-    public String search(@RequestParam String keyword, @RequestParam(defaultValue = "0") int page, Model model) {
+    public String search(@RequestParam String keyword, @RequestParam(defaultValue = "0") int page, @RequestParam(required = false)Long categoryId, Model model) {
         Page<Product> searchProducts = productService.searchProducts(keyword, PageRequest.of(page, 8));
+        if (categoryId != null) {
+            // categoryId를 이용한 검색 로직
+            searchProducts = productService.searchProductsByCategory(categoryId, PageRequest.of(page, 8));
+        } else {
+            searchProducts = productService.searchProducts(keyword, PageRequest.of(page, 8));
+        }
         model.addAttribute("pagedProducts", searchProducts);
         model.addAttribute("keyword", keyword);
         getLoggedInMemberId().ifPresent(memberId -> model.addAttribute("loggedInMemberId", memberId));
         return "products/productList";
 
     }
+
+    @ModelAttribute("categories")
+    public List<Category> categories() {
+        return categoryService.findAll();
+    }
+
 }

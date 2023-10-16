@@ -18,4 +18,6 @@ public class ProductForm {
     private String photoList;
     private LocalDateTime creationDate;
     private MultipartFile photo; // 새로 추가한 필드
+    private Long categoryId; // 카테고리 선택을 위한 필드
+
 }

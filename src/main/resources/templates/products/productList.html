@@ -26,6 +26,15 @@
                 <label for="searchSubmit" class="sr-only">검색 버튼</label> <!-- 접근성을 위한 레이블 추가 (화면에는 보이지 않음) -->
                 <input type="submit" id="searchSubmit" value="검색" class="btn btn-secondary mr-2">
                 <!-- 검색 폼 끝 -->
+                <!-- 카테고리 드롭다운 시작 -->
+                <div class="dropdown d-inline-block mr-2">
+                    <select name="categoryId" class="form-control" onchange="this.form.submit()"> <!-- 이 부분을 추가 -->
+                        <option value="">-- 카테고리 선택 --</option>
+                        <!-- 카테고리는 서버에서 가져와야 하므로 th:each를 사용하여 반복 -->
+                        <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}"></option>
+                    </select>
+                </div>
+                <!-- 카테고리 드롭다운 끝 -->
                 <div class="dropdown d-inline-block">
                     <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">정렬</button>
                     <div class="dropdown-menu">
