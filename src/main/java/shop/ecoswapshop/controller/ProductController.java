@@ -196,7 +196,7 @@ public class ProductController {
     }
 
     // 상품 삭제
-    @DeleteMapping("delete/{productId}")
+    @PostMapping("delete/{productId}")
     public String delete(@PathVariable Long productId) {
         Product product = getAuthorizedProduct(productId);
         productService.deleteProductById(productId);

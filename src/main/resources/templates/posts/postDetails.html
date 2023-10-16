@@ -64,8 +64,9 @@
                     <!-- 수정 및 삭제 버튼 조건 추가 -->
                     <a th:if="${loggedInMemberId == post.member.id}" th:href="@{/posts/edit/{id}(id=${post.id})}"
                        class="btn btn-warning">수정</a>
-                    <a th:if="${loggedInMemberId == post.member.id}" th:href="@{/posts/delete/{id}(id=${post.id})}"
-                       class="btn btn-danger">삭제</a>
+                    <form th:if="${loggedInMemberId == post.member.id}" th:action="@{/posts/delete/{id}(id=${post.id})}" method="post" style="display: inline;">
+                        <button type="submit" class="btn btn-danger" onclick="return confirm('정말로 이 게시물을 삭제하시겠습니까?');">삭제</button>
+                    </form>
                 </div>
             </div>
         </div>
@@ -107,8 +108,8 @@
                                 </button>
                                 <form th:if="${loggedInMemberId == comment.member.id}"
                                       th:action="@{/posts/details/{postId}/comments/{commentId}/delete(postId=${post.id}, commentId=${comment.id})}"
-                                      method="POST">
-                                    <button type="submit" class="btn btn-danger btn-sm">삭제</button>
+                                      method="post" style="display: inline;">
+                                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('정말로 이 댓글을 삭제하시겠습니까?');">삭제</button>
                                 </form>
                             </div>
                         </div>
@@ -150,8 +151,8 @@
                                         </button>
                                         <form th:if="${loggedInMemberId == reply.member.id}"
                                               th:action="@{/posts/details/{postId}/replies/{replyId}/delete(postId=${post.id}, replyId=${reply.id})}"
-                                              method="POST">
-                                            <button type="submit" class="btn btn-danger btn-sm">삭제</button>
+                                              method="post" style="display: inline;">
+                                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('정말로 이 대댓글을 삭제하시겠습니까?');">삭제</button>
                                         </form>
                                     </div>
                                 </div>

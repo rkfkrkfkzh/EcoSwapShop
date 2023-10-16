@@ -47,8 +47,10 @@
                     <!-- 수정 및 삭제 버튼 조건 추가 -->
                     <a th:if="${loggedInMemberId == post.member.id}" th:href="@{/posts/edit/{id}(id=${post.id})}"
                        class="btn btn-warning">수정</a>
-                    <a th:if="${loggedInMemberId == post.member.id}" th:href="@{/posts/delete/{id}(id=${post.id})}"
-                       class="btn btn-danger">삭제</a>
+                    <form th:if="${loggedInMemberId == post.member.id}"
+                          th:action="@{/posts/delete/{id}(id=${post.id})}" method="post" style="display: inline ;">
+                        <button type="submit" class="btn btn-danger" onclick="return confirm('정말로 이 게시물을 삭제하시겠습니까?');">삭제</button>
+                    </form>
                 </td>
             </tr>
             </tbody>

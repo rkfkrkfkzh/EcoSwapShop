@@ -55,7 +55,13 @@
                     <button type="submit" class="btn btn-primary">찜하기</button>
                 </form>
                 <a th:if="${loggedInMemberId == product.member.id}" th:href="@{/products/edit/{id}(id=${product.id})}" class="btn btn-warning">수정</a>
-                <a th:if="${loggedInMemberId == product.member.id}" th:href="@{/products/delete/{id}(id=${product.id})}" class="btn btn-danger ml-2">삭제</a>
+                <form th:if="${loggedInMemberId == product.member.id}"
+                      th:action="@{/products/delete/{id}(id=${product.id})}"
+                      method="post"
+                      class="d-inline-block"
+                      onsubmit="return confirm('현재 상품을 정말 삭제하시겠습니까???');">
+                    <input type="submit" value="삭제" class="btn btn-danger">
+                </form>
             </div>
         </div>
     </div>

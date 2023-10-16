@@ -118,7 +118,7 @@ public class PostController {
     }
 
     // 삭제
-    @GetMapping("delete/{postId}")
+    @PostMapping("delete/{postId}")
     public String delete(@PathVariable Long postId) {
         Optional<Post> postById = postService.findPostById(postId);
         if (!postById.isPresent()) {
