@@ -9,8 +9,6 @@
     <div class="sidebar bg-light pt-3 pl-3">
         <h5>카테고리</h5>
         <ul class="list-unstyled">
-            <li><a href="/category/electronics" class="text-dark">가전제품</a></li>
-            <li><a href="/category/furniture" class="text-dark">생활용품</a></li>
             <!-- 관리자에게만 보이는 카테고리 관리 링크 추가 시작 -->
             <div th:if="${#authentication.name == 'admin'}">
                 <li class="mt-2"><strong>카테고리 관리:</strong></li>

@@ -1,7 +1,6 @@
 package shop.ecoswapshop.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import shop.ecoswapshop.domain.Category;
@@ -29,4 +28,8 @@ public class CategoryService {
         return categoryRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("해당 카테고리가 없습니다. id=" + id));
     }
 
+    @Transactional
+    public void delete(Long id) {
+        categoryRepository.deleteById(id);
+    }
 }

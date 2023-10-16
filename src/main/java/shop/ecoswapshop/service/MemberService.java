@@ -19,6 +19,7 @@ import shop.ecoswapshop.repository.MemberRepository;
 
 import javax.persistence.ManyToOne;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -112,9 +113,6 @@ public class MemberService implements UserDetailsService {
         if (address != null) existingMember.setAddress(address);
     }
 
-// ... 기존의 코드 ...
-
-
     // 회원 삭제
     @Transactional
     public void deleteMemberById(Long memberId) {
@@ -133,9 +131,18 @@ public class MemberService implements UserDetailsService {
         if (member.getStatus() == MemberStatus.DEACTIVATED) {
             throw new UsernameNotFoundException("비활성화된 회원입니다.");
         }
+
+        List<SimpleGrantedAuthority> authorities = new ArrayList<>();
+
+        // UserType에 따른 권한 부여
+        if (member.getType() == UserType.ADMIN) {
+            authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
+        } else if (member.getType() == UserType.USER) {
+            authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
+        }
+
         return new User(
-                member.getUsername(), member.getPassword(), Collections.singletonList(
-                new SimpleGrantedAuthority("ROLE_USER")));
+                member.getUsername(), member.getPassword(), authorities);
     }
 
     // id 중복체크

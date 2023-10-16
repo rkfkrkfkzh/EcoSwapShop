@@ -3,6 +3,7 @@ package shop.ecoswapshop.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,7 +34,10 @@ public class CategoryController {
     }
 
     @PostMapping("/categories/new")
-    public String create(@ModelAttribute Category category) {
+    public String create(@ModelAttribute Category category, BindingResult result) {
+        if (result.hasErrors()) {
+            return "categories/create";
+        }
         categoryService.save(category);
         return "redirect:/categories";
     }
@@ -52,5 +56,9 @@ public class CategoryController {
         return "redirect:/categories";
     }
 
-    // 삭제 메서드 및 기타 필요한 메서드 추가
+    @GetMapping("categories/{id}/delete")
+    public String delete(@PathVariable Long id) {
+        categoryService.delete(id);
+        return "redirect:/categories";
+    }
 }

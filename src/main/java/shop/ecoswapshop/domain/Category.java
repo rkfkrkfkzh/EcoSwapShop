@@ -26,7 +26,7 @@ public class Category {
     private List<Product> productList = new ArrayList<>(); // 상품리스트
 
     @ManyToOne(fetch = LAZY)
-    @JoinTable(name = "parent_id")
+    @JoinColumn(name = "parent_id")
     private Category parent;
 
     @OneToMany(mappedBy = "parent")

@@ -22,12 +22,6 @@
             <div class="col-md-9">
                 <h1>Eco Swap SHOP에 오신 것을 환영합니다.</h1>
                 <p>신뢰할 수 있는 판매자의 중고 제품에 대한 최고의 거래를 살펴보십시오.</p>
-                <!-- 카테고리 관리 버튼 추가 시작 -->
-                <div th:if="${#authorization.expression('hasRole(''ADMIN'')')}" class="mb-3">
-                    <a href="/categories" class="btn btn-info">카테고리 관리</a>
-                </div>
-
-                <!-- 카테고리 관리 버튼 추가 끝 -->
                 <!-- Featured Products Section -->
                 <h2>주요 제품</h2>
                 <div class="row">
