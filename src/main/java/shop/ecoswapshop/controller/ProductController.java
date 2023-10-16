@@ -28,14 +28,14 @@ public class ProductController {
     private final MemberService memberService;
     private final PhotoService photoService;
     private final CategoryService categoryService;
+    private static final int PAGE_SIZE = 8;
 
-    // 로그인한 사용자의 memberId를 가져옵니다.
     private Optional<Long> getLoggedInMemberId() {
         return memberService.findLoggedInMemberId();
     }
 
     private Member getLoggedInMember() {
-        return getLoggedInMemberId()
+        return memberService.findLoggedInMemberId()
                 .map(memberService::findMemberById)
                 .orElseThrow(() -> new RuntimeException("Logged in member not found"))
                 .orElseThrow(() -> new RuntimeException("Member Not Found"));
@@ -55,7 +55,7 @@ public class ProductController {
     }
 
     @GetMapping
-    public String list(@RequestParam(defaultValue = "0") int page, @RequestParam(required = false) String sort,@RequestParam(required = false) Long categoryId, Model model) {
+    public String list(@RequestParam(defaultValue = "0") int page, @RequestParam(required = false) String sort, @RequestParam(required = false) Long categoryId, Model model) {
         Sort sortOrder = Sort.unsorted();
         if (sort != null && !sort.isEmpty()) {
             String[] sortParams = sort.split(",");
@@ -64,12 +64,9 @@ public class ProductController {
                     : Sort.Order.desc(sortParams[0]));
         }
         // 모든 상품을 조회합니다.
-        Page<Product> pagedProducts;
-        if (categoryId != null) {
-            pagedProducts = productService.getPagedProductsByCategory(categoryId, page, 8, sortOrder);
-        } else {
-            pagedProducts = productService.getPagedProducts(page, 8, sortOrder);
-        }
+        Page<Product> pagedProducts = categoryId != null
+                ? productService.getPagedProductsByCategory(categoryId, page, PAGE_SIZE, sortOrder)
+                : productService.getPagedProducts(page, PAGE_SIZE, sortOrder);
         // 상품 목록을 모델에 추가합니다.
         model.addAttribute("pagedProducts", pagedProducts);
         // 로그인한 사용자의 memberId가 있다면 모델에 추가합니다.
@@ -199,7 +196,7 @@ public class ProductController {
     }
 
     // 상품 삭제
-    @GetMapping("delete/{productId}")
+    @DeleteMapping("delete/{productId}")
     public String delete(@PathVariable Long productId) {
         Product product = getAuthorizedProduct(productId);
         productService.deleteProductById(productId);
@@ -208,14 +205,18 @@ public class ProductController {
 
     // 상품 검색
     @GetMapping("/search")
-    public String search(@RequestParam String keyword, @RequestParam(defaultValue = "0") int page, @RequestParam(required = false)Long categoryId, Model model) {
-        Page<Product> searchProducts = productService.searchProducts(keyword, PageRequest.of(page, 8));
+    public String search(@RequestParam String keyword,
+                         @RequestParam(defaultValue = "0") int page,
+                         @RequestParam(required = false) Long categoryId,
+                         Model model) {
+        Page<Product> searchProducts;
         if (categoryId != null) {
             // categoryId를 이용한 검색 로직
-            searchProducts = productService.searchProductsByCategory(categoryId, PageRequest.of(page, 8));
+            searchProducts = productService.searchProductsByCategory(categoryId, PageRequest.of(page, PAGE_SIZE));
         } else {
-            searchProducts = productService.searchProducts(keyword, PageRequest.of(page, 8));
+            searchProducts = productService.searchProducts(keyword, PageRequest.of(page, PAGE_SIZE));
         }
+        model.addAttribute("categoryId", categoryId);
         model.addAttribute("pagedProducts", searchProducts);
         model.addAttribute("keyword", keyword);
         getLoggedInMemberId().ifPresent(memberId -> model.addAttribute("loggedInMemberId", memberId));
