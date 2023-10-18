@@ -44,7 +44,7 @@ public class ProductServiceTest {
 
         // When
         List<MultipartFile> files = null;
-        Long productId = productService.registerProduct(product, files);
+        Long productId = productService.registerProduct(product);
 
         // Then
         assertNotNull(productId);
@@ -126,7 +126,7 @@ public class ProductServiceTest {
 
         // When
         List<MultipartFile> files = null;
-        Long photoId = productService.registerProduct(product, files);
+        Long photoId = productService.registerProduct(product);
 
         // Then
         assertNotNull(photoId);
@@ -140,7 +140,7 @@ public class ProductServiceTest {
         Long productId = productRepository.save(product).getId();
 
         List<MultipartFile> files = null;
-        productService.registerProduct(product, files);
+        productService.registerProduct(product);
 
         // When
         List<Photo> photos = productService.getPhotoByProductId(productId);
@@ -155,7 +155,7 @@ public class ProductServiceTest {
         Product product = new Product(); // 상품 생성 로직에 맞게 조정해야 함.
         Product product1 = productRepository.save(product);
         List<MultipartFile> files = null;
-        Long product2 = productService.registerProduct(product1, files);
+        Long product2 = productService.registerProduct(product1);
 
         // When
         productService.deleteProductById(product2);

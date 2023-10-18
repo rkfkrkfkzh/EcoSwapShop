@@ -29,6 +29,7 @@ public class ProductController {
     private final PhotoService photoService;
     private final CategoryService categoryService;
     private static final int PAGE_SIZE = 8;
+    private static final String UPLOAD_PATH = "/uploads/";
 
     private Optional<Long> getLoggedInMemberId() {
         return memberService.findLoggedInMemberId();
@@ -100,6 +101,28 @@ public class ProductController {
 
     @PostMapping("/create")
     public String create(@ModelAttribute ProductForm productForm) throws IOException {
+        Product product = prepareProductForCreation(productForm);
+        handleProductImage(product, productForm.getPhoto());
+        productService.registerProduct(product);
+        return "redirect:/products";
+    }
+
+    private void handleProductImage(Product product, MultipartFile productImage) throws IOException {
+        if (productImage != null && !productImage.isEmpty()) {
+            if (!productImage.getContentType().startsWith("image/")) {
+                throw new RuntimeException("업로드한 이미지 파일이 아닙니다.");
+            }
+            String fileName = photoService.storeFile(productImage);
+            String imagePath = UPLOAD_PATH + fileName;
+
+            Photo photo = new Photo();
+            photo.setUrl(imagePath);
+
+            product.addPhoto(photo);
+        }
+    }
+
+    private Product prepareProductForCreation(ProductForm productForm) {
         Member loggedInMember = getLoggedInMember();
         Product product = new Product();
 
@@ -116,23 +139,7 @@ public class ProductController {
         if (category != null) {
             product.setCategory(category);
         }
-
-        // 이미지 파일 처리 및 상품 저장
-        MultipartFile productImage = productForm.getPhoto();
-        if (productImage != null && !productImage.isEmpty()) {
-            if (!productImage.getContentType().startsWith("image/")) {
-                throw new RuntimeException("업로드한 이미지 파일이 아닙니다.");
-            }
-            String fileName = photoService.storeFile(productImage);
-            String imagePath = "/uploads/" + fileName;
-
-            Photo photo = new Photo();
-            photo.setUrl(imagePath);
-
-            product.addPhoto(photo);
-        }
-        productService.registerProduct(product);
-        return "redirect:/products";
+        return product;
     }
 
     @GetMapping("/edit/{productId}")
@@ -146,7 +153,6 @@ public class ProductController {
         // 카테고리 목록을 모델에 추가
         List<Category> categories = categoryService.findAll();
         model.addAttribute("categories", categories);
-
         model.addAttribute("productForm", product);
         model.addAttribute("conditions", Condition.values());
         return "products/productEdit";
@@ -154,6 +160,7 @@ public class ProductController {
 
     @PostMapping("/edit/{productId}")
     public String edit(@PathVariable Long productId, @ModelAttribute ProductForm productForm) throws IOException {
+        System.out.println("deleteCurrentImage value: " + productForm.isDeleteCurrentImage());
 
         return processEdit(productId, productForm);
     }
@@ -171,21 +178,23 @@ public class ProductController {
         if (category != null) {
             product.setCategory(category);
         }
+        // 이미지 삭제 로직
+        if (productForm.isDeleteCurrentImage()) {
+            for (Photo oldPhoto : product.getPhotoList()) {
+                photoService.deletePhoto(oldPhoto.getId());
+            }
+            product.getPhotoList().clear();
+        }
         // 이미지 업로드 및 기존 이미지 삭제 로직 추가
         MultipartFile newProductImage = productForm.getPhoto();
         if (newProductImage != null && !newProductImage.isEmpty()) {
             if (!newProductImage.getContentType().startsWith("image/")) {
                 throw new RuntimeException("업로드한 파일이 이미지가 아닙니다.");
             }
-            // 기존에 연결된 사진 삭제
-            for (Photo oldPhoto : product.getPhotoList()) {
-                photoService.deletePhoto(oldPhoto.getId());
-            }
-            product.getPhotoList().clear();
 
             // 새로운 사진 업로드
             String fileName = photoService.storeFile(newProductImage);
-            String imagePath = "/uploads/" + fileName;
+            String imagePath = UPLOAD_PATH + fileName;
             Photo newPhoto = new Photo();
             newPhoto.setUrl(imagePath);
 

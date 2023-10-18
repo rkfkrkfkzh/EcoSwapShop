@@ -82,3 +82,28 @@
 .detail-item {
     margin: 10px 0;
 }
+
+ .img-container {
+     position: relative;
+     display: inline-block;
+     margin-right: 10px;
+ }
+
+.img-container img {
+    max-width: 200px;
+}
+
+.img-container .delete-icon {
+    display: none;
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background-color: rgba(255, 255, 255, 0.5);
+    padding: 5px;
+    border: none;
+    cursor: pointer;
+}
+
+.img-container:hover .delete-icon {
+    display: block;
+}

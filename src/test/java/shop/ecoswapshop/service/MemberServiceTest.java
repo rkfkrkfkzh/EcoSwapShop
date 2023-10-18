@@ -38,7 +38,7 @@ public class MemberServiceTest {
         member.setEmail("john.doe@example.com");
         member.setPhoneNumber("1234567890");
         member.setAddress(new Address("City", "Street", "12345"));
-        member.setType(UserType.TYPE_USER);
+        member.setType(UserType.USER);
         member.setRegistrationDate(LocalDateTime.now());
 
         //when
@@ -64,7 +64,7 @@ public class MemberServiceTest {
         member1.setEmail("Lim.doe@example.com");
         member1.setPhoneNumber("1234567890");
         member1.setAddress(new Address("City", "Street", "12345"));
-        member1.setType(UserType.TYPE_USER);
+        member1.setType(UserType.USER);
         member1.setRegistrationDate(LocalDateTime.now());
 
         Member member2 = new Member();
@@ -74,7 +74,7 @@ public class MemberServiceTest {
         member2.setEmail("kim.doe@example.com");
         member2.setPhoneNumber("987654321");
         member2.setAddress(new Address("City", "Street", "12345"));
-        member2.setType(UserType.TYPE_USER);
+        member2.setType(UserType.USER);
         member2.setRegistrationDate(LocalDateTime.now());
 
         //when
@@ -94,7 +94,7 @@ public class MemberServiceTest {
         member.setEmail("Lim.doe@example.com");
         member.setPhoneNumber("1234567890");
         member.setAddress(new Address("City", "Street", "12345"));
-        member.setType(UserType.TYPE_USER);
+        member.setType(UserType.USER);
         member.setRegistrationDate(LocalDateTime.now());
         Long memberId = memberService.registerMember(member);
 

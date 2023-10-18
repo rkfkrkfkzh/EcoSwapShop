@@ -111,5 +111,4 @@ public class PhotoController {
         redirectAttributes.addFlashAttribute("message", "Photo deleted successfully!");
         return "redirect:/products/edit/" + photo.getProduct().getId();
     }
-
 }

@@ -35,8 +35,8 @@ public class PhotoService {
     }
 
     @Transactional
-    public void updatePhoto(Long photoId, MultipartFile file)throws IOException {
-        logger.info("Updating photo with ID : {}",photoId);
+    public void updatePhoto(Long photoId, MultipartFile file) throws IOException {
+        logger.info("Updating photo with ID : {}", photoId);
         Photo photo = photoRepository.findById(photoId).orElseThrow(NoSuchElementException::new);
         String fileName = storeFile(file); // 새로 업로드된 파일 저장
         String fileDownloadUri = "/uploads/" + fileName; // 여기에 서버에 따라서 경로조정
@@ -46,8 +46,18 @@ public class PhotoService {
 
     @Transactional
     public void deletePhoto(Long photoId) {
-        logger.info("Delete photo with ID : {}", photoId);
-        photoRepository.deleteById(photoId);
+        Optional<Photo> photoOptional = photoRepository.findById(photoId);
+        if (photoOptional.isPresent()) {
+            Photo photo = photoOptional.get();
+            String fileName = photo.getUrl().replace("/uploads/", ""); // URL에서 파일명만 추출
+            File file = new File(uploadDir, fileName);
+            if (file.exists()) {
+                file.delete(); // 파일 시스템에서 이미지 파일 삭제
+            }
+            photoRepository.deleteById(photoId); // 데이터베이스에서 레코드 삭제
+        } else {
+            logger.warn("Photo with ID {} not found", photoId);
+        }
     }
 
     public Optional<Photo> findPhotoById(Long photoId) {
@@ -55,7 +65,7 @@ public class PhotoService {
     }
 
     @Transactional
-    public String storeFile(MultipartFile file)throws IOException {
+    public String storeFile(MultipartFile file) throws IOException {
         String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
         File directory = new File(uploadDir);
         if (!directory.exists()) {
