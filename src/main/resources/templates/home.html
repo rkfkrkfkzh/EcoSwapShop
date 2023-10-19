@@ -37,8 +37,9 @@
                                 <!-- 'product.name'은 Product 객체의 이름을 가리킵니다. -->
                                 <h5 th:text="${product.productName}" class="card-title">상품명</h5>
                                 <!-- 'product.description'은 Product 객체의 설명을 가리킵니다. -->
-                                <p th:text="${product.productDescription.split('\n')[0]}" class="card-text"
-                                   style="white-space: pre-wrap;">설명</p>
+                                <p th:if="${product.productDescription != null}" th:text="${product.productDescription.split('\n')[0]}" class="card-text" style="white-space: pre-wrap;">설명</p>
+                                <p th:if="${product.productDescription == null}" class="card-text">설명 정보가 없습니다.</p>
+
                                 <!-- 'product.id'로 각 제품의 세부 정보 페이지로 연결 -->
                                 <a th:href="@{/products/details/{productId}(productId=${product.id})}"
                                    class="btn btn-primary">세부 정보보기</a>

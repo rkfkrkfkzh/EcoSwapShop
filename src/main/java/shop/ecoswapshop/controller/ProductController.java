@@ -135,9 +135,11 @@ public class ProductController {
 
         // 카테고리 설정
         Long categoryId = productForm.getCategoryId();
-        Category category = categoryService.findById(categoryId);
-        if (category != null) {
-            product.setCategory(category);
+        if (categoryId != null) {
+            Category category = categoryService.findById(categoryId);
+            if (category != null) {
+                product.setCategory(category);
+            }
         }
         return product;
     }
@@ -168,40 +170,56 @@ public class ProductController {
     private String processEdit(Long productId, ProductForm productForm) throws IOException {
         Product product = getAuthorizedProduct(productId);
         // 상품 기본정보 업데이트
+        updateProductDetails(product, productForm);
+       
+        // 이미지 삭제 로직
+        if (productForm.isDeleteCurrentImage()) {
+            deleteExistingImage(product);
+        }
+        // 새 이미지가 제공된 경우
+        MultipartFile newProductImage = productForm.getPhoto();
+        if (newProductImage != null && !newProductImage.isEmpty()) {
+            updateProductImage(product, newProductImage);
+        }
+        productService.updateProduct(product);
+        return "redirect:/products";
+    }
+
+    private void updateProductImage(Product product, MultipartFile newProductImage) throws IOException{
+        if (!newProductImage.getContentType().startsWith("image/")) {
+            throw new RuntimeException("업로드한 파일이 이미지가 아닙니다.");
+        }
+
+        String fileName = photoService.storeFile(newProductImage);
+        String imagePath = UPLOAD_PATH + fileName;
+
+        Photo newPhoto = new Photo();
+        newPhoto.setUrl(imagePath);
+
+        product.addPhoto(newPhoto);
+    }
+
+    private void deleteExistingImage(Product product) {
+        for (Photo oldPhoto : product.getPhotoList()) {
+            photoService.deletePhoto(oldPhoto.getId());
+        }
+        product.getPhotoList().clear();
+    }
+
+    private void updateProductDetails(Product product, ProductForm productForm) {
         product.setProductName(productForm.getProductName());
         product.setProductDescription(productForm.getProductDescription());
         product.setPrice(productForm.getPrice());
         product.setProductCondition(productForm.getProductCondition());
+
         // 카테고리 설정
         Long categoryId = productForm.getCategoryId();
-        Category category = categoryService.findById(categoryId);
-        if (category != null) {
-            product.setCategory(category);
-        }
-        // 이미지 삭제 로직
-        if (productForm.isDeleteCurrentImage()) {
-            for (Photo oldPhoto : product.getPhotoList()) {
-                photoService.deletePhoto(oldPhoto.getId());
+        if (categoryId != null) {
+            Category category = categoryService.findById(categoryId);
+            if (category != null) {
+                product.setCategory(category);
             }
-            product.getPhotoList().clear();
         }
-        // 이미지 업로드 및 기존 이미지 삭제 로직 추가
-        MultipartFile newProductImage = productForm.getPhoto();
-        if (newProductImage != null && !newProductImage.isEmpty()) {
-            if (!newProductImage.getContentType().startsWith("image/")) {
-                throw new RuntimeException("업로드한 파일이 이미지가 아닙니다.");
-            }
-
-            // 새로운 사진 업로드
-            String fileName = photoService.storeFile(newProductImage);
-            String imagePath = UPLOAD_PATH + fileName;
-            Photo newPhoto = new Photo();
-            newPhoto.setUrl(imagePath);
-
-            product.addPhoto(newPhoto);
-        }
-        productService.updateProduct(product);
-        return "redirect:/products";
     }
 
     // 상품 삭제
