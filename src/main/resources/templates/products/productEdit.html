@@ -64,19 +64,7 @@
                                             <input type="submit" style="display: none;">                                        </form>
                                     </div>
                                 </th:block>
-
                             </div>
-                        </div>
-
-                        <div class="mb-4">
-                            <form id="imageUploadForm" th:action="@{'/products/edit/' + ${productForm.id}}"
-                                  method="post" enctype="multipart/form-data">
-                                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-                                <label for="newProductImages" class="form-label">새로운 이미지 업로드</label>
-                                <input type="file" id="newProductImages" name="newProductImages" class="form-control"
-                                       multiple>
-                                <button type="submit" class="btn btn-primary mt-2">이미지 업로드</button>
-                            </form>
                         </div>
 
                     </form>

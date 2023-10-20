@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import shop.ecoswapshop.domain.Photo;
+import shop.ecoswapshop.domain.Product;
 import shop.ecoswapshop.repository.PhotoRepository;
 
 import java.io.File;
@@ -15,6 +16,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -74,5 +76,9 @@ public class PhotoService {
         Path filePath = Paths.get(uploadDir).resolve(fileName);
         Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
         return fileName;
+    }
+
+    public List<Photo> findPhotosByProductId(Long productId) {
+        return photoRepository.findByProductId(productId);
     }
 }

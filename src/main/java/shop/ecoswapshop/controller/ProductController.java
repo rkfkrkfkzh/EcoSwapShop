@@ -161,10 +161,27 @@ public class ProductController {
     }
 
     @PostMapping("/edit/{productId}")
-    public String edit(@PathVariable Long productId, @ModelAttribute ProductForm productForm) throws IOException {
-        System.out.println("deleteCurrentImage value: " + productForm.isDeleteCurrentImage());
+    public String edit(@PathVariable Long productId, @ModelAttribute ProductForm productForm,
+                       @RequestParam("newProductImages") MultipartFile[] images) throws IOException {
 
+        if (images != null && images.length > 0) {
+            uploadProductImages(productId, List.of(images));
+        }
         return processEdit(productId, productForm);
+    }
+
+    private void uploadProductImages(Long productId, List<MultipartFile> files) throws IOException {
+        Product product = productService.findProductById(productId).orElseThrow();
+
+        for (MultipartFile file : files) {
+            if (!file.isEmpty()) {
+                Photo photo = new Photo();
+                photo.setProduct(product);
+                String fileName = photoService.storeFile(file); // 이미지 저장 및 URL 추출
+                photo.setUrl("/uploads/" + fileName);
+                photoService.savePhoto(photo);
+            }
+        }
     }
 
     private String processEdit(Long productId, ProductForm productForm) throws IOException {
@@ -179,6 +196,10 @@ public class ProductController {
         // 새 이미지가 제공된 경우
         MultipartFile newProductImage = productForm.getPhoto();
         if (newProductImage != null && !newProductImage.isEmpty()) {
+            List<Photo> existingPhotos = photoService.findPhotosByProductId(productId);
+            if (!existingPhotos.isEmpty()) {
+                deleteExistingImage(product);
+            }
             updateProductImage(product, newProductImage);
         }
         productService.updateProduct(product);
@@ -200,10 +221,10 @@ public class ProductController {
     }
 
     private void deleteExistingImage(Product product) {
-        for (Photo oldPhoto : product.getPhotoList()) {
+        List<Photo> oldPhotos = photoService.findPhotosByProductId(product.getId());
+        for (Photo oldPhoto : oldPhotos) {
             photoService.deletePhoto(oldPhoto.getId());
         }
-        product.getPhotoList().clear();
     }
 
     private void updateProductDetails(Product product, ProductForm productForm) {

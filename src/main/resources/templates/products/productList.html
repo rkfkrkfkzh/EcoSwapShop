@@ -61,7 +61,7 @@
             <tr th:each="product : ${pagedProducts.content}">
                 <td th:text="${product.productName}"></td>
                 <td>
-                    <pre th:text="${product.productDescription.split('\n')[0]}" style="white-space: pre-wrap;"></pre>
+                    <pre th:if="${product.productDescription != null}" th:text="${product.productDescription.split('\n')[0]}" style="white-space: pre-wrap;"></pre>
                 </td>
                 <td th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + '원'"></td>
                 <td th:text="${product.productCondition}"></td>
