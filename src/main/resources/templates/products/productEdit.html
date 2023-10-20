@@ -6,6 +6,8 @@
     <title>Edit Product</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <link rel="stylesheet" th:href="@{/css/style.css}"> <!-- Link to your custom CSS file -->
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
 <div class="main-container">
@@ -17,7 +19,7 @@
                 <div class="form-container">
                     <h1 class="text-center mb-4">제품 수정</h1>
                     <form th:action="@{'/products/edit/' + ${productForm.id}}" th:object="${productForm}" method="post"
-                          class="needs-validation" novalidate>
+                          class="needs-validation" novalidate enctype="multipart/form-data">
                         <div class="mb-3">
                             <label for="productName" class="form-label">제품명</label>
                             <input type="text" class="form-control" id="productName" th:field="*{productName}" required>
@@ -50,23 +52,24 @@
                                         th:selected="${category.id == productForm.category.id}"></option>
                             </select>
                         </div>
-                        <button type="submit" class="btn btn-primary">수정 완료</button>
+                        <!-- 여기에 새로운 이미지 업로드를 위한 input을 삽입합니다. -->
+                        <div class="mb-3">
+                            <label for="newProductImages" class="form-label">새로운 제품 이미지 추가</label>
+                            <input type="file" id="newProductImages" name="newProductImages" multiple class="form-control">
+                            <small class="text-muted">여러 이미지를 선택하려면 Ctrl 또는 Shift 키를 누르세요.</small>
+                        </div>
                         <div class="mb-4">
                             <label for="productImages" class="form-label">제품 이미지</label>
                             <div>
                                 <th:block th:each="photo : ${productForm.photoList}">
                                     <div class="img-container">
-                                        <img th:src="@{${photo.url}}" alt="Product Image" class="img-thumbnail"/>
-                                        <form th:action="@{/photos/delete/{id}(id=${photo.id})}" method="post" style="position: absolute;">
-                                            <!-- Hidden input to store deleteCurrentImage value -->
-                                            <input type="hidden" name="deleteCurrentImage" value="false">
-                                            <button type="button" class="delete-icon">✖</button>
-                                            <input type="submit" style="display: none;">                                        </form>
+                                        <img th:src="@{${photo.url}}" alt="Product Image" width="100">
+                                        <input type="checkbox" th:name="'deletePhotos'" th:value="${photo.id}"> 삭제
                                     </div>
                                 </th:block>
                             </div>
                         </div>
-
+                        <button type="submit" class="btn btn-primary">수정 완료</button>
                     </form>
                 </div>
             </div>
@@ -75,7 +78,6 @@
     <!-- Footer inclusion -->
     <div th:replace="fragments/footer :: footer"></div>
 </div>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         const priceInput = document.getElementById("price");
@@ -96,25 +98,20 @@
             const rawValue = priceInput.value.replace(/,/g, "");
             priceInput.value = rawValue;
         });
-    });
-</script>
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const deleteIcons = document.querySelectorAll('.delete-icon');
 
+        const deleteIcons = document.querySelectorAll('.delete-icon');
         deleteIcons.forEach(icon => {
-            icon.addEventListener('click', function() {
+            icon.addEventListener('click', function(event) {
+                // 'X' 버튼의 기본 동작(폼 제출)을 막습니다.
+                event.preventDefault();
+
+                // 사용자에게 삭제를 확인하는 창을 띄웁니다.
                 if (confirm('정말로 이 이미지를 삭제하시겠습니까?')) {
-                    // Set the hidden input value to true
-                    const hiddenInput = this.previousElementSibling;
-                    hiddenInput.value = "true";
-                    // Submit the form
-                    this.nextElementSibling.click();
+                    // 'OK'를 클릭한 경우에만 폼을 제출합니다.
+                    icon.closest('form').submit();
                 }
             });
-        });
-    });
-
+        });})
 </script>
 
 </body>

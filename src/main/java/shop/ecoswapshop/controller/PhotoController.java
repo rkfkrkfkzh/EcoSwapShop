@@ -89,7 +89,7 @@ public class PhotoController {
         }
         return "redirect:/products/details/" + productId;
     }
-
+// 삭제 관련 메서드는 ProductController에서 일괄 처리하자 product에서 상품수정 내에서 이미지 관리를 할수 있으니 그방법이 옳다 생각
     @PostMapping("/delete/{photoId}")
     public String deleteImage(@PathVariable Long photoId, RedirectAttributes redirectAttributes) {
         logger.info("DeleteImage 메서드 호출됨. photoId : {}", photoId);
@@ -97,18 +97,20 @@ public class PhotoController {
         Optional<Photo> photoOptional = photoService.findPhotoById(photoId);
 
         if (!photoOptional.isPresent()) {
-            redirectAttributes.addFlashAttribute("message", "Photo not found!");
+            redirectAttributes.addFlashAttribute("message", "사진을 찾을 수 없습니다!");
             return "redirect:/error";
         }
 
         Photo photo = photoOptional.get();
+        Long productId = photo.getProduct().getId();  // 사진을 삭제하기 전에 정확한 제품 ID를 가져옵니다.
+
         if (!isUserAuthorized(photo.getProduct().getMember().getId())) {
-            redirectAttributes.addFlashAttribute("message", "Not authorized to delete this photo!");
+            redirectAttributes.addFlashAttribute("message", "이 사진을 삭제할 권한이 없습니다!");
             return "redirect:/error";
         }
 
         photoService.deletePhoto(photoId);
-        redirectAttributes.addFlashAttribute("message", "Photo deleted successfully!");
-        return "redirect:/products/edit/" + photo.getProduct().getId();
+        redirectAttributes.addFlashAttribute("message", "사진이 성공적으로 삭제되었습니다!");
+        return "redirect:/products/edit/" + productId;
     }
 }

@@ -38,7 +38,7 @@ public class ProductController {
     private Member getLoggedInMember() {
         return memberService.findLoggedInMemberId()
                 .map(memberService::findMemberById)
-                .orElseThrow(() -> new RuntimeException("Logged in member not found"))
+                .orElseThrow(() -> new RuntimeException("Logged in member not 각found"))
                 .orElseThrow(() -> new RuntimeException("Member Not Found"));
     }
 
@@ -102,23 +102,25 @@ public class ProductController {
     @PostMapping("/create")
     public String create(@ModelAttribute ProductForm productForm) throws IOException {
         Product product = prepareProductForCreation(productForm);
-        handleProductImage(product, productForm.getPhoto());
+        handleProductImage(product, productForm.getPhotos()); // 단수에서 복수로 변경
         productService.registerProduct(product);
         return "redirect:/products";
     }
 
-    private void handleProductImage(Product product, MultipartFile productImage) throws IOException {
-        if (productImage != null && !productImage.isEmpty()) {
-            if (!productImage.getContentType().startsWith("image/")) {
-                throw new RuntimeException("업로드한 이미지 파일이 아닙니다.");
+    private void handleProductImage(Product product, List<MultipartFile> productImages) throws IOException {
+        for (MultipartFile productImage : productImages) {
+            if (productImage != null && !productImage.isEmpty()) {
+                if (!productImage.getContentType().startsWith("image/")) {
+                    throw new RuntimeException("업로드한 이미지 파일이 아닙니다.");
+                }
+                String fileName = photoService.storeFile(productImage);
+                String imagePath = UPLOAD_PATH + fileName;
+
+                Photo photo = new Photo();
+                photo.setUrl(imagePath);
+
+                product.addPhoto(photo);
             }
-            String fileName = photoService.storeFile(productImage);
-            String imagePath = UPLOAD_PATH + fileName;
-
-            Photo photo = new Photo();
-            photo.setUrl(imagePath);
-
-            product.addPhoto(photo);
         }
     }
 
@@ -162,12 +164,24 @@ public class ProductController {
 
     @PostMapping("/edit/{productId}")
     public String edit(@PathVariable Long productId, @ModelAttribute ProductForm productForm,
-                       @RequestParam("newProductImages") MultipartFile[] images) throws IOException {
+                       @RequestParam("newProductImages") MultipartFile[] images,
+                       @RequestParam(value = "deletePhotos", required = false)List<Long> deletePhotos) throws IOException {
 
         if (images != null && images.length > 0) {
             uploadProductImages(productId, List.of(images));
         }
+
+        //선택한 이미지 삭제
+        if (deletePhotos != null && !deletePhotos.isEmpty()) {
+            deleteSelectedPhotos(deletePhotos);
+        }
         return processEdit(productId, productForm);
+    }
+
+    private void deleteSelectedPhotos(List<Long> deletePhotos) {
+        for (Long photoId : deletePhotos) {
+            photoService.deletePhoto(photoId);
+        }
     }
 
     private void uploadProductImages(Long productId, List<MultipartFile> files) throws IOException {
@@ -188,42 +202,30 @@ public class ProductController {
         Product product = getAuthorizedProduct(productId);
         // 상품 기본정보 업데이트
         updateProductDetails(product, productForm);
-       
-        // 이미지 삭제 로직
-        if (productForm.isDeleteCurrentImage()) {
-            deleteExistingImage(product);
-        }
+
         // 새 이미지가 제공된 경우
-        MultipartFile newProductImage = productForm.getPhoto();
-        if (newProductImage != null && !newProductImage.isEmpty()) {
+        List<MultipartFile> newProductImages = productForm.getPhotos();
+        if (newProductImages != null && !newProductImages.isEmpty()) {
             List<Photo> existingPhotos = photoService.findPhotosByProductId(productId);
-            if (!existingPhotos.isEmpty()) {
-                deleteExistingImage(product);
-            }
-            updateProductImage(product, newProductImage);
+            updateProductImage(product, newProductImages);
         }
         productService.updateProduct(product);
         return "redirect:/products";
     }
 
-    private void updateProductImage(Product product, MultipartFile newProductImage) throws IOException{
-        if (!newProductImage.getContentType().startsWith("image/")) {
-            throw new RuntimeException("업로드한 파일이 이미지가 아닙니다.");
-        }
+    private void updateProductImage(Product product, List<MultipartFile> newProductImages) throws IOException {
+        for (MultipartFile newProductImage : newProductImages) {
+            if (!newProductImage.getContentType().startsWith("image/")) {
+                throw new RuntimeException("업로드한 파일이 이미지가 아닙니다.");
+            }
 
-        String fileName = photoService.storeFile(newProductImage);
-        String imagePath = UPLOAD_PATH + fileName;
+            String fileName = photoService.storeFile(newProductImage);
+            String imagePath = UPLOAD_PATH + fileName;
 
-        Photo newPhoto = new Photo();
-        newPhoto.setUrl(imagePath);
+            Photo newPhoto = new Photo();
+            newPhoto.setUrl(imagePath);
 
-        product.addPhoto(newPhoto);
-    }
-
-    private void deleteExistingImage(Product product) {
-        List<Photo> oldPhotos = photoService.findPhotosByProductId(product.getId());
-        for (Photo oldPhoto : oldPhotos) {
-            photoService.deletePhoto(oldPhoto.getId());
+            product.addPhoto(newPhoto);
         }
     }
 
@@ -269,12 +271,10 @@ public class ProductController {
         model.addAttribute("keyword", keyword);
         getLoggedInMemberId().ifPresent(memberId -> model.addAttribute("loggedInMemberId", memberId));
         return "products/productList";
-
     }
 
     @ModelAttribute("categories")
     public List<Category> categories() {
         return categoryService.findAll();
     }
-
 }
