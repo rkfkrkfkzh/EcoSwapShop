@@ -107,3 +107,48 @@
 .img-container:hover .delete-icon {
     display: block;
 }
+
+#chatMessages {
+    border: 1px solid #ccc;
+    padding: 20px;
+    height: 400px;
+    overflow-y: scroll;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.1);
+}
+
+.message {
+    padding: 10px;
+    border-radius: 20px;
+    margin-bottom: 10px;
+    max-width: 70%;
+    word-break: break-word;
+    clear: both;
+}
+
+.message.sent {
+    background-color: #e6f7ff;
+    float: right;
+    background: linear-gradient(to right, #e6f7ff, #b3e0ff);
+}
+
+.message.received {
+    background-color: #fff;
+    float: left;
+    background: linear-gradient(to left, #e6e6e6, #b3b3b3);
+}
+
+#chatArea {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+#inputArea {
+    display: flex;
+    gap: 10px;
+}
+ea {
+    display: flex;
+    gap: 10px;
+}

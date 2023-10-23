@@ -63,6 +63,11 @@
                     <input type="submit" value="삭제" class="btn btn-danger">
                 </form>
             </div>
+            <!-- 대화하기 버튼: 로그인한 사용자가 상품을 등록한 판매자가 아닐 때에만 보이게 -->
+            <a th:if="${loggedInMemberId != product.member.id}"
+               th:href="@{'/chat/start/' + ${product.id}}"
+               class="btn btn-info">대화하기</a>
+
         </div>
     </div>
 </div>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Chat</title>
+    <!-- 웹소켓 라이브러리 추가 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.4.0/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+    <link rel="stylesheet" th:href="@{/css/style.css}"> <!-- Link to your custom CSS file -->
+</head>
+<body>
+<div id="chatArea">
+    <div id="chatMessages"></div>
+    <div id="inputArea">
+        <input type="text" id="messageInput" placeholder="Enter your message here" style="flex: 1;">
+        <button onclick="sendMessage()">Send</button>
+    </div>
+</div>
+<script th:inline="javascript">
+    var receiverId = "[[ ${receiverId} ]]"; // 수신자 ID
+    var senderId = "[[ ${senderId} ]]"; // 발신자 ID
+
+    var socket = new SockJS('/ws');
+    var stompClient = Stomp.over(socket);
+
+
+    stompClient.connect({}, function (frame) {
+        stompClient.subscribe('/topic/' + receiverId, function (messagePayload) {
+            var message = JSON.parse(messagePayload.body);
+            var messageType = (message.senderId === senderId) ? 'sent' : 'received';
+            displayMessage(message, messageType);
+        });
+    });
+
+    function sendMessage() {
+        var content = document.getElementById('messageInput').value;
+        var chatMessage = {
+            senderId: senderId,
+            receiverId: receiverId,
+            content: content
+        };
+        stompClient.send("/app/chat/" + receiverId, {}, JSON.stringify(chatMessage));
+    }
+
+    function displayMessage(message, type) {
+        var chatDiv = document.getElementById("chatMessages");
+        var messageDiv = document.createElement('div');
+        messageDiv.classList.add('message');
+        messageDiv.classList.add(type);
+        messageDiv.innerHTML = "<p>" + message.senderId + ": " + message.content + "</p>";
+        chatDiv.appendChild(messageDiv);
+    }
+</script>
+</body>
+</html>

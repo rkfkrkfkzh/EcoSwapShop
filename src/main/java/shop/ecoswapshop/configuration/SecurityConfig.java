@@ -27,7 +27,7 @@ public class SecurityConfig {
                         .antMatchers("/products/{productId}/edit").hasAnyRole("USER", "ADMIN") // 수정 권한 설정
                         .antMatchers("/favorite/**").hasAnyRole("USER", "ADMIN") // 수정 권한 설정
                         .antMatchers("/css/**").permitAll() // CSS 리소스 허용
-
+                        .antMatchers("/ws/**").permitAll()
                         .anyRequest().permitAll()) // 나머지 경로는 인증 없이 허용
                 .formLogin(formLogin -> formLogin
                         .loginPage("/members/login")
