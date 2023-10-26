@@ -16,6 +16,10 @@
         <button onclick="sendMessage()">Send</button>
     </div>
 </div>
+<script th:inline="javascript">
+    var receiverId = [[${receiverId}]];  // 수신자 ID
+    var senderId = [[${senderId}]];      // 발신자 ID
+</script>
 <script type="text/javascript">
     let socket = new SockJS('/ws');  // 웹소켓 엔드포인트 지정 (서버 측 엔드포인트와 일치해야 합니다)
     let stompClient = Stomp.over(socket);
@@ -25,7 +29,7 @@
         stompClient.connect({}, function(frame) {
             console.log('Connected: ' + frame);
             // 메시지 수신을 위한 구독 설정
-            stompClient.subscribe('/topic/messages', function(messageOutput) {
+            stompClient.subscribe('/topic/' + receiverId, function(messageOutput) {
                 let messageContent = JSON.parse(messageOutput.body).content;
                 let messageArea = document.getElementById('chatMessages');
                 let messageDiv = document.createElement('div');
@@ -40,10 +44,12 @@
         let messageInput = document.getElementById('messageInput');
         if(stompClient && messageInput.value.trim() !== "") {
             let chatMessage = {
+                senderId: senderId,                  // 발신자 ID 추가
+                receiverId: receiverId,              // 수신자 ID 추가
                 content: messageInput.value.trim(),
                 timestamp: new Date().toLocaleString()
             };
-            stompClient.send("/app/chat", {}, JSON.stringify(chatMessage));
+            stompClient.send("/app/chat/" + receiverId, {}, JSON.stringify(chatMessage));
             messageInput.value = '';
         }
     }

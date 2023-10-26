@@ -2,6 +2,7 @@ package shop.ecoswapshop.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
@@ -18,6 +19,7 @@ import shop.ecoswapshop.repository.ChatMessageRepository;
 import shop.ecoswapshop.repository.ProductRepository;
 
 import java.security.Principal;
+import java.util.List;
 
 @Controller
 @RequestMapping("/chat")
@@ -56,5 +58,13 @@ public class ChatController {
             super(message);
         }
     }
+
+    @GetMapping("/rooms")
+    public ResponseEntity<List<ChatMessage>> getMyRooms(Principal principal) {
+        String currentUserId = principal.getName();
+        List<ChatMessage> messages = chatMessageRepository.findByReceiverId(currentUserId);
+        return ResponseEntity.ok(messages);
+    }
+
 }
 
