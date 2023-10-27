@@ -29,10 +29,15 @@ public class ChatController {
     private final ChatMessageRepository chatMessageRepository;
     private final ProductRepository productRepository;
 
-    @MessageMapping("/chat/{receiverId}")
-    @SendTo("/topic/{receiverId}")
+    @MessageMapping("/chat/{receiverId}/{productId}")
+    @SendTo("/topic/{receiverId}/{productId}")
     @Transactional
-    public ChatMessage sendMessage(@DestinationVariable String receiverId, ChatMessage chatMessage) {
+    public ChatMessage sendMessage(@DestinationVariable String receiverId,
+                                   @DestinationVariable Long productId,
+                                   ChatMessage chatMessage) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ProductNotFoundException("Invalid productId: " + productId));
+        chatMessage.setProduct(product);
         // 메시지를 데이터베이스에 저장
         ChatMessage savedMessage = chatMessageRepository.save(chatMessage);
         if (savedMessage == null) {
@@ -46,9 +51,12 @@ public class ChatController {
         // productId로 제품을 찾고, 그제품의 판매자 memberId를 가져옴
         Product product = productRepository.findById(productId).
                 orElseThrow(() -> new ProductNotFoundException("Invalid productId: " + productId));
-        String receiverId = product.getMember().getId().toString();
+        String receiverId = product.getMember().getUsername();
         model.addAttribute("receiverId", receiverId);
         model.addAttribute("senderId", principal.getName()); // 현재 로그인한 사용자의 ID
+
+        List<ChatMessage> chatHistory = chatMessageRepository.findByProduct_Id(productId);
+        model.addAttribute("chatHistory", chatHistory);
         return "chat";
     }
 

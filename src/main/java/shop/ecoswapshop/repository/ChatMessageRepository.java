@@ -9,4 +9,8 @@ public interface ChatMessageRepository extends JpaRepository<ChatMessage, Long> 
 
     // 현재 사용자 ID에 해당하는 채팅 메시지를 조회
     List<ChatMessage> findByReceiverId(String currentUserId);
+
+    List<ChatMessage> findByReceiverIdAndSenderIdOrReceiverIdAndSenderId(String receiverId, String name, String name1, String receiverId1);
+
+    List<ChatMessage> findByProduct_Id(Long productId);
 }

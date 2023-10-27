@@ -6,19 +6,24 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.4.0/sockjs.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
     <link rel="stylesheet" th:href="@{/css/style.css}"> <!-- Link to your custom CSS file -->
-    <link rel="icon" href="icons/your_icon.ico" type="image/x-icon">
 </head>
+
 <body>
 <div id="chatArea">
     <div id="chatMessages"></div>
+    <div th:each="message : ${chatHistory}" th:text="${message.content}"></div>
+
     <div id="inputArea">
         <input type="text" id="messageInput" placeholder="Enter your message here" style="flex: 1;">
         <button onclick="sendMessage()">Send</button>
     </div>
 </div>
+<button onclick="exitChat()">대화 나가기</button>
+
 <script th:inline="javascript">
     var receiverId = [[${receiverId}]];  // 수신자 ID
     var senderId = [[${senderId}]];      // 발신자 ID
+    var productId = [[${productId}]];  // 상품 ID
 </script>
 <script type="text/javascript">
     let socket = new SockJS('/ws');  // 웹소켓 엔드포인트 지정 (서버 측 엔드포인트와 일치해야 합니다)
@@ -47,12 +52,19 @@
                 senderId: senderId,                  // 발신자 ID 추가
                 receiverId: receiverId,              // 수신자 ID 추가
                 content: messageInput.value.trim(),
+                productId: productId,
                 timestamp: new Date().toLocaleString()
             };
             stompClient.send("/app/chat/" + receiverId, {}, JSON.stringify(chatMessage));
             messageInput.value = '';
         }
     }
+
+    // 대화나가기
+  function exitChat() {
+        window.history.back();
+    }
+
 </script>
 
 </body>

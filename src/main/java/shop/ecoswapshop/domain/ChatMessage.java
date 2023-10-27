@@ -3,9 +3,9 @@ package shop.ecoswapshop.domain;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
+
+import static javax.persistence.FetchType.LAZY;
 
 @Entity
 @Getter
@@ -19,4 +19,14 @@ public class ChatMessage {
     private String senderId;
     private String receiverId;
     private String content;
+
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "product_id")
+    private Product product;
+
+    public void setProduct(Product product) {
+        this.product = product;
+        product.getChatMessages().add(this);
+    }
+
 }

@@ -49,6 +49,9 @@ public class Product {
     @OneToMany(mappedBy = "product", cascade = ALL)
     private List<Favorite> favorites = new ArrayList<>();
 
+    @OneToMany(mappedBy = "product", cascade = ALL)
+    private List<ChatMessage> chatMessages = new ArrayList<>();
+
     // test 용
     public Product(long id, String productName, int price) {
     }
@@ -70,5 +73,10 @@ public class Product {
     public void addPhoto(Photo photo) {
         photoList.add(photo);
         photo.setProduct(this);
+    }
+
+    public void addChatMessage(ChatMessage chatMessage) {
+        chatMessages.add(chatMessage);
+        chatMessage.setProduct(this);
     }
 }
