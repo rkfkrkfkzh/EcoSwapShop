@@ -108,6 +108,7 @@
     display: block;
 }
 
+
 #chatMessages {
     border: 1px solid #ccc;
     padding: 20px;
@@ -115,27 +116,26 @@
     overflow-y: scroll;
     border-radius: 10px;
     box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    margin-bottom: 15px;
+}
+
+.message:last-child {
+    border-bottom: none;
 }
 
 .message {
     padding: 10px;
-    border-radius: 20px;
-    margin-bottom: 10px;
-    max-width: 70%;
-    word-break: break-word;
-    clear: both;
+    border-bottom: 1px solid #e0e0e0;
 }
 
-.message.sent {
-    background-color: #e6f7ff;
-    float: right;
-    background: linear-gradient(to right, #e6f7ff, #b3e0ff);
+.sender {
+    font-weight: bold;
 }
 
-.message.received {
-    background-color: #fff;
-    float: left;
-    background: linear-gradient(to left, #e6e6e6, #b3b3b3);
+.timestamp {
+    font-size: 0.8em;
+    color: gray;
+    margin-left: 10px;
 }
 
 #chatArea {
@@ -147,8 +147,39 @@
 #inputArea {
     display: flex;
     gap: 10px;
+    align-items: center;
+    width: 100%; /* 부모 요소의 너비를 최대로 조정 */
+    max-width: 800px; /* 필요에 따라 최대 너비 제한 설정 (이 값을 조정하실 수 있습니다) */
+    margin: 0 auto; /* 중앙 정렬 */
 }
-ea {
-    display: flex;
-    gap: 10px;
+
+#messageInput {
+    flex-grow: 1;
+    padding: 15px 10px;           /* 패딩 조정 */
+    height: 50px;                 /* 높이 조정 */
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    box-shadow: 0px 2px 5px rgba(0,0,0,0.1); /* 그림자 추가 */
+    transition: border 0.3s, box-shadow 0.3s; /* 효과 추가 */
+    width: 80%; /* 입력란의 너비를 최대로 조정 */
+
+}
+
+#messageInput:focus {
+    border-color: #007BFF; /* 포커스 상태일 때의 테두리 색상 */
+    box-shadow: 0px 2px 8px rgba(0, 107, 255, 0.3); /* 포커스 상태일 때의 그림자 */
+}
+
+button {
+    padding: 10px 20px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #0056b3;
 }

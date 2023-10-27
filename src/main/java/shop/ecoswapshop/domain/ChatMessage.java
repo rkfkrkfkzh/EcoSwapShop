@@ -19,6 +19,7 @@ public class ChatMessage {
     private String senderId;
     private String receiverId;
     private String content;
+    private String timestamp;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "product_id")

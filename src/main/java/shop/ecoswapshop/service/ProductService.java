@@ -1,6 +1,7 @@
 package shop.ecoswapshop.service;
 
 import lombok.RequiredArgsConstructor;
+import org.hibernate.Hibernate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -108,6 +109,14 @@ public class ProductService {
         return productRepository.findAll(pageable);
     }
 
+    //상품을 등록한 회원의 정보
+    public Product getProductWithMember(Long productId) {
+        Product product = productRepository.findById(productId).orElseThrow(() -> new NotFoundException("Product not found"));
+
+        // Hibernate를 사용하여 Member 엔터티를 초기화
+        Hibernate.initialize(product.getMember());
+        return product;
+    }
 }
 
 
