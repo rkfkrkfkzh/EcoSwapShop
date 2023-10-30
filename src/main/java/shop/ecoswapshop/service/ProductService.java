@@ -117,6 +117,11 @@ public class ProductService {
         Hibernate.initialize(product.getMember());
         return product;
     }
+
+    public Page<Product> getProductsByMemberId(Long memberId, int page, int pageSize, Sort sortOrder) {
+        Pageable pageable = PageRequest.of(page, pageSize, sortOrder);
+        return productRepository.findByMemberId(memberId, pageable);
+    }
 }
 
 

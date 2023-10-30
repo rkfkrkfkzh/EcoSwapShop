@@ -45,11 +45,6 @@ public class PostService {
         return postRepository.findById(postId);
     }
 
-    // 특정 사용자가 작성한 모든 게시글 조회
-    public List<Post> findPostsByMemberId(Long memberId) {
-        return postRepository.findByMemberId(memberId);
-    }
-
     // 게시글 제목에 해당하는 문자열을 포함하는 게시글 조회
     public List<Post> findPostsByTitle(String keyword) {
         return postRepository.findByTitleContaining(keyword);
@@ -174,5 +169,9 @@ public class PostService {
     public Page<Post> getPagedPosts(int page, int pageSize) {
         Pageable pageable = PageRequest.of(page, pageSize);
         return postRepository.findAll(pageable);
+    }
+
+    public Page<Post> getMyPosts(Long memberId, int page, int size) {
+        return postRepository.findByMemberId(memberId, PageRequest.of(page, size));
     }
 }

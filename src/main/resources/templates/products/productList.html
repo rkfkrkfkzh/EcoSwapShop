@@ -13,7 +13,10 @@
     <div class="container mt-4 text-center">
         <div class="d-flex justify-content-between align-items-center">
             <h1>상품 리스트</h1>
-            <a href="/products/new" class="btn btn-primary">상품 등록</a>
+            <div>
+                <a th:href="@{/products(page=${pagedProducts.number}, onlyMine=true, keyword=${keyword}, categoryId=${categoryId}, sort=${sort})}" class="btn btn-secondary mr-2">내 상품 보기</a>
+                <a href="/products/new" class="btn btn-primary">상품 등록</a>
+            </div>
         </div>
         <!-- 검색 폼 시작 -->
         <div class="mb-4">
@@ -31,17 +34,24 @@
                     <select name="categoryId" class="form-control" onchange="this.form.submit()"> <!-- 이 부분을 추가 -->
                         <option value="">-- 카테고리 선택 --</option>
                         <!-- 카테고리는 서버에서 가져와야 하므로 th:each를 사용하여 반복 -->
-                        <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}"></option>
+                        <option th:each="category : ${categories}" th:value="${category.id}"
+                                th:text="${category.name}"></option>
                     </select>
                 </div>
                 <!-- 카테고리 드롭다운 끝 -->
                 <div class="dropdown d-inline-block">
                     <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">정렬</button>
-                    <div class="dropdown-menu">
-                        <a class="dropdown-item" href="#" th:href="@{/products(sort='price,asc')}">낮은 가격순</a>
-                        <a class="dropdown-item" href="#" th:href="@{/products(sort='price,desc')}">높은 가격순</a>
-                        <a class="dropdown-item" href="#" th:href="@{/products(sort='productCondition,asc')}">등급 낮은순</a>
-                        <a class="dropdown-item" href="#" th:href="@{/products(sort='productCondition,desc')}">등급 높은순</a>
+                    <div class="dropdown d-inline-block">
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" href="#"
+                               th:href="@{/products(page=${pagedProducts.number}, sort='price,asc', keyword=${keyword != null ? keyword : ''}, categoryId=${categoryId != null ? categoryId : ''})}">낮은 가격순</a>
+                            <a class="dropdown-item" href="#"
+                               th:href="@{/products(page=${pagedProducts.number}, sort='price,desc', keyword=${keyword != null ? keyword : ''}, categoryId=${categoryId != null ? categoryId : ''})}">높은 가격순</a>
+                            <a class="dropdown-item" href="#"
+                               th:href="@{/products(page=${pagedProducts.number}, sort='productCondition,asc', keyword=${keyword != null ? keyword : ''}, categoryId=${categoryId != null ? categoryId : ''})}">등급 낮은순</a>
+                            <a class="dropdown-item" href="#"
+                               th:href="@{/products(page=${pagedProducts.number}, sort='productCondition,desc', keyword=${keyword != null ? keyword : ''}, categoryId=${categoryId != null ? categoryId : ''})}">등급 높은순</a>
+                        </div>
                     </div>
                 </div>
             </form>
@@ -61,7 +71,8 @@
             <tr th:each="product : ${pagedProducts.content}">
                 <td th:text="${product.productName}"></td>
                 <td>
-                    <pre th:if="${product.productDescription != null}" th:text="${product.productDescription.split('\n')[0]}" style="white-space: pre-wrap;"></pre>
+                    <pre th:if="${product.productDescription != null}"
+                         th:text="${product.productDescription.split('\n')[0]}" style="white-space: pre-wrap;"></pre>
                 </td>
                 <td th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + '원'"></td>
                 <td th:text="${product.productCondition}"></td>
@@ -73,12 +84,12 @@
                     <a th:if="${loggedInMemberId == product.member.id}"
                        th:href="@{/products/edit/{id}(id=${product.id})}" class="btn btn-warning">수정</a>
                     <form th:if="${loggedInMemberId == product.member.id}"
-                           th:action="@{/products/delete/{id}(id=${product.id})}"
-                           method="post"
-                           class="d-inline-block"
-                           onsubmit="return confirm('현재 상품을 정말 삭제 하시겠습니까???');">
-                    <input type="submit" value="삭제" class="btn btn-danger">
-                </form>
+                          th:action="@{/products/delete/{id}(id=${product.id})}"
+                          method="post"
+                          class="d-inline-block"
+                          onsubmit="return confirm('현재 상품을 정말 삭제 하시겠습니까???');">
+                        <input type="submit" value="삭제" class="btn btn-danger">
+                    </form>
 
                 </td>
             </tr>
@@ -88,13 +99,17 @@
         <div class="pagination-container">
             <ul class="pagination">
                 <li th:if="${pagedProducts.number > 0}" class="page-item">
-                    <a class="page-link" th:href="@{/products(page=${pagedProducts.number - 1}, keyword=${keyword}, categoryId=${categoryId})}">이전</a>
+                    <a class="page-link"
+                       th:href="@{/products(page=${pagedProducts.number - 1}, sort=${sort != null ? sort : ''}, keyword=${keyword != null ? keyword : ''}, categoryId=${categoryId != null ? categoryId : ''})}">이전</a>
                 </li>
                 <li th:each="pageNumber : ${#numbers.sequence(0, pagedProducts.totalPages - 1)}" class="page-item">
-                    <a class="page-link" th:href="@{/products(page=${pageNumber}, keyword=${keyword}, categoryId=${categoryId})}" th:text="${pageNumber + 1}"></a>
+                    <a class="page-link"
+                       th:href="@{/products(page=${pageNumber}, onlyMine=${onlyMine}, sort=${sort != null ? sort : ''}, keyword=${keyword != null ? keyword : ''}, categoryId=${categoryId != null ? categoryId : ''})}"
+                       th:text="${pageNumber + 1}"></a>
                 </li>
                 <li th:if="${pagedProducts.number < pagedProducts.totalPages - 1}" class="page-item">
-                    <a class="page-link" th:href="@{/products(page=${pagedProducts.number + 1}, keyword=${keyword}, categoryId=${categoryId})}">다음</a>
+                    <a class="page-link"
+                       th:href="@{/products(page=${pagedProducts.number + 1}, sort=${sort != null ? sort : ''}, keyword=${keyword != null ? keyword : ''}, categoryId=${categoryId != null ? categoryId : ''})}">다음</a>
                 </li>
             </ul>
         </div>

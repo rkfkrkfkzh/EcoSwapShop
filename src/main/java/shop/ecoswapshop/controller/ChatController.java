@@ -2,10 +2,10 @@ package shop.ecoswapshop.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -28,6 +28,7 @@ public class ChatController {
 
     private final ChatMessageRepository chatMessageRepository;
     private final ProductRepository productRepository;
+    private final SimpMessagingTemplate simpMessagingTemplate; // 추가: 웹소켓 메시지를 전송하기 위해
 
     @MessageMapping("/chat/{receiverId}/{productId}")
     @SendTo("/topic/{receiverId}/{productId}")
@@ -66,13 +67,5 @@ public class ChatController {
             super(message);
         }
     }
-
-    @GetMapping("/rooms")
-    public ResponseEntity<List<ChatMessage>> getMyRooms(Principal principal) {
-        String currentUserId = principal.getName();
-        List<ChatMessage> messages = chatMessageRepository.findByReceiverId(currentUserId);
-        return ResponseEntity.ok(messages);
-    }
-
 }
 

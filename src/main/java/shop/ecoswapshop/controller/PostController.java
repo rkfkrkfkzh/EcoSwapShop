@@ -42,10 +42,22 @@ public class PostController {
     }
 
     @GetMapping
-    public String showPostList(@RequestParam(defaultValue = "0") int page, Model model) {
-        Page<Post> pagedPosts = postService.getPagedPosts(page, 8);
+    public String showPostList(@RequestParam(defaultValue = "0") int page,
+                               @RequestParam(defaultValue = "false") boolean onlyMine, //매개변수 추가
+                               Model model) {
+        Page<Post> pagedPosts;
+
+        if (onlyMine) {
+            Member loggedInMember = getLoggedInMember();
+            pagedPosts = postService.getMyPosts(loggedInMember.getId(), page, 8);
+        } else {
+            pagedPosts = postService.getPagedPosts(page, 8);
+        }
+
         model.addAttribute("pagedPosts", pagedPosts);
         getLoggedInMemberId().ifPresent(memberId -> model.addAttribute("loggedInMemberId", memberId));
+        model.addAttribute("onlyMine", onlyMine); // 뷰에서 상태를 알 수 있도록 onlyMine 추가
+
         return "posts/postList";
     }
 

@@ -12,14 +12,19 @@
     <div class="container mt-4 text-center"> <!--스크롤-->
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h1>게시물 리스트</h1>
-            <a href="/posts/new" class="btn btn-primary">게시물 등록</a>
+            <div>
+                <a th:href="@{/posts(onlyMine=true, page=${page})}"class="btn btn-secondary mr-2">내가 작성한 글만 보기</a>
+                <a href="/posts/new" class="btn btn-primary">게시물 등록</a>
+            </div>
         </div>
         <!-- 검색 폼 추가 시작 -->
         <div class="mb-4">
             <form action="/posts/search" method="get" class="form-inline justify-content-center">
 
                 <label for="keywordInput" class="sr-only">게시글 검색</label> <!-- 접근성을 위한 레이블 추가 (화면에는 보이지 않음) -->
-                <input type="text" id="keywordInput" name="keyword" th:value="${searchedKeyword != null ? searchedKeyword : ''}" placeholder="게시글 검색..." class="form-control mr-2">
+                <input type="text" id="keywordInput" name="keyword"
+                       th:value="${searchedKeyword != null ? searchedKeyword : ''}" placeholder="게시글 검색..."
+                       class="form-control mr-2">
 
                 <label for="searchSubmit" class="sr-only">검색 버튼</label> <!-- 접근성을 위한 레이블 추가 (화면에는 보이지 않음) -->
                 <input type="submit" id="searchSubmit" value="검색" class="btn btn-secondary">
@@ -49,7 +54,9 @@
                        class="btn btn-warning">수정</a>
                     <form th:if="${loggedInMemberId == post.member.id}"
                           th:action="@{/posts/delete/{id}(id=${post.id})}" method="post" style="display: inline ;">
-                        <button type="submit" class="btn btn-danger" onclick="return confirm('정말로 이 게시물을 삭제하시겠습니까?');">삭제</button>
+                        <button type="submit" class="btn btn-danger" onclick="return confirm('정말로 이 게시물을 삭제하시겠습니까?');">
+                            삭제
+                        </button>
                     </form>
                 </td>
             </tr>
@@ -59,13 +66,13 @@
         <div class="pagination-container">
             <ul class="pagination">
                 <li th:if="${pagedPosts.number > 0}" class="page-item">
-                    <a class="page-link" th:href="@{/posts(page=${pagedPosts.number - 1})}">이전</a>
+                    <a class="page-link" th:href="@{/posts(onlyMine=${onlyMine}, page=${pagedPosts.number - 1})}">이전</a>
                 </li>
                 <li th:each="pageNumber : ${#numbers.sequence(0, pagedPosts.totalPages - 1)}" class="page-item">
-                    <a class="page-link" th:href="@{/posts(page=${pageNumber})}" th:text="${pageNumber + 1}"></a>
+                    <a class="page-link" th:href="@{/posts(onlyMine=${onlyMine}, page=${pageNumber})}" th:text="${pageNumber + 1}"></a>
                 </li>
                 <li th:if="${pagedPosts.number < pagedPosts.totalPages - 1}" class="page-item">
-                    <a class="page-link" th:href="@{/posts(page=${pagedPosts.number + 1})}">다음</a>
+                    <a class="page-link" th:href="@{/posts(onlyMine=${onlyMine}, page=${pagedPosts.number + 1})}">다음</a>
                 </li>
             </ul>
         </div>

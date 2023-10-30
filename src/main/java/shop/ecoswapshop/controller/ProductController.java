@@ -56,7 +56,11 @@ public class ProductController {
     }
 
     @GetMapping
-    public String list(@RequestParam(defaultValue = "0") int page, @RequestParam(required = false) String sort, @RequestParam(required = false) Long categoryId, Model model) {
+    public String list(@RequestParam(defaultValue = "0") int page,
+                       @RequestParam(required = false) String sort,
+                       @RequestParam(required = false) Long categoryId,
+                       @RequestParam(required = false, defaultValue = "false") boolean onlyMine,
+                       Model model) {
         Sort sortOrder = Sort.unsorted();
         if (sort != null && !sort.isEmpty()) {
             String[] sortParams = sort.split(",");
@@ -64,10 +68,25 @@ public class ProductController {
                     ? Sort.Order.asc(sortParams[0])
                     : Sort.Order.desc(sortParams[0]));
         }
-        // 모든 상품을 조회합니다.
-        Page<Product> pagedProducts = categoryId != null
-                ? productService.getPagedProductsByCategory(categoryId, page, PAGE_SIZE, sortOrder)
-                : productService.getPagedProducts(page, PAGE_SIZE, sortOrder);
+
+        Page<Product> pagedProducts;
+
+        if (onlyMine) {
+            Optional<Long> loggedInMemberId = getLoggedInMemberId();
+            if (loggedInMemberId.isPresent()) {
+                pagedProducts = productService.getProductsByMemberId(loggedInMemberId.get(), page, PAGE_SIZE, sortOrder);
+            } else {
+                return "redirect:/error"; // 로그인이 필요한 경우
+            }
+        } else {
+            // 기존의 상품 조회 로직
+            pagedProducts = categoryId != null
+                    ? productService.getPagedProductsByCategory(categoryId, page, PAGE_SIZE, sortOrder)
+                    : productService.getPagedProducts(page, PAGE_SIZE, sortOrder);
+        }
+        model.addAttribute("onlyMine", onlyMine);
+        model.addAttribute("categoryId", categoryId);
+        model.addAttribute("sort", sort);
         // 상품 목록을 모델에 추가합니다.
         model.addAttribute("pagedProducts", pagedProducts);
         // 로그인한 사용자의 memberId가 있다면 모델에 추가합니다.

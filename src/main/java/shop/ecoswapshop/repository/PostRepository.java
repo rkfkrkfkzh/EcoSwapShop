@@ -12,7 +12,7 @@ import java.util.List;
 public interface PostRepository extends JpaRepository<Post, Long> {
 
     // 특정 사용자가 작성한 모든 게시글 조회
-    List<Post> findByMemberId(Long memberId);
+    Page<Post> findByMemberId(Long memberId, Pageable pageable);
 
     // 게시글 제목에 해당하는 문자열을 포함하는 게시글 조회
     List<Post> findByTitleContaining(String keyword);

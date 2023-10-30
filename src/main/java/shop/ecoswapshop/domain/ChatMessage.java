@@ -29,5 +29,4 @@ public class ChatMessage {
         this.product = product;
         product.getChatMessages().add(this);
     }
-
 }

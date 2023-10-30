@@ -12,7 +12,7 @@ function loadRooms() {
                 let roomElement = document.createElement("li");
                 roomElement.textContent = "Chat with " + message.senderId;
                 roomElement.addEventListener("click", function() {
-                    location.href = "/chat/start/" + message.id; // 해당 상품에 대한 대화방 입장
+                    location.href = "/chat/start/" + message.productId; // 해당 상품에 대한 대화방 입장
                 });
                 roomsElement.appendChild(roomElement);
             });
@@ -20,6 +20,7 @@ function loadRooms() {
         console.log('There was a problem with the fetch operation:', error.message);
     });
 }
+
 
 window.onload = function() {
     loadRooms();
