@@ -5,7 +5,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -43,17 +42,14 @@ public class ChatController {
                 .orElseThrow(() -> new ProductNotFoundException("Invalid productId: " + productId));
         chatMessage.setProduct(product);
 
+        chatMessage.setReceiverId(receiverId); // 수신자 ID 설정
         String productSellerId = product.getMember().getUsername();
         String loggedInUserId = chatMessage.getSenderId();
-        // 만약 로그인 중인 사용자가 상품 판매자와 동일하면 수신자와 발신자를 교환
-        if (productSellerId.equals(loggedInUserId)) {
-            chatMessage.setReceiverId(chatMessage.getSenderId());
-            chatMessage.setSenderId(productSellerId);
-        } else {
+
+        if (!productSellerId.equals(loggedInUserId)) {
             chatMessage.setReceiverId(productSellerId);
             chatMessage.setSenderId(loggedInUserId);
         }
-
 
         // 메시지를 데이터베이스에 저장
         ChatMessage savedMessage = chatMessageRepository.save(chatMessage);
@@ -74,17 +70,39 @@ public class ChatController {
     @GetMapping("/start/{productId}")
     public String startChat(@PathVariable Long productId, Model model, Principal principal) {
         // productId로 제품을 찾고, 그제품의 판매자 memberId를 가져옴
-        Product product = productRepository.findById(productId).
-                orElseThrow(() -> new ProductNotFoundException("Invalid productId: " + productId));
-        String receiverId = product.getMember().getUsername();
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ProductNotFoundException("Invalid productId: " + productId));
 
-        model.addAttribute("receiverId", receiverId);
-        model.addAttribute("senderId", principal.getName()); // 현재 로그인한 사용자의 ID
-
+        String sellerId = product.getMember().getUsername();
         List<ChatMessage> chatHistory = chatMessageRepository.findByProduct_Id(productId);
+
+        String buyerId = null;
+        if (!chatHistory.isEmpty()) {
+            // 첫 번째 메시지의 senderId로 구매자 아이디 파악
+            buyerId = chatHistory.get(0).getSenderId();
+        }
+
+        if (buyerId == null || buyerId.equals(sellerId)) {
+            // 구매자 아이디를 찾을 수 없거나 판매자와 동일한 경우의 처리
+            // 예) 에러 메시지 출력, 다른 페이지로 리다이렉트 등
+            // 이 부분은 실제 시나리오에 맞게 구현 필요
+            return "errorPage"; // 예시로 에러 페이지로 리다이렉트
+        }
+
+        String currentUserId = principal.getName();
+        if (currentUserId.equals(sellerId)) {
+            model.addAttribute("receiverId", buyerId);
+            model.addAttribute("senderId", sellerId);
+        } else {
+            model.addAttribute("receiverId", sellerId);
+            model.addAttribute("senderId", buyerId);
+        }
+
         model.addAttribute("chatHistory", chatHistory);
         return "chat";
     }
+
+
 
     @ResponseStatus(code = HttpStatus.NOT_FOUND)
     public static class ProductNotFoundException extends RuntimeException {
