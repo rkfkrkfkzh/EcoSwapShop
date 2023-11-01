@@ -77,19 +77,24 @@ public class ChatController {
         List<ChatMessage> chatHistory = chatMessageRepository.findByProduct_Id(productId);
 
         String buyerId = null;
+
+        String currentUserId = principal.getName();
+
         if (!chatHistory.isEmpty()) {
             // 첫 번째 메시지의 senderId로 구매자 아이디 파악
             buyerId = chatHistory.get(0).getSenderId();
+        }else{
+            // chatHistory가 비어있는 경우, 현재 로그인 중인 사용자가 구매자입니다.
+            buyerId = currentUserId;
         }
 
         if (buyerId == null || buyerId.equals(sellerId)) {
             // 구매자 아이디를 찾을 수 없거나 판매자와 동일한 경우의 처리
             // 예) 에러 메시지 출력, 다른 페이지로 리다이렉트 등
             // 이 부분은 실제 시나리오에 맞게 구현 필요
-            return "errorPage"; // 예시로 에러 페이지로 리다이렉트
+            return "error"; // 예시로 에러 페이지로 리다이렉트
         }
 
-        String currentUserId = principal.getName();
         if (currentUserId.equals(sellerId)) {
             model.addAttribute("receiverId", buyerId);
             model.addAttribute("senderId", sellerId);
@@ -101,8 +106,6 @@ public class ChatController {
         model.addAttribute("chatHistory", chatHistory);
         return "chat";
     }
-
-
 
     @ResponseStatus(code = HttpStatus.NOT_FOUND)
     public static class ProductNotFoundException extends RuntimeException {
