@@ -18,11 +18,25 @@
                 <li class="nav-item"><a class="nav-link" th:href="@{/products}">상품</a></li>
                 <li class="nav-item"><a class="nav-link" th:href="@{/posts}">게시글</a></li>
                 <li class="nav-item"><a class="nav-link" th:href="@{/favorites}">찜리스트</a></li>
-                <li class="nav-item"><a class="nav-link" th:href="@{/chat/rooms}">대화방 목록</a></li>
-
             </ul>
             <ul class="navbar-nav ml-auto user-actions">
                 <!-- 로그인 상태인 경우 -->
+                <li th:if="${#authorization.expression('isAuthenticated()')}" class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="notificationsDropdown" role="button"
+                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        알림 <span class="badge badge-danger" th:text="${unreadNotificationsCount}">0</span>
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="notificationsDropdown">
+                        <h6 class="dropdown-header">최신 알림:</h6>
+                        <div th:each="notification : ${recentNotifications}">
+                            <a class="dropdown-item" th:href="@{/notifications/{id}(id=${notification.id})}">
+                                <span th:text="'[' + ${notification.productName} + '] 에 대한 새로운 메시지: ' + ${notification.content}">Notification content</span>
+                            </a>
+                        </div>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" th:href="@{/notifications}">모든 알림 보기</a>
+                    </div>
+                </li>
                 <li th:if="${#authorization.expression('isAuthenticated()')}" class="nav-item"><a class="nav-link"
                                                                                                   th:href="@{/members/edit/{memberId}(memberId=${loggedInMemberId})}">프로필
                     수정</a></li>

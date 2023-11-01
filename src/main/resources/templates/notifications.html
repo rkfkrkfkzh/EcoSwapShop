@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Notifications</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<body>
+<!-- Header 추가 -->
+<div th:replace="fragments/header :: header"></div> <!-- Header inclusion -->
+
+<div class="container mt-5">
+    <h2>내 알림</h2>
+    <ul class="list-group">
+        <li th:each="notification : ${notifications}" class="list-group-item">
+            <!-- Product가 null이 아닐 때만 해당 로직 수행 -->
+            <div th:if="${notification.productId != null}">
+                <!-- 해당 채팅방으로 이동하는 링크 추가 -->
+                <a th:href="@{/chat/start/{productId}(productId=${notification.productId})}" class="d-block">
+                    <span th:text="'[' + ${notification.productName} + '] 에 대한 알림: ' + ${notification.content}">Notification content</span>
+                </a>
+                <!-- 알림을 읽었다는 표시를 위한 버튼 -->
+                <a th:href="@{/notifications/{id}/read(id=${notification.id})}"
+                   class="btn btn-primary btn-sm float-right ml-2">읽음</a>
+            </div>
+            <!-- Product가 null일 경우에 대한 처리 (예: 표시하지 않음) -->
+            <div th:if="${notification.productId == null}">
+                <span th:text="'알림: ' + ${notification.content}">Notification content without product</span>
+            </div>
+        </li>
+    </ul>
+
+    <a href="javascript:history.back()" class="btn btn-secondary mt-3">이전 페이지로</a>
+</div>
+
+<!-- Footer 추가 (footer.html이 있다고 가정) -->
+<div class="mb-5">
+    <div th:replace="fragments/footer :: footer"></div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+</html>
