@@ -32,10 +32,11 @@ public class ChatController {
     private final NotificationRepository notificationRepository; // 알림 저장을 위한 Repository
 
 
-    @MessageMapping("/chat/{receiverId}/{productId}")
-    @SendTo("/topic/{receiverId}/{productId}")
+    @MessageMapping("/chat/{senderId}_{receiverId}_{productId}")
+    @SendTo("/topic/{senderId}_{receiverId}_{productId}")
     @Transactional
-    public ChatMessage sendMessage(@DestinationVariable String receiverId,
+    public ChatMessage sendMessage(@DestinationVariable String senderId,
+                                   @DestinationVariable String receiverId,
                                    @DestinationVariable Long productId,
                                    ChatMessage chatMessage) {
         Product product = productRepository.findById(productId)
@@ -74,18 +75,25 @@ public class ChatController {
                 .orElseThrow(() -> new ProductNotFoundException("Invalid productId: " + productId));
 
         String sellerId = product.getMember().getUsername();
-        List<ChatMessage> chatHistory = chatMessageRepository.findByProduct_Id(productId);
 
         String buyerId = null;
-
         String currentUserId = principal.getName();
+        List<ChatMessage> chatHistory = chatMessageRepository.findByProduct_IdAndSenderIdAndReceiverId(productId, currentUserId, sellerId);
 
-        if (!chatHistory.isEmpty()) {
-            // 첫 번째 메시지의 senderId로 구매자 아이디 파악
-            buyerId = chatHistory.get(0).getSenderId();
-        }else{
-            // chatHistory가 비어있는 경우, 현재 로그인 중인 사용자가 구매자입니다.
-            buyerId = currentUserId;
+        if (currentUserId.equals(sellerId)) {
+            // 현재 사용자가 판매자인 경우
+            chatHistory = chatMessageRepository.findByProduct_IdAndReceiverId(productId, sellerId);
+            if (!chatHistory.isEmpty()) {
+                buyerId = chatHistory.get(0).getSenderId();
+            }
+        } else {
+            // 현재 사용자가 구매자인 경우
+            chatHistory = chatMessageRepository.findByProduct_IdAndSenderIdAndReceiverId(productId, currentUserId, sellerId);
+            if (!chatHistory.isEmpty()) {
+                buyerId = chatHistory.get(0).getSenderId();
+            } else {
+                buyerId = currentUserId;
+            }
         }
 
         if (buyerId == null || buyerId.equals(sellerId)) {

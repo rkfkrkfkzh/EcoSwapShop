@@ -40,7 +40,7 @@
         stompClient.connect({}, function (frame) {
             console.log('Connected: ' + frame);
             // 새로운 메시지를 받았을 때 메시지 표시
-            stompClient.subscribe('/topic/' + receiverId + "/" + productId, function (messageOutput) {
+            stompClient.subscribe('/topic/' + senderId + "_" + receiverId + "_" + productId, function (messageOutput) {
                 let message = JSON.parse(messageOutput.body);
                 let messageArea = document.getElementById('chatMessages');
                 let messageDiv = document.createElement('div');
@@ -79,7 +79,8 @@
                 productId: productId,
                 timestamp: new Date().toLocaleString()
             };
-            stompClient.send("/app/chat/" + receiverId + "/" + productId, {}, JSON.stringify(chatMessage));
+            stompClient.send("/app/chat/" + senderId + "_" + receiverId + "_" + productId, {}, JSON.stringify(chatMessage));
+
             messageInput.value = '';
         }
     }

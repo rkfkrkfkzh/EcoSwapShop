@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>List of Buyers</title>
+</head>
+<body>
+<h2>Buyers for Product: [상품 이름]</h2>
+<ul>
+    <th:block th:each="buyer : ${buyers}">
+        <li th:text="${buyer}"></li>
+    </th:block>
+</ul>
+</body>
+</html>
