@@ -5,6 +5,8 @@ import lombok.Setter;
 
 import javax.persistence.*;
 
+import java.util.UUID;
+
 import static javax.persistence.FetchType.LAZY;
 
 @Entity
@@ -22,4 +24,8 @@ public class Notification {
     private boolean isRead = false;
     private String productName; // 상품ID 추가
     private Long productId;
+
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "session_id") // 외래 키 명시
+    private ChatSession chatSession; // ChatSession과의 연관 관계 추가
 }

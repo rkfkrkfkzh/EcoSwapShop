@@ -15,9 +15,13 @@
             <!-- Product가 null이 아닐 때만 해당 로직 수행 -->
             <div th:if="${notification.productId != null}">
                 <!-- 해당 채팅방으로 이동하는 링크 추가 -->
-                <a th:href="@{/chat/start/{productId}(productId=${notification.productId})}" class="d-block">
-                    <span th:text="'[' + ${notification.productName} + '] 에 대한 알림: ' + ${notification.content}">Notification content</span>
+                <a th:href="@{/chat/session/{sessionId}(sessionId=${notification.chatSession.sessionId})}" class="d-block">
+                    <span th:text="'[' + ${notification.productName} + '] 에 대한 알림: ' + ${notification.content}"></span>
                 </a>
+
+                <!--a th:href="@{/chat/start/{productId}(productId=${notification.productId})}" class="d-block">
+                    <span th:text="'[' + ${notification.productName} + '] 에 대한 알림: ' + ${notification.content}">Notification content</span>
+                </a-->
                 <!-- 알림을 읽었다는 표시를 위한 버튼 -->
                 <a th:href="@{/notifications/{id}/read(id=${notification.id})}"
                    class="btn btn-primary btn-sm float-right ml-2">읽음</a>
