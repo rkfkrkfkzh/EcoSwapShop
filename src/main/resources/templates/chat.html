@@ -93,6 +93,9 @@
             };
             stompClient.send("/app/chat/" + sessionId, {}, JSON.stringify(chatMessage));
 
+            // 메시지를 화면에 추가
+            displayMessage(chatMessage);
+
             // 입력 필드 초기화 및 포커스
             messageInput.value = '';
             messageInput.focus();
