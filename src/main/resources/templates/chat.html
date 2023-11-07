@@ -117,12 +117,13 @@
         var csrfHeader = document.getElementById('csrfHeader').value;
 
         if (confirm("채팅방을 삭제하시겠습니까?")) {
-            fetch('/session/' + sessionId, {
-                method: 'DELETE',
+            fetch('/chat/session/delete/' + sessionId, { // URL 변경
+                method: 'POST', // 메소드 변경
                 headers: {
                     'Content-Type': 'application/json',
                     [csrfHeader]: csrfToken // CSRF 토큰 추가
-                }
+                },
+                body: JSON.stringify({ sessionId: sessionId }) // 필요에 따라 데이터 전송
             }).then(response => {
                 if (response.ok || response.status === 204) {
                     window.location.href = '/notifications'; // 성공적으로 삭제 후 리다이렉트
@@ -137,6 +138,5 @@
         }
     }
 </script>
-
 </body>
 </html>

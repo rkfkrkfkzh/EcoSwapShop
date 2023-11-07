@@ -137,26 +137,29 @@ public class ChatController {
     @GetMapping("/session/{sessionId}")
     public String joinChatSession(@PathVariable UUID sessionId, Model model, Principal principal) {
         ChatSession chatSession = chatSessionRepository.findById(sessionId)
-                .orElseThrow(() -> new ChatSessionNotFoundException("Invalid sessionId: " + sessionId));
+                .orElseThrow(() -> new ChatSessionNotFoundException("잘못된 세션 Id: " + sessionId));
 
         String currentUserId = principal.getName();
 
         // 사용자가 세션의 구매자 또는 판매자인지 확인
         if (!currentUserId.equals(chatSession.getBuyerId()) && !currentUserId.equals(chatSession.getSellerId())) {
             // 사용자가 해당 세션의 구매자나 판매자가 아니라면 접근을 거부합니다.
-            throw new AccessDeniedException("You do not have permission to access this chat session.");
+            throw new AccessDeniedException("이 채팅 세션에 액세스할 수 있는 권한이 없습니다.");
         }
+
+        String senderId = currentUserId;
+        String receiverId = currentUserId.equals(chatSession.getBuyerId()) ? chatSession.getSellerId() : chatSession.getBuyerId();
 
         List<ChatMessage> chatHistory = chatMessageRepository.findByChatSession_SessionId(sessionId);
         model.addAttribute("chatHistory", chatHistory);
         model.addAttribute("sessionId", chatSession.getSessionId());
-        model.addAttribute("receiverId", chatSession.getBuyerId().equals(currentUserId) ? chatSession.getSellerId() : chatSession.getBuyerId());
-        model.addAttribute("senderId", chatSession.getSellerId());
+        model.addAttribute("receiverId", receiverId);
+        model.addAttribute("senderId", senderId);
 
         return "chat";
     }
 
-    @DeleteMapping("/session/{sessionId}")
+    @PostMapping("/session/delete/{sessionId}")
     @Transactional
     public String deleteChatSession(@PathVariable UUID sessionId, Principal principal) {
         ChatSession chatSession = chatSessionRepository.findById(sessionId)
@@ -166,7 +169,7 @@ public class ChatController {
 
         // 채팅방 삭제 권한 확인
         if (!currentUserId.equals(chatSession.getSellerId()) && !currentUserId.equals(chatSession.getBuyerId())) {
-            throw new AccessDeniedException("You do not have permission to delete this chat session.");
+            throw new AccessDeniedException("이 채팅 세션을 삭제할 권한이 없습니다.");
         }
 
         // 채팅방과 연관된 알림 삭제
