@@ -9,10 +9,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.*;
 import shop.ecoswapshop.domain.ChatMessage;
 import shop.ecoswapshop.domain.ChatSession;
 import shop.ecoswapshop.domain.Notification;
@@ -23,6 +20,7 @@ import shop.ecoswapshop.repository.ChatSessionRepository;
 import shop.ecoswapshop.repository.NotificationRepository;
 import shop.ecoswapshop.repository.ProductRepository;
 
+import javax.management.loading.PrivateClassLoader;
 import java.security.Principal;
 import java.util.List;
 import java.util.UUID;
@@ -156,6 +154,30 @@ public class ChatController {
         model.addAttribute("senderId", chatSession.getSellerId());
 
         return "chat";
+    }
+
+    @DeleteMapping("/session/{sessionId}")
+    @Transactional
+    public String deleteChatSession(@PathVariable UUID sessionId, Principal principal) {
+        ChatSession chatSession = chatSessionRepository.findById(sessionId)
+                .orElseThrow(() -> new ChatSessionNotFoundException("Invalid sessionId : " + sessionId));
+
+        String currentUserId = principal.getName();
+
+        // 채팅방 삭제 권한 확인
+        if (!currentUserId.equals(chatSession.getSellerId()) && !currentUserId.equals(chatSession.getBuyerId())) {
+            throw new AccessDeniedException("You do not have permission to delete this chat session.");
+        }
+
+        // 채팅방과 연관된 알림 삭제
+        notificationRepository.deleteByChatSession_SessionId(sessionId);
+        // 채팅방과 관련된 메시지 등 삭제
+        chatMessageRepository.deleteByChatSession_SessionId(sessionId);
+        // 채팅 세션 삭제
+        chatSessionRepository.delete(chatSession);
+
+        // 삭제 후 리다이렉트
+        return "redirect:/notifications";
     }
 
     @ResponseStatus(code = HttpStatus.NOT_FOUND)

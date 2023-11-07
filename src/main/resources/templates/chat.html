@@ -18,10 +18,14 @@
         </div>
     </div>
 </div>
+<!-- CSRF 토큰 값 -->
+<input type="hidden" id="csrfToken" th:value="${_csrf.token}"/>
+<input type="hidden" id="csrfHeader" th:value="${_csrf.headerName}"/>
 
-<input type="text" id="messageInput" placeholder="Enter your message here">
-<button onclick="sendMessage()">Send</button>
+<input type="text" id="messageInput" placeholder="메세지를 입력해주세요">
+<button onclick="sendMessage()">전송</button>
 <button onclick="exitChat()">대화 나가기</button>
+<button onclick="deleteChatSession()">채팅방 삭제</button>
 
 <script th:inline="javascript">
     /* 변수 선언 */
@@ -106,6 +110,31 @@
 
     function exitChat() {
         window.history.back();
+    }
+
+    function deleteChatSession() {
+        var csrfToken = document.getElementById('csrfToken').value;
+        var csrfHeader = document.getElementById('csrfHeader').value;
+
+        if (confirm("채팅방을 삭제하시겠습니까?")) {
+            fetch('/session/' + sessionId, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    [csrfHeader]: csrfToken // CSRF 토큰 추가
+                }
+            }).then(response => {
+                if (response.ok || response.status === 204) {
+                    window.location.href = '/notifications'; // 성공적으로 삭제 후 리다이렉트
+                } else {
+                    return response.json().then(err => {
+                        throw new Error(err.message || '채팅방 삭제에 실패했습니다.');
+                    });                }
+            }).catch(error => {
+                console.error('삭제 요청 처리 중 오류 발생:', error);
+                alert(error.message);
+            });
+        }
     }
 </script>
 

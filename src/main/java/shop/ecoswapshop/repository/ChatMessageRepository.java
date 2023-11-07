@@ -21,4 +21,7 @@ public interface ChatMessageRepository extends JpaRepository<ChatMessage, Long> 
 
     // 특정 채팅 세션의 메시지를 조회
     List<ChatMessage> findByChatSession_SessionId(UUID sessionId);
+
+    // 특정 채팅 세션의 모든 메시지를 삭제
+    void deleteByChatSession_SessionId(UUID sessionId);
 }
