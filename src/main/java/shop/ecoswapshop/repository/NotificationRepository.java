@@ -13,4 +13,6 @@ public interface NotificationRepository extends JpaRepository<Notification,Long>
     List<Notification> findByReceiverId(String name);
 
     void deleteByChatSession_SessionId(UUID sessionId);
+
+    long countByReceiverIdAndIsRead(String name, boolean b);
 }

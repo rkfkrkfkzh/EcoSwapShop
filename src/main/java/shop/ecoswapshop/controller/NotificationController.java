@@ -23,15 +23,22 @@ public class NotificationController {
     public String getAllNotifications(Model model, Principal principal) {
         List<Notification> notifications = notificationRepository.findByReceiverId(principal.getName());
         model.addAttribute("notifications", notifications);
+
+        // 안읽은 알림의 수를 계산
+        long unreadNotificationsCount = notificationRepository.countByReceiverIdAndIsRead(principal.getName(), false);
+        model.addAttribute("unreadNotificationsCount", unreadNotificationsCount);
+
         return "notifications";  // Thymeleaf의 notifications.html 템플릿을 의미합니다.
     }
+
 
     @GetMapping("/{notificationId}/read")
     public String readNotification(@PathVariable Long notificationId) {
         Notification notification = notificationRepository.findById(notificationId).orElseThrow(() ->
-                new RuntimeException("Notification not found with ID: " + notificationId));
+                new RuntimeException("ID가 포함된 알림을 찾을 수 없습니다.: " + notificationId));
         notification.setRead(true);  // 예를 들어 'read'라는 boolean 필드가 있다고 가정
         notificationRepository.save(notification);
         return "redirect:/notifications";  // 알림 페이지로 다시 리다이렉트합니다.
     }
+
 }

@@ -3,6 +3,7 @@
 <head>
     <title>Notifications</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}"> <!-- Link to your custom CSS file -->
 </head>
 <body>
 <!-- Header 추가 -->
@@ -15,20 +16,17 @@
             <!-- Product가 null이 아닐 때만 해당 로직 수행 -->
             <div th:if="${notification.productId != null}">
                 <!-- 해당 채팅방으로 이동하는 링크 추가 -->
-                <a th:href="@{/chat/session/{sessionId}(sessionId=${notification.chatSession.sessionId})}" class="d-block">
-                    <span th:text="'[' + ${notification.productName} + '] 에 대한 알림: ' + ${notification.content}"></span>
+                <a th:href="@{/chat/session/{sessionId}(sessionId=${notification.chatSession.sessionId})}"
+                   class="d-block notification-link"
+                   th:data-notification-id="${notification.id}">
+                    <span th:class="${notification.isRead ? '' : 'unread-notification'}"
+                          th:text="'[' + ${notification.productName} + '] 에 대한 알림: ' + ${notification.content}+ ' (발신자: ' + ${notification.senderId} + ')'"></span>
                 </a>
-
-                <!--a th:href="@{/chat/start/{productId}(productId=${notification.productId})}" class="d-block">
-                    <span th:text="'[' + ${notification.productName} + '] 에 대한 알림: ' + ${notification.content}">Notification content</span>
-                </a-->
-                <!-- 알림을 읽었다는 표시를 위한 버튼 -->
-                <a th:href="@{/notifications/{id}/read(id=${notification.id})}"
-                   class="btn btn-primary btn-sm float-right ml-2">읽음</a>
             </div>
             <!-- Product가 null일 경우에 대한 처리 (예: 표시하지 않음) -->
             <div th:if="${notification.productId == null}">
-                <span th:text="'알림: ' + ${notification.content}">Notification content without product</span>
+             <span th:class="${notification.isRead ? '' : 'unread-notification'}"
+              th:text="'알림: ' + ${notification.content}"></span>
             </div>
         </li>
     </ul>
@@ -40,7 +38,18 @@
 <div class="mb-5">
     <div th:replace="fragments/footer :: footer"></div>
 </div>
-
+<script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.notification-link').forEach(function (link) {
+            link.addEventListener('click', function () {
+                var notificationId = this.getAttribute('data-notification-id');
+                fetch(`/notifications/${notificationId}/read`, {
+                    method: 'GET', // 서버 측에서 GET 메소드를 사용하고 있으므로 GET을 사용합니다.
+                });
+            });
+        });
+    });
+</script>
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>

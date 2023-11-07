@@ -1,4 +1,4 @@
-/* Error Page Styles */
+/* 에러 페이지 */
 .error-container {
     display: flex;
     flex-direction: column;
@@ -38,7 +38,7 @@
     background-color: #2980b9;
 }
 
-/* Responsive Styling */
+/* Responsive */
 @media (max-width: 576px) {
     .error-container {
         max-width: 90%;
@@ -60,18 +60,22 @@
 .comment-box:hover .comment-actions {
     display: block;
 }
+
 .fixed-size-image {
-    width: 100px;  /* or whatever width you want */
-    height: 100px;  /* or whatever height you want */
-    object-fit: cover;  /* this will make sure to cover the 100x100 box without stretching */
+    width: 100px; /* or whatever width you want */
+    height: 100px; /* or whatever height you want */
+    object-fit: cover; /* this will make sure to cover the 100x100 box without stretching */
 }
+
 .product-image {
     width: 300px;
     height: auto;
 }
+
 .content {
     flex: 1;
 }
+
 .member-details {
     margin-top: 20px;
     padding: 20px;
@@ -79,15 +83,16 @@
     border-radius: 5px;
     background-color: #f9f9f9;
 }
+
 .detail-item {
     margin: 10px 0;
 }
-
- .img-container {
-     position: relative;
-     display: inline-block;
-     margin-right: 10px;
- }
+/* 이미지 관련 */
+.img-container {
+    position: relative;
+    display: inline-block;
+    margin-right: 10px;
+}
 
 .img-container img {
     max-width: 200px;
@@ -108,14 +113,14 @@
     display: block;
 }
 
-
+/* 메시지 관련 */
 #chatMessages {
     border: 1px solid #ccc;
     padding: 20px;
     height: 400px;
     overflow-y: scroll;
     border-radius: 10px;
-    box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
     margin-bottom: 15px;
 }
 
@@ -155,11 +160,11 @@
 
 #messageInput {
     flex-grow: 1;
-    padding: 15px 10px;           /* 패딩 조정 */
-    height: 50px;                 /* 높이 조정 */
+    padding: 15px 10px; /* 패딩 조정 */
+    height: 50px; /* 높이 조정 */
     border-radius: 5px;
     border: 1px solid #ccc;
-    box-shadow: 0px 2px 5px rgba(0,0,0,0.1); /* 그림자 추가 */
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1); /* 그림자 추가 */
     transition: border 0.3s, box-shadow 0.3s; /* 효과 추가 */
     width: 80%; /* 입력란의 너비를 최대로 조정 */
 
@@ -182,4 +187,21 @@ button {
 
 button:hover {
     background-color: #0056b3;
+}
+/* 메시지 알림 안읽은 채팅 표시 */
+.unread-notification {
+    font-weight: bold;
+    color: red;
+}
+/* 대화방 삭제 버튼 */
+.delete-chat-button {
+    background-color: red; /* 빨간색 배경 */
+    color: white; /* 흰색 글씨 */
+    border: none; /* 테두리 제거 */
+    padding: 10px 20px; /* 패딩 */
+    margin-top: 10px; /* 상단 여백 */
+    cursor: pointer; /* 커서 스타일 변경 */
+}
+.delete-chat-button:hover {
+    background-color: darkred; /* 마우스 오버시 색상 변경 */
 }

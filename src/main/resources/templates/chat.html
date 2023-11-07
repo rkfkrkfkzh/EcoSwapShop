@@ -25,8 +25,8 @@
 <input type="text" id="messageInput" placeholder="메세지를 입력해주세요">
 <button onclick="sendMessage()">전송</button>
 <button onclick="exitChat()">대화 나가기</button>
-<button onclick="deleteChatSession()">채팅방 삭제</button>
-
+<!--button onclick="deleteChatSession()">채팅방 삭제</button-->
+<button onclick="deleteChatSession()" class="delete-chat-button">채팅방 삭제</button>
 <script th:inline="javascript">
     /* 변수 선언 */
     var sessionId = [[${sessionId}]]; // Thymeleaf를 통해 세션 ID를 가져옵니다.
