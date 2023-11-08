@@ -7,8 +7,6 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static javax.persistence.FetchType.LAZY;
-
 @Entity
 @Getter
 @Setter
@@ -25,7 +23,7 @@ public class Category {
     @OneToMany(mappedBy = "category")
     private List<Product> productList = new ArrayList<>(); // 상품리스트
 
-    @ManyToOne(fetch = LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")
     private Category parent;
 
