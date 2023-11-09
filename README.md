@@ -72,8 +72,6 @@ Spring boot 를 사용하여 REST API를 설계 및 구축 Thymeleaf와 연동�
 
 - Github Repository 로 관리
 - GitHub Actions를 사용하여 Java 애플리케이션에 대한 CI/CD 파이프라인을 구축
-- Travis-CI 와 AWS S3, CodeDeploy와 연동
-- 리눅스 쉘스크립트를 작성 후 EC2 인스턴스에 자동으로 배포되도록 구현
 
 ### 배포 설정
 
