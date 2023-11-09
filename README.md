@@ -68,23 +68,16 @@ Spring boot 를 사용하여 REST API를 설계 및 구축 Thymeleaf와 연동�
 - $.ajax 함수를 사용하여 서버에 비동기적으로 HTTP 요청, 사용자의 입력에 대한 피드백을 제공
 - 메타 태그 viewport를 사용하여 모바일 및 다양한 화면 크기에 대응하는 반응형 웹 디자인을 적용
 
-
-### REST API 구축
-- Vue 와 Spring boot 서버가 통신하기 위해 REST API 설계
-- /v1/posts, /v1/comments, /v1/matching 와 같이 API 버전 관리
-- Spring Rest Docs과 테스트 코드를 이용하여 최신화된 API Document 제공
-
 ### CI/CD 구축
 
-- Github Repository 로 버전 관리
-- Travis-CI 를 사용해 Git의 Master branch가 push 될 때 마다, 자동으로 빌드되는 환경 구현
+- Github Repository 로 관리
+- GitHub Actions를 사용하여 Java 애플리케이션에 대한 CI/CD 파이프라인을 구축
 - Travis-CI 와 AWS S3, CodeDeploy와 연동
 - 리눅스 쉘스크립트를 작성 후 EC2 인스턴스에 자동으로 배포되도록 구현
 
-### [7] 무중단 배포 설정
+### 배포 설정
 
-- Nginx 와 스프링 서버 연동
-- 무중단 배포를 하기 위한 profiles 설정 및 스크립트 작성
+- GitHub Action을 사용하여 AWS Elastic Beanstalk에 애플리케이션을 배포
 
 # 6. 설명
 
