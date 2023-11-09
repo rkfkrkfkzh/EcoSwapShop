@@ -28,15 +28,14 @@ jobs:
       - name: Run tests
         run: ./gradlew test
 
-          - name: Deploy to AWS Elastic Beanstalk
-            if: github.ref == 'refs/heads/main'
-            uses: einaregilsson/beanstalk-deploy@v13
-            with:
-              aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
-              aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-              application_name: 'your-application-name'
-              environment_name: 'your-environment-name'
-              region: 'us-west-2'
-              version_label: ${{ github.sha }}
-              deployment_package: 'your-application.zip'
-
+      - name: Deploy to AWS Elastic Beanstalk
+        if: github.ref == 'refs/heads/main'
+        uses: einaregilsson/beanstalk-deploy@v13
+        with:
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          application_name: 'your-application-name'
+          environment_name: 'your-environment-name'
+          region: 'us-west-2'
+          version_label: ${{ github.sha }}
+          deployment_package: 'your-application.zip'
