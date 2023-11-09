@@ -28,7 +28,7 @@ jobs:
       - name: Run tests
         run: ./gradlew test
 
-      - name: Deploy to AWS Elastic Beanstalk
+        - name: Deploy to AWS Elastic Beanstalk
           if: github.ref == 'refs/heads/main'
           uses: einaregilsson/beanstalk-deploy@v13 # 이것은 커뮤니티에서 만든 GitHub Action입니다.
           with:
