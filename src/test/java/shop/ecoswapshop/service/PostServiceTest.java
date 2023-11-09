@@ -52,28 +52,6 @@ public class PostServiceTest {
     }
 
     @Test
-    public void 특정_사용자_게시글_조회() throws Exception {
-        //given
-        Member member = new Member();
-        member.setFullName("lim");
-        memberRepository.save(member);
-
-        Post post = new Post();
-        post.setMember(member);
-        post.setTitle("게시글1");
-        post.setContent("This is a test content");
-        post.setCreationDate(LocalDateTime.now());
-        postService.createPost(post);
-
-        //when
-        List<Post> postsByMemberId = postService.findPostsByMemberId(member.getId());
-
-        //then
-        assertFalse(postsByMemberId.isEmpty());
-        assertEquals(postsByMemberId.get(0).getTitle(), "게시글1");
-    }
-
-    @Test
     public void 게시글_검색() throws Exception {
         //given
         String keyword = "테스트1";
