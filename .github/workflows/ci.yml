@@ -28,14 +28,15 @@ jobs:
       - name: Run tests
         run: ./gradlew test
 
-        - name: Deploy to AWS Elastic Beanstalk
-          if: github.ref == 'refs/heads/main'
-          uses: einaregilsson/beanstalk-deploy@v13 # 이것은 커뮤니티에서 만든 GitHub Action입니다.
-          with:
-            aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }} # GitHub Secrets에 저장된 값
-            aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }} # GitHub Secrets에 저장된 값
-            application_name: 'your-application-name' # Elastic Beanstalk 애플리케이션 이름
-            environment_name: 'your-environment-name' # Elastic Beanstalk 환경 이름
-            region: 'us-west-2' # AWS 리전
-            version_label: ${{ github.sha }} # 버전 라벨 (예: 커밋 SHA)
-            deployment_package: 'your-application.zip' # 배포 패키지 파일 경로
+          - name: Deploy to AWS Elastic Beanstalk
+            if: github.ref == 'refs/heads/main'
+            uses: einaregilsson/beanstalk-deploy@v13
+            with:
+              aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+              aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+              application_name: 'your-application-name'
+              environment_name: 'your-environment-name'
+              region: 'us-west-2'
+              version_label: ${{ github.sha }}
+              deployment_package: 'your-application.zip'
+
