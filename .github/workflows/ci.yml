@@ -32,10 +32,10 @@ jobs:
         if: github.ref == 'refs/heads/main'
         uses: einaregilsson/beanstalk-deploy@v13
         with:
-          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          application_name: 'your-application-name'
-          environment_name: 'your-environment-name'
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}   # github Repository secrets
+          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }} # github Repository secrets
+          application_name: 'your-application-name' # AWS Elastic Beanstalk에 있는 애플리케이션의 이름.
+          environment_name: 'your-environment-name' # 배포할 환경의 이름.
           region: 'us-west-2'
-          version_label: ${{ github.sha }}
-          deployment_package: 'your-application.zip'
+          version_label: ${{ github.sha }} # 커밋 SHA
+          deployment_package: 'Ecoswapshop.zip' # 배포할 압축된 파일의 경로.
