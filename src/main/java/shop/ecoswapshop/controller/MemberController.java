@@ -140,7 +140,7 @@ public class MemberController {
     }
 
     // 회원 비활성화 처리
-    @PostMapping("deactivate")
+    @PostMapping("/deactivate")
     public String deactivate(@RequestParam String password) {
         Member loggedInMember = getLoggedInMember();
 
