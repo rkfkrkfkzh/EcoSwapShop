@@ -17,8 +17,6 @@ public interface FavoriteRepository extends JpaRepository<Favorite, Long> {
     // 특정 사용자가 작성한 모든찜 조회
     Page<Favorite> findByMemberId(Long memberId, Pageable pageable);
 
-    List<Favorite> findByProductId(Long productId);
-
     // 페이징 처리
     Page<Favorite> findAll(Pageable pageable);
 

@@ -45,8 +45,4 @@ public class FavoriteService {
         PageRequest pageable = PageRequest.of(page, pageSize);
         return favoriteRepository.findByMemberId(memberId, pageable);
     }
-
-    public List<Favorite> getFavoritesByProduct(Long productId) {
-        return favoriteRepository.findByProductId(productId);
-    }
 }

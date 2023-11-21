@@ -37,16 +37,6 @@ public class PhotoService {
     }
 
     @Transactional
-    public void updatePhoto(Long photoId, MultipartFile file) throws IOException {
-        logger.info("Updating photo with ID : {}", photoId);
-        Photo photo = photoRepository.findById(photoId).orElseThrow(NoSuchElementException::new);
-        String fileName = storeFile(file); // 새로 업로드된 파일 저장
-        String fileDownloadUri = "/uploads/" + fileName; // 여기에 서버에 따라서 경로조정
-        photo.setUrl(fileDownloadUri); // 파일의 다운로드 URL로 Photo 엔티티 업데이트
-        photoRepository.save(photo);
-    }
-
-    @Transactional
     public void deletePhoto(Long photoId) {
         Optional<Photo> photoOptional = photoRepository.findById(photoId);
         if (photoOptional.isPresent()) {

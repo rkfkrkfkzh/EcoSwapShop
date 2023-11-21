@@ -35,24 +35,9 @@ public class PostService {
         return postRepository.save(post).getId();
     }
 
-    // 모든 게시글 조회
-    public List<Post> findAllPosts() {
-        return postRepository.findAll();
-    }
-
     // 특정 게시글 조회
     public Optional<Post> findPostById(Long postId) {
         return postRepository.findById(postId);
-    }
-
-    // 게시글 제목에 해당하는 문자열을 포함하는 게시글 조회
-    public List<Post> findPostsByTitle(String keyword) {
-        return postRepository.findByTitleContaining(keyword);
-    }
-
-    // 게시글 내용에 해당하는 문자열을 포함하는 게시글 조회
-    public List<Post> findPostsByContent(String keyword) {
-        return postRepository.findByContentContaining(keyword);
     }
 
     // 게시글 삭제

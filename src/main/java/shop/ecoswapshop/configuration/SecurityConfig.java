@@ -19,7 +19,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .authorizeRequests(authorizeRequests -> authorizeRequests
+            .authorizeRequests(authorizeRequests -> authorizeRequests
                         .antMatchers("/members/login").permitAll()
                         .antMatchers("/members/new").permitAll() // 회원 가입 페이지 허용
                         .antMatchers("/categories").permitAll()
@@ -29,13 +29,13 @@ public class SecurityConfig {
                         .antMatchers("/css/**").permitAll() // CSS 리소스 허용
                         .antMatchers("/ws/**").permitAll()
                         .anyRequest().permitAll()) // 나머지 경로는 인증 없이 허용
-                .formLogin(formLogin -> formLogin
+            .formLogin(formLogin -> formLogin
                         .loginPage("/members/login")
                         .loginProcessingUrl("/members/login")
                         .successForwardUrl("/members/login") // 로그인 성공 시 이동할 페이지
                         .failureUrl("/members/login?error=true") // 로그인 실패 시 이동할 페이지
                         .permitAll())
-                .logout(logout -> logout
+            .logout(logout -> logout
                         .logoutUrl("/members/logout")
                         .logoutSuccessUrl("/") // 로그아웃 성공 시 이동할 페이지
                         .invalidateHttpSession(true) // 세션 무효화

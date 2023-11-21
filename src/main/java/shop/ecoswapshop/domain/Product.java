@@ -37,7 +37,7 @@ public class Product {
     @Enumerated(EnumType.STRING)
     private Condition productCondition; //상품 상태
 
-    @ManyToOne(fetch = LAZY) // 상품과 카테고리 테이블 간의 다대일 관계 설다
+    @ManyToOne(fetch = LAZY) // 상품과 카테고리 테이블 간의 다대일 관계
     @JoinColumn(name = "category_id")
     private Category category; // 카테고리
 

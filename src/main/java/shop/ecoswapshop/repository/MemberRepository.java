@@ -25,23 +25,6 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     // 회원 전화번호로 조회
     Optional<Member> findByPhoneNumber(String phoneNumber);
 
-    // 특정 등급의 회원들 조회
-    List<Member> findByType(UserType type);
-
-    // 회원 등록일 기준으로 조회 (특정 날짜 이후의 회원들)
-    List<Member> findByRegistrationDateAfter(LocalDateTime registrationDate);
-
-    // 회원 등록일과 등급 기준으로 조회 (특정 날짜 이후, 특정 등급 이상의 회원들)
-    List<Member> findByRegistrationDateAfterAndType(LocalDateTime registrationDate, UserType type);
-
-    // 회원 등록일과 등급, 이름으로 복합 조건으로 조회
-    List<Member> findByRegistrationDateAfterAndTypeAndFullName(LocalDateTime registrationDate, UserType type, String fullName);
-
-    // 로그인 기능 - 이메일과 비밀번호로 회원 조회
-    Optional<Member> findByUsernameAndPassword(String username, String password);
-
     // 아이디 중복체크
     boolean existsByUsername(String username);
-
-    List<Member> findByStatus(MemberStatus status); // 상태에 따른 회원 조회 메서드
 }

@@ -60,41 +60,6 @@ public class MemberService implements UserDetailsService {
         return memberRepository.findAll();
     }
 
-    // 회원 이름으로 조회
-    public List<Member> findMembersByFullName(String fullName) {
-        return memberRepository.findByFullName(fullName);
-    }
-
-    // 회원 이메일로 조회
-    public Optional<Member> findMemberByEmail(String email) {
-        return memberRepository.findByEmail(email);
-    }
-
-    // 회원 전화번호로 조회
-    public Optional<Member> findMemberByPhoneNumber(String phoneNumber) {
-        return memberRepository.findByPhoneNumber(phoneNumber);
-    }
-
-    // 특정 등급의 회원들 조회
-    public List<Member> findMembersByType(UserType type) {
-        return memberRepository.findByType(type);
-    }
-
-    // 회원 등록일 기준으로 조회 (특정 날짜 이후의 회원들)
-    public List<Member> findMembersRegisteredAfter(LocalDateTime registrationDate) {
-        return memberRepository.findByRegistrationDateAfter(registrationDate);
-    }
-
-    // 회원 등록일과 등급 기준으로 조회 (특정 날짜 이후, 특정 등급 이상의 회원들)
-    public List<Member> findMembersRegisteredAfterAndType(LocalDateTime registrationDate, UserType type) {
-        return memberRepository.findByRegistrationDateAfterAndType(registrationDate, type);
-    }
-
-    // 회원 등록일과 등급, 이름으로 복합 조건으로 조회
-    public List<Member> findMembersRegisteredAfterAndTypeAndName(LocalDateTime registrationDate, UserType type, String fullName) {
-        return memberRepository.findByRegistrationDateAfterAndTypeAndFullName(registrationDate, type, fullName);
-    }
-
     // 회원 정보 수정
     @Transactional
     public void updateMember(Long memberId, String username, String password, String email,
