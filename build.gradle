@@ -44,10 +44,9 @@ dependencies {
 
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-hibernate5:2.14.2'
 
-//JUnit4 추가
-    testImplementation("org.junit.vintage:junit-vintage-engine") {
-        exclude group: "org.hamcrest", module: "hamcrest-core"
-    }
+    testImplementation('org.junit.jupiter:junit-jupiter-api:5.7.0')
+    testRuntimeOnly('org.junit.jupiter:junit-jupiter-engine:5.7.0')
+
 }
 test {
     useJUnitPlatform()

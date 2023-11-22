@@ -17,10 +17,7 @@ import shop.ecoswapshop.domain.MemberStatus;
 import shop.ecoswapshop.domain.UserType;
 import shop.ecoswapshop.repository.MemberRepository;
 
-import javax.persistence.ManyToOne;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -76,6 +73,8 @@ public class MemberService implements UserDetailsService {
         if (fullName != null && !fullName.isEmpty()) existingMember.setFullName(fullName);
         if (phoneNumber != null && !phoneNumber.isEmpty()) existingMember.setPhoneNumber(phoneNumber);
         if (address != null) existingMember.setAddress(address);
+
+        memberRepository.save(existingMember);
     }
 
     // 회원 삭제
