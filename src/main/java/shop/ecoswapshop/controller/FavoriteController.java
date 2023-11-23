@@ -24,27 +24,10 @@ public class FavoriteController {
     private final FavoriteService favoriteService;
     private final MemberService memberService;
 
-    // 로그인한 사용자의 memberId를 가져옵니다.
-    private Optional<Long> getLoggedInMemberId() {
-        return memberService.findLoggedInMemberId();
-    }
-
-    private Member getLoggedInMember() {
-        return getLoggedInMemberId()
-                .map(memberService::findMemberById)
-                .orElseThrow(() -> new RuntimeException("Logged in member not found"))
-                .orElseThrow(()-> new RuntimeException("Member Not Found"));
-    }
-
-    private boolean isUserAuthorized(Long memberId) {
-        return getLoggedInMemberId().isPresent() && getLoggedInMemberId().get().equals(memberId);
-
-    }
-
     @GetMapping
     public String getFavorites(@RequestParam(defaultValue = "0")int page, Model model) {
-        if (getLoggedInMemberId().isPresent()) {
-            Long memberId = getLoggedInMemberId().get();
+        if (memberService.findLoggedInMemberId().isPresent()) {
+            Long memberId = memberService.findLoggedInMemberId().get();
 
             Page<Favorite> pagedFavorites = favoriteService.getFavoritesByMember(memberId, page, 8);
             model.addAttribute("pagedFavorites", pagedFavorites);
@@ -57,7 +40,7 @@ public class FavoriteController {
 
     @PostMapping("/toggle")
     public String toggleFavorite(@RequestParam Long memberId, @RequestParam Long productId) {
-        if (!isUserAuthorized(memberId)) {
+        if (!memberService.isUserAuthorized(memberId)) {
             return "redirect:/error";
         }
         favoriteService.toggleFavorite(memberId, productId);

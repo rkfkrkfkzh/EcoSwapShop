@@ -31,25 +31,9 @@ public class ProductController {
     private static final int PAGE_SIZE = 8;
     private static final String UPLOAD_PATH = "/uploads/";
 
-    private Optional<Long> getLoggedInMemberId() {
-        return memberService.findLoggedInMemberId();
-    }
-
-    private Member getLoggedInMember() {
-        return memberService.findLoggedInMemberId()
-                .map(memberService::findMemberById)
-                .orElseThrow(() -> new RuntimeException("Logged in member not 각found"))
-                .orElseThrow(() -> new RuntimeException("Member Not Found"));
-    }
-
-    private boolean isUserAuthorized(Long memberId) {
-        return getLoggedInMemberId().isPresent() && getLoggedInMemberId().get().equals(memberId);
-
-    }
-
     private Product getAuthorizedProduct(Long productId) {
         Product product = productService.findProductById(productId).orElseThrow(() -> new RuntimeException("상품을 찾을 수 없습니다."));
-        if (!isUserAuthorized(product.getMember().getId())) {
+        if (!memberService.isUserAuthorized(product.getMember().getId())) {
             throw new RuntimeException("수정권한이 없습니다.");
         }
         return product;
@@ -72,7 +56,7 @@ public class ProductController {
         Page<Product> pagedProducts;
 
         if (onlyMine) {
-            Optional<Long> loggedInMemberId = getLoggedInMemberId();
+            Optional<Long> loggedInMemberId = memberService.findLoggedInMemberId();
             if (loggedInMemberId.isPresent()) {
                 pagedProducts = productService.getProductsByMemberId(loggedInMemberId.get(), page, PAGE_SIZE, sortOrder);
             } else {
@@ -90,7 +74,7 @@ public class ProductController {
         // 상품 목록을 모델에 추가합니다.
         model.addAttribute("pagedProducts", pagedProducts);
         // 로그인한 사용자의 memberId가 있다면 모델에 추가합니다.
-        getLoggedInMemberId().ifPresent(memberId -> model.addAttribute("loggedInMemberId", memberId));
+        memberService.findLoggedInMemberId().ifPresent(memberId -> model.addAttribute("loggedInMemberId", memberId));
 
         return "products/productList";
     }
@@ -103,13 +87,13 @@ public class ProductController {
         }
         model.addAttribute("product", product.get());
 
-        getLoggedInMemberId().ifPresent(memberId -> model.addAttribute("loggedInMemberId", memberId));
+        memberService.findLoggedInMemberId().ifPresent(memberId -> model.addAttribute("loggedInMemberId", memberId));
         return "products/productsDetails"; //Thymeleaf view
     }
 
     @GetMapping("/new")
     public String createForm(Model model) {
-        Member loggedInMember = getLoggedInMember();
+        Member loggedInMember = memberService.getLoggedInMember();
         model.addAttribute("productForm", new ProductForm());
         model.addAttribute("conditions", Condition.values()); // Condition 열거형의 값들을 모델에 추가
         // 카테고리 데이터를 가져와 모델에 추가
@@ -144,7 +128,7 @@ public class ProductController {
     }
 
     private Product prepareProductForCreation(ProductForm productForm) {
-        Member loggedInMember = getLoggedInMember();
+        Member loggedInMember = memberService.getLoggedInMember();
         Product product = new Product();
 
         product.setProductName(productForm.getProductName());
@@ -288,7 +272,7 @@ public class ProductController {
         model.addAttribute("categoryId", categoryId);
         model.addAttribute("pagedProducts", searchProducts);
         model.addAttribute("keyword", keyword);
-        getLoggedInMemberId().ifPresent(memberId -> model.addAttribute("loggedInMemberId", memberId));
+        memberService.findLoggedInMemberId().ifPresent(memberId -> model.addAttribute("loggedInMemberId", memberId));
         return "products/productList";
     }
 

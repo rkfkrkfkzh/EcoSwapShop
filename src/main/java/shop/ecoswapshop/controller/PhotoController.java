@@ -35,13 +35,6 @@ public class PhotoController {
 
     private static final String UPLOAD_DIR = "uploads";
     private static final Logger logger = LoggerFactory.getLogger(Photo.class);
-    private Optional<Long> getLoggedInMemberId() {
-        return memberService.findLoggedInMemberId();
-    }
-
-    private boolean isUserAuthorized(Long memberId) {
-        return getLoggedInMemberId().isPresent() && getLoggedInMemberId().get().equals(memberId);
-    }
 
     @GetMapping("/uploads/{filename:.+}")
     public ResponseEntity<Resource> serveFile(@PathVariable String filename) {
@@ -74,21 +67,21 @@ public class PhotoController {
         }
         return "redirect:/success";
     }
-
-    @PostMapping("/edit/{productId}")
-    public String uploadProductImages(@PathVariable Long productId, @RequestParam("files") List<MultipartFile> files) throws IOException {
-        Product product = productService.findProductById(productId).orElseThrow();
-        for (MultipartFile file : files) {
-            if (!file.isEmpty()) {
-                Photo photo = new Photo();
-                photo.setProduct(product);
-                String fileName = photoService.storeFile(file);
-                photo.setUrl("/uploads/" +fileName);
-                photoService.savePhoto(photo);
-            }
-        }
-        return "redirect:/products/details/" + productId;
-    }
+//
+//    @PostMapping("/edit/{productId}")
+//    public String uploadProductImages(@PathVariable Long productId, @RequestParam("files") List<MultipartFile> files) throws IOException {
+//        Product product = productService.findProductById(productId).orElseThrow(() -> new RuntimeException("Product not found"));
+//        for (MultipartFile file : files) {
+//            if (!file.isEmpty()) {
+//                Photo photo = new Photo();
+//                photo.setProduct(product);
+//                String fileName = photoService.storeFile(file);
+//                photo.setUrl("/uploads/" +fileName);
+//                photoService.savePhoto(photo);
+//            }
+//        }
+//        return "redirect:/products/details/" + productId;
+//    }
 // 삭제 관련 메서드는 ProductController에서 일괄 처리하자 product에서 상품수정 내에서 이미지 관리를 할수 있으니 그방법이 옳다 생각
     @PostMapping("/delete/{photoId}")
     public String deleteImage(@PathVariable Long photoId, RedirectAttributes redirectAttributes) {
@@ -104,7 +97,7 @@ public class PhotoController {
         Photo photo = photoOptional.get();
         Long productId = photo.getProduct().getId();  // 사진을 삭제하기 전에 정확한 제품 ID를 가져옵니다.
 
-        if (!isUserAuthorized(photo.getProduct().getMember().getId())) {
+        if (!memberService.isUserAuthorized(photo.getProduct().getMember().getId())) {
             redirectAttributes.addFlashAttribute("message", "이 사진을 삭제할 권한이 없습니다!");
             return "redirect:/error";
         }

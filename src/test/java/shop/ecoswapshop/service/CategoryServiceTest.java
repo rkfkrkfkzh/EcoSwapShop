@@ -4,25 +4,21 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class PhotoServiceTest {
+class CategoryServiceTest {
 
     @Test
-    void savePhoto() {
+    void findAll() {
     }
 
     @Test
-    void deletePhoto() {
+    void save() {
     }
 
     @Test
-    void findPhotoById() {
+    void findById() {
     }
 
     @Test
-    void storeFile() {
-    }
-
-    @Test
-    void findPhotosByProductId() {
+    void delete() {
     }
 }

@@ -40,27 +40,10 @@ public class ProductService {
         return productRepository.findById(productId);
     }
 
-    // 전체 상품 조회
-    public List<Product> findAllProducts() {
-        return productRepository.findAll();
-    }
-
     // 상품 삭제
     @Transactional
     public void deleteProductById(Long productId) {
         productRepository.deleteById(productId);
-    }
-
-    // 상품 모두 삭제
-    @Transactional
-    public void deleteAllProducts() {
-        productRepository.deleteAll();
-    }
-
-    // 특정 상품의 모든 사진 조회
-    public List<Photo> getPhotoByProductId(Long productId) {
-        Product product = productRepository.findById(productId).orElseThrow();
-        return product.getPhotoList();
     }
 
     @Transactional

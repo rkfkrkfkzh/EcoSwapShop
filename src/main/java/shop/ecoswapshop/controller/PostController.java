@@ -1,11 +1,8 @@
 package shop.ecoswapshop.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.dom4j.rule.Mode;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -26,21 +23,6 @@ public class PostController {
     private final PostService postService;
     private final MemberService memberService;
 
-    private Optional<Long> getLoggedInMemberId() {
-        return memberService.findLoggedInMemberId();
-    }
-
-    private Member getLoggedInMember() {
-        return getLoggedInMemberId()
-                .map(memberService::findMemberById)
-                .orElseThrow(() -> new RuntimeException("Logged in member not found"))
-                .orElseThrow(() -> new RuntimeException("Member Not Found"));
-    }
-
-    private boolean isUserAuthorized(Long memberId) {
-        return getLoggedInMemberId().isPresent() && getLoggedInMemberId().get().equals(memberId);
-    }
-
     @GetMapping
     public String showPostList(@RequestParam(defaultValue = "0") int page,
                                @RequestParam(defaultValue = "false") boolean onlyMine, //매개변수 추가
@@ -48,14 +30,14 @@ public class PostController {
         Page<Post> pagedPosts;
 
         if (onlyMine) {
-            Member loggedInMember = getLoggedInMember();
+            Member loggedInMember = memberService.getLoggedInMember();
             pagedPosts = postService.getMyPosts(loggedInMember.getId(), page, 8);
         } else {
             pagedPosts = postService.getPagedPosts(page, 8);
         }
 
         model.addAttribute("pagedPosts", pagedPosts);
-        getLoggedInMemberId().ifPresent(memberId -> model.addAttribute("loggedInMemberId", memberId));
+        memberService.findLoggedInMemberId().ifPresent(memberId -> model.addAttribute("loggedInMemberId", memberId));
         model.addAttribute("onlyMine", onlyMine); // 뷰에서 상태를 알 수 있도록 onlyMine 추가
 
         return "posts/postList";
@@ -64,7 +46,7 @@ public class PostController {
     // 등록
     @GetMapping("/new")
     public String showPostForm(Model model) {
-        Member loggedInMember = getLoggedInMember();
+        Member loggedInMember = memberService.getLoggedInMember();
         Post post = new Post();
         model.addAttribute("postForm", new PostForm());
         model.addAttribute("post", post);
@@ -74,7 +56,7 @@ public class PostController {
 
     @PostMapping("/create")
     public String createPost(@ModelAttribute PostForm postForm) {
-        Member loggedInMember = getLoggedInMember();
+        Member loggedInMember = memberService.getLoggedInMember();
         Post post = new Post();
         post.setTitle(postForm.getTitle());
         post.setContent(postForm.getContent());
@@ -92,7 +74,7 @@ public class PostController {
         if (!post.isPresent()) {
             return "redirect:/error";
         }
-        if (!isUserAuthorized(post.get().getMember().getId())) {
+        if (!memberService.isUserAuthorized(post.get().getMember().getId())) {
             return "redirect:/error";
         }
         model.addAttribute("postForm", post.get());
@@ -106,7 +88,7 @@ public class PostController {
             return "redirect:/error";
         }
         Post post = postById.get();
-        if (!isUserAuthorized(post.getMember().getId())) {
+        if (!memberService.isUserAuthorized(post.getMember().getId())) {
             return "redirect:/error";
         }
 
@@ -125,7 +107,7 @@ public class PostController {
             return "redirect:/error";
         }
         model.addAttribute("post", post.get());
-        getLoggedInMemberId().ifPresent(memberId -> model.addAttribute("loggedInMemberId", memberId));
+        memberService.findLoggedInMemberId().ifPresent(memberId -> model.addAttribute("loggedInMemberId", memberId));
         return "posts/postDetails";
     }
 
@@ -137,7 +119,7 @@ public class PostController {
             return "redirect:/error";
         }
         Post post = postById.get();
-        if (!isUserAuthorized(post.getMember().getId())) {
+        if (!memberService.isUserAuthorized(post.getMember().getId())) {
             return "redirect:/error";
         }
         postService.deletePostById(postId);
@@ -147,7 +129,7 @@ public class PostController {
     // 댓글 추가
     @PostMapping("/details/{postId}/addComment")
     public String addComment(@PathVariable Long postId, @RequestParam Long memberId, @RequestParam String content, RedirectAttributes redirectAttributes) {
-        Member loggedInMember = getLoggedInMember();
+        Member loggedInMember = memberService.getLoggedInMember();
         Long commentId = postService.addComment(postId, memberId, content);
         redirectAttributes.addFlashAttribute("successMessage", "댓글이 성공적으로 추가 되었습니다.");
         return "redirect:/posts/details/" + postId;
@@ -157,7 +139,7 @@ public class PostController {
     @PostMapping("details/{postId}/comments/{commentId}/edit")
     public String editComment(@PathVariable Long postId, @PathVariable Long commentId, @RequestParam String newContent, RedirectAttributes redirectAttributes) {
         try {
-            Member loggedInMember = getLoggedInMember(); // 로그인한 사용자 가져오기
+            Member loggedInMember = memberService.getLoggedInMember(); // 로그인한 사용자 가져오기
             postService.editComment(postId, commentId, newContent, loggedInMember.getId()); // 댓글 수정 서비스 메서드
             redirectAttributes.addFlashAttribute("successMessage", "댓글이 성공적으로 수정되었습니다");
             return "redirect:/posts/details/" + postId;
@@ -170,7 +152,7 @@ public class PostController {
     @PostMapping("details/{postId}/comments/{commentId}/delete")
     public String deleteComment(@PathVariable Long postId, @PathVariable Long commentId, RedirectAttributes redirectAttributes) {
         try {
-            Member loggedInMember = getLoggedInMember();
+            Member loggedInMember = memberService.getLoggedInMember();
             postService.deleteComment(postId, commentId, loggedInMember.getId());
             redirectAttributes.addFlashAttribute("successMessage", "댓글이 성공적으로 삭제되었습니다");
             return "redirect:/posts/details/" + postId;
@@ -193,7 +175,7 @@ public class PostController {
     public String editReply(@PathVariable Long postId, @PathVariable Long commentId, @RequestParam String newContent, RedirectAttributes redirectAttributes) {
         System.out.println("Inside editReply method");
         try {
-            Member loggedInMember = getLoggedInMember(); // 로그인한 사용자 가져오기
+            Member loggedInMember = memberService.getLoggedInMember(); // 로그인한 사용자 가져오기
             postService.editReply(postId, commentId, newContent, loggedInMember.getId());  // 대댓글 수정 서비스 메서드
             redirectAttributes.addFlashAttribute("successMessage", "대댓글이 수정되었습니다");
             return "redirect:/posts/details/" + postId;
@@ -208,7 +190,7 @@ public class PostController {
     @PostMapping("details/{postId}/replies/{commentId}/delete")
     public String deleteReply(@PathVariable Long postId, @PathVariable Long commentId, RedirectAttributes redirectAttributes) {
         try {
-            Member loggedInMember = getLoggedInMember();
+            Member loggedInMember = memberService.getLoggedInMember();
             postService.deleteReply(postId, commentId, loggedInMember.getId());
             redirectAttributes.addFlashAttribute("successMessage", "대댓글이 삭제되었습니다");
             return "redirect:/posts/details/" + postId;
@@ -222,7 +204,7 @@ public class PostController {
     public String searchPosts(@RequestParam String keyword, @RequestParam(defaultValue = "0") int page, Model model) {
         Page<Post> searchPosts = postService.searchPosts(keyword, PageRequest.of(page, 8));
         model.addAttribute("pagedPosts", searchPosts);
-        getLoggedInMemberId().ifPresent(memberId -> model.addAttribute("loggedInMemberId", memberId));
+        memberService.findLoggedInMemberId().ifPresent(memberId -> model.addAttribute("loggedInMemberId", memberId));
         model.addAttribute("searchedKeyword", keyword); // 검색한 키워드 view 전달
         return "posts/postList"; // 검색결과 보여주기위해 기존 게시글 목록페이지 재사용
     }

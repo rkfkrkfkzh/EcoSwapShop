@@ -126,6 +126,17 @@ public class MemberService implements UserDetailsService {
         }
     }
 
+    public Member getLoggedInMember() {
+        return findLoggedInMemberId()
+                .map(this::findMemberById)
+                .orElseThrow(() -> new RuntimeException("Logged in member not found"))
+                .orElseThrow(() -> new RuntimeException("Member Not Found"));
+    }
+
+    public boolean isUserAuthorized(Long memberId) {
+        return findLoggedInMemberId().isPresent() && findLoggedInMemberId().get().equals(memberId);
+    }
+
     // 회원 비활성화
     @Transactional
     public void deactivateMember(Long memberId) {

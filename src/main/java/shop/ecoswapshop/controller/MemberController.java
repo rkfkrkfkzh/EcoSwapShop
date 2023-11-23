@@ -23,22 +23,6 @@ public class MemberController {
 
     private final MemberService memberService;
 
-    // 로그인한 사용자의 memberId를 가져옵니다.
-    private Optional<Long> getLoggedInMemberId() {
-        return memberService.findLoggedInMemberId();
-    }
-
-    private Member getLoggedInMember() {
-        return getLoggedInMemberId()
-                .map(memberService::findMemberById)
-                .orElseThrow(() -> new RuntimeException("Logged in member not found"))
-                .orElseThrow(() -> new RuntimeException("Member Not Found"));
-    }
-
-    private boolean isUserAuthorized(Long memberId) {
-        return getLoggedInMemberId().isPresent() && getLoggedInMemberId().get().equals(memberId);
-    }
-
     @GetMapping("/new")
     public String createForm(Model model) {
         model.addAttribute("memberForm", new MemberForm());
@@ -80,7 +64,7 @@ public class MemberController {
         model.addAttribute("member", member);
 
         // 로그인한 사용자의 ID를 모델에 추가합니다.
-        getLoggedInMemberId().ifPresent(id -> model.addAttribute("loggedInMemberId", id));
+        memberService.findLoggedInMemberId().ifPresent(id -> model.addAttribute("loggedInMemberId", id));
 
         return "members/memberDetail";
     }
@@ -142,7 +126,7 @@ public class MemberController {
     // 회원 비활성화 처리
     @PostMapping("/deactivate")
     public String deactivate(@RequestParam String password) {
-        Member loggedInMember = getLoggedInMember();
+        Member loggedInMember = memberService.getLoggedInMember();
 
         if (!memberService.validatePassword(loggedInMember, password)) {
             return "redirect:/error";
