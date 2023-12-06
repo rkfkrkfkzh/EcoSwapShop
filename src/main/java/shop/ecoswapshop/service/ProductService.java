@@ -25,7 +25,6 @@ import java.util.Optional;
 public class ProductService {
 
     private final ProductRepository productRepository;
-    private final PhotoRepository photoRepository;
     private final CategoryService categoryService;
 
     // 상품 등록
