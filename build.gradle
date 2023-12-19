@@ -47,8 +47,15 @@ dependencies {
 
     testImplementation('org.junit.jupiter:junit-jupiter-api:5.7.0')
     testRuntimeOnly('org.junit.jupiter:junit-jupiter-engine:5.7.0')
-
 }
+
+bootJar {
+    archiveBaseName.set('my-springboot-app')
+    archiveVersion.set('0.0.1-SNAPSHOT')
+    mainClass = 'shop.ecoswapshop.EcoswapshopApplication'
+}
+
+
 test {
     useJUnitPlatform()
 }

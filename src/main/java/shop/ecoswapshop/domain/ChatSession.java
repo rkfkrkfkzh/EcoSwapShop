@@ -16,7 +16,7 @@ public class ChatSession {
 
     @Id
     @GeneratedValue
-    @Column(columnDefinition = "UUID") //UUID가 16바이트, BINARY 타입 컬럼이 16바이트보다 짧게 설정되어있을수 있어 Value too long for column 에러가 생길수 있음
+    @Column(columnDefinition = "CHAR(36)") //mysql에서 사용하기위해 변경
     private UUID sessionId;
 
     private Long productId;
