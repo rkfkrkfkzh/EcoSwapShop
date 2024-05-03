@@ -27,4 +27,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     // 아이디 중복체크
     boolean existsByUsername(String username);
+
+    Optional<Member> findUserByEmailAndProvider(String email, String provider);
+
 }

@@ -25,8 +25,8 @@
                         <p class="text-danger text-center" th:if="${param.error}">없는 회원이거나, 비활성화 회원입니다.</p>
                     </form>
                     <div class="text-center mt-3">
-                        <a class="btn btn-info" href="/oauth2/authorization/kakao">카카오로 로그인</a>
-                        <a class="btn btn-info" href="/oauth2/authorization/naver">네이버로 로그인</a>
+                        <a href="/oauth2/authorization/naver" class="btn btn-sm btn-success active" role="button">Naver Login</a><br>
+                        <a href="/oauth2/authorization/kakao" class="btn btn-third active" role="button">Kakao Login</a>
                     </div>
                     <div class="text-center mt-3">
                         <a href="/members/findUsernameForm" class="btn btn-light">아이디 찾기</a>

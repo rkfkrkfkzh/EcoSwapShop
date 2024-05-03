@@ -42,6 +42,8 @@ public class Member {
     @Embedded
     private Address address; // 주소
 
+    private String provider;
+
     @Enumerated(EnumType.STRING)
     private UserType type = UserType.USER; // 회원 타입(운영자, 고객) 기본값 유저
 
@@ -73,12 +75,11 @@ public class Member {
         comment.setMember(this);
     }
 
-    public String getRoleKey() {
-        return this.type.getRole();
-    }
+    // 사용자의 이름이나 이메일을 업데이트하는 메소드
+    public Member updateUser(String username, String email) {
+        this.username = username;
+        this.email = email;
 
-    public Member update(String name) {
-        this.fullName = name;
         return this;
     }
 

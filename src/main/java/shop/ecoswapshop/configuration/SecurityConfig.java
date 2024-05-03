@@ -8,14 +8,15 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import shop.ecoswapshop.service.CustomOAuth2UserService;
+import shop.ecoswapshop.service.OAuth2Service;
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final CustomOAuth2UserService customOAuth2UserService;
+    private final OAuth2Service oAuth2Service;
+
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -28,6 +29,7 @@ public class SecurityConfig {
                         .antMatchers("/members/login").permitAll()
                         .antMatchers("/members/new").permitAll() // 회원 가입 페이지 허용
                         .antMatchers("/categories").permitAll()
+                        .antMatchers("/login/oauth2/naver").permitAll() // 네이버 로그인 경로에 대한 접근 허용
                         .antMatchers("/categories/new").hasAnyRole("ADMIN", "TYPE_ADMIN")
                         .antMatchers("/products/{productId}/edit").hasAnyRole("USER", "ADMIN") // 수정 권한 설정
                         .antMatchers("/favorite/**").hasAnyRole("USER", "ADMIN") // 수정 권한 설정
@@ -46,16 +48,13 @@ public class SecurityConfig {
                         .invalidateHttpSession(true) // 세션 무효화
                         .deleteCookies("JSESSIONID") // 세션 쿠키 삭제
                         .permitAll())
-                .oauth2Login()
-                .userInfoEndpoint()
-                .userService(customOAuth2UserService);
+                // 스프링 시큐리티 설정 클래스 내에 로그인 성공 URL 및 네이버 로그인 경로에 대한 접근 허용 코드 추가
+                .oauth2Login(oauth2Login -> oauth2Login
+                        .defaultSuccessUrl("/", true) // 로그인 성공시 이동할 URL
+                        .userInfoEndpoint() // 사용자가 로그인에 성공하였을 경우,
+                        .userService(oAuth2Service) // 해당 서비스 로직을 타도록 설정
+                );
 
         return http.build();
-    }
-
-    /* static 관련 인증 설정 무시 */
-    public void configure(WebSecurity web) throws Exception{
-        web
-                .ignoring().antMatchers("/css/**", "/js/**", "/img/**", "/error");
     }
 }
