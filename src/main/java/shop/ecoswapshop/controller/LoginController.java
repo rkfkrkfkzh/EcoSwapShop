@@ -18,14 +18,14 @@ import javax.servlet.http.HttpSession;
 public class LoginController {
 
     @Autowired
-    private MemberRepository memberRepository; // 이것은 당신의 MemberRepository Bean입니다.
+    private MemberRepository memberRepository;
 
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
 
     @GetMapping("/members/login")
     public String login() {
-        return "members/login"; // "login"은 로그인 페이지의 뷰 이름이어야 합니다.
+        return "members/login";
     }
 
     @PostMapping("/members/login")

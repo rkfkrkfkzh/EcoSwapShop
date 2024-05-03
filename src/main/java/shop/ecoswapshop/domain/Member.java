@@ -1,7 +1,9 @@
 package shop.ecoswapshop.domain;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -11,8 +13,10 @@ import java.util.List;
 import static javax.persistence.CascadeType.ALL;
 
 @Entity
-@Getter
-@Setter
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Member {
 
     @Id
@@ -39,7 +43,7 @@ public class Member {
     private Address address; // 주소
 
     @Enumerated(EnumType.STRING)
-    private UserType type; // 회원 타입(운영자, 고객)
+    private UserType type = UserType.USER; // 회원 타입(운영자, 고객) 기본값 유저
 
     private LocalDateTime registrationDate; // 등록일
 
@@ -68,4 +72,14 @@ public class Member {
         this.commentList.add(comment);
         comment.setMember(this);
     }
+
+    public String getRoleKey() {
+        return this.type.getRole();
+    }
+
+    public Member update(String name) {
+        this.fullName = name;
+        return this;
+    }
+
 }

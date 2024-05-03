@@ -1,5 +1,6 @@
 package shop.ecoswapshop.domain;
 
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,8 +11,7 @@ import java.util.UUID;
 import static javax.persistence.FetchType.LAZY;
 
 @Entity
-@Getter
-@Setter
+@Data
 public class Notification {
 
     @Id
