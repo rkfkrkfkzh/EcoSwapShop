@@ -3,6 +3,8 @@ package shop.ecoswapshop.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -56,6 +58,7 @@ public class MemberController {
 
     @GetMapping("/detail/{memberId}")
     public String detail(@PathVariable Long memberId, Model model) {
+
         Optional<Member> optionalMember = memberService.findMemberById(memberId);
         if (!optionalMember.isPresent()) {
             return "redirect:/error";

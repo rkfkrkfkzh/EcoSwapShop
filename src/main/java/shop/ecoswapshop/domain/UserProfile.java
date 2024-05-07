@@ -23,9 +23,11 @@ public class UserProfile {
     // DTO 파일을 통하여 Entity를 생성하는 메소드
     public Member toEntity() {
         return Member.builder()
-                .username(this.username)
+                .fullName(this.username)
                 .email(this.email)
                 .provider(this.provider)
+                .type(UserType.USER)
+                .status(MemberStatus.ACTIVE)
                 .build();
     }
 }
