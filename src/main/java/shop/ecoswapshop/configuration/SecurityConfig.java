@@ -7,6 +7,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import shop.ecoswapshop.domain.UserType;
 import shop.ecoswapshop.service.OAuth2Service;
 
 @Configuration
@@ -27,18 +28,20 @@ public class SecurityConfig {
                 .authorizeRequests(authorizeRequests -> authorizeRequests
                         .antMatchers("/members/login").permitAll()
                         .antMatchers("/members/new").permitAll() // 회원 가입 페이지 허용
+                        .antMatchers("/members/exists/**").permitAll()
                         .antMatchers("/categories").permitAll()
-                        .antMatchers("/login/oauth2/naver").permitAll() // 네이버 로그인 경로에 대한 접근 허용
-                        .antMatchers("/categories/new").hasAnyRole("ADMIN", "TYPE_ADMIN")
-                        .antMatchers("/products/{productId}/edit").hasAnyRole("USER", "ADMIN") // 수정 권한 설정
-                        .antMatchers("/favorite/**").hasAnyRole("USER", "ADMIN") // 수정 권한 설정
+                        .antMatchers("/error").permitAll()
+                        .antMatchers("/categories/new").hasAnyRole(UserType.USER.getRole(),UserType.ADMIN.getRole())
+                        .antMatchers("/products/new").hasAnyRole(UserType.USER.getRole(),UserType.ADMIN.getRole())
+                        .antMatchers("/products/{productId}/edit").hasAnyRole(UserType.USER.getRole(),UserType.ADMIN.getRole()) // 수정 권한 설정
+                        .antMatchers("/favorites/**").hasAnyRole(UserType.USER.getRole(),UserType.ADMIN.getRole()) // 수정 권한 설정
                         .antMatchers("/css/**").permitAll() // CSS 리소스 허용
                         .antMatchers("/ws/**").permitAll()
-                        .anyRequest().permitAll()) // 나머지 경로는 인증 없이 허용
+                        .anyRequest().authenticated()) // 나머지 경로는 인증
                 .formLogin(formLogin -> formLogin
                         .loginPage("/members/login")
                         .loginProcessingUrl("/members/login")
-                        .successForwardUrl("/") // 로그인 성공 시 이동할 페이지
+                        .defaultSuccessUrl("/", true) // 로그인 성공 후 리다이렉트하는 경로를 설정
                         .failureUrl("/members/login?error=true") // 로그인 실패 시 이동할 페이지
                         .permitAll())
                 .logout(logout -> logout

@@ -2,6 +2,8 @@ package shop.ecoswapshop.domain;
 
 import lombok.Getter;
 
+import java.time.LocalDateTime;
+
 @Getter
 public class UserProfile {
     private String username; // 사용자 이름
@@ -28,6 +30,7 @@ public class UserProfile {
                 .provider(this.provider)
                 .type(UserType.USER)
                 .status(MemberStatus.ACTIVE)
+                .registrationDate(LocalDateTime.now())
                 .build();
     }
 }

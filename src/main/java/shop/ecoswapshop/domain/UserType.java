@@ -3,8 +3,8 @@ package shop.ecoswapshop.domain;
 import lombok.Getter;
 
 public enum UserType {
-    ADMIN("ROLE_ADMIN"),
-    USER("ROLE_USER");
+    ADMIN("ADMIN"),
+    USER("USER");
 
     @Getter
     private final String role;

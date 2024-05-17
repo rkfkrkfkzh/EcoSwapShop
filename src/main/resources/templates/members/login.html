@@ -3,6 +3,17 @@
 <head>
     <title>Login</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+
+        .social-btn-naver {
+            background-color: #1ec800;
+            color: white;
+        }
+        .social-btn-kakao {
+            background-color: #fee500;
+            color: black;
+        }
+    </style>
 </head>
 <body>
 <div class="container mt-5">
@@ -25,8 +36,12 @@
                         <p class="text-danger text-center" th:if="${param.error}">없는 회원이거나, 비활성화 회원입니다.</p>
                     </form>
                     <div class="text-center mt-3">
-                        <a href="/oauth2/authorization/naver" class="btn btn-sm btn-success active" role="button">Naver Login</a><br>
-                        <a href="/oauth2/authorization/kakao" class="btn btn-third active" role="button">Kakao Login</a>
+                        <div class="d-flex justify-content-center">
+                            <a href="/oauth2/authorization/naver" class="btn social-btn social-btn-naver mr-2" role="button">Naver Login
+                            </a>
+                            <a href="/oauth2/authorization/kakao" class="btn social-btn social-btn-kakao" role="button">Kakao Login
+                            </a>
+                        </div>
                     </div>
                     <div class="text-center mt-3">
                         <a href="/members/findUsernameForm" class="btn btn-light">아이디 찾기</a>
