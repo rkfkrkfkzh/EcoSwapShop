@@ -36,6 +36,12 @@ class PostServiceTest {
     @InjectMocks
     private PostService postService;
 
+
+    @SuppressWarnings("unchecked")
+    private <T> Page<T> mockPage() {
+        return mock(Page.class);
+    }
+
     @Test
     void createPost() {
         // Given
@@ -254,7 +260,7 @@ class PostServiceTest {
         // Given
         String keyword = "Test";
         Pageable pageable = PageRequest.of(0, 10);
-        Page<Post> expectedPage = mock(Page.class); // 가상의 Page 객체 생성
+        Page<Post> expectedPage = mockPage(); // 가상의 Page 객체 생성
         when(postRepository.findByTitleContainingOrContentContaining(keyword, keyword, pageable)).thenReturn(expectedPage);
 
         // When
@@ -265,14 +271,15 @@ class PostServiceTest {
         assertEquals(expectedPage, resultPage);
     }
 
+
     @Test
     void getPagedPosts() {
         // Given
         int page = 0;
         int size = 10;
-        Pageable pageable = PageRequest.of(page, size);
-        Page<Post> expectedPage = mock(Page.class); // 가상의 Page 객체 생성
-        when(postRepository.findAll(pageable)).thenReturn(expectedPage);
+//        Pageable pageable = PageRequest.of(page, size);
+        Page<Post> expectedPage = mockPage(); // 가상의 Page 객체 생성
+        when(postRepository.findAll(any(Pageable.class))).thenReturn(expectedPage);
 
         // When
         Page<Post> resultPage = postService.getPagedPosts(page, size);
@@ -289,7 +296,8 @@ class PostServiceTest {
         int page = 0;
         int size = 10;
         Pageable pageable = PageRequest.of(page, size);
-        Page<Post> expectedPage = mock(Page.class); // 가상의 Page 객체 생성
+        Page<Post> expectedPage = mockPage(); // 가상의 Page 객체 생성
+
         when(postRepository.findByMemberId(memberId, pageable)).thenReturn(expectedPage);
 
         // When

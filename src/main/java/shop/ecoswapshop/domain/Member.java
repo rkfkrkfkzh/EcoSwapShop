@@ -1,5 +1,6 @@
 package shop.ecoswapshop.domain;
 
+import com.fasterxml.jackson.databind.deser.impl.CreatorCandidate;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,9 +15,9 @@ import static javax.persistence.CascadeType.ALL;
 
 @Entity
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Member {
 
     @Id
@@ -45,23 +46,29 @@ public class Member {
     private String provider;
 
     @Enumerated(EnumType.STRING)
+    @Builder.Default
     private UserType type = UserType.USER; // 회원 타입(운영자, 고객) 기본값 유저
 
     private LocalDateTime registrationDate; // 등록일
 
     @OneToMany(mappedBy = "member", cascade = ALL)
+    @Builder.Default
     private List<Product> productList = new ArrayList<>();
 
     @OneToMany(mappedBy = "member", cascade = ALL)
+    @Builder.Default
     private List<Post> postList = new ArrayList<>();
 
     @OneToMany(mappedBy = "member", cascade = ALL)
+    @Builder.Default
     private List<Comment> commentList = new ArrayList<>();
 
     @OneToMany(mappedBy = "member", cascade = ALL)
+    @Builder.Default
     private List<Favorite> favorites = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
+    @Builder.Default
     private MemberStatus status = MemberStatus.ACTIVE; // 기본값은 활성 상태
 
     // 연관관계 메서드

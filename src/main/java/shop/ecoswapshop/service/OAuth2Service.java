@@ -28,7 +28,7 @@ public class OAuth2Service implements OAuth2UserService<OAuth2UserRequest, OAuth
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
-        OAuth2UserService oAuth2UserService = new DefaultOAuth2UserService();
+        OAuth2UserService<OAuth2UserRequest, OAuth2User> oAuth2UserService = new DefaultOAuth2UserService();
         OAuth2User oAuth2User = oAuth2UserService.loadUser(userRequest);
 
         String registrationId = userRequest.getClientRegistration().getRegistrationId(); // 로그인을 수행한 서비스의 이름
@@ -56,7 +56,7 @@ public class OAuth2Service implements OAuth2UserService<OAuth2UserRequest, OAuth
     }
 
 
-    public Map getCustomAttribute(String registrationId,
+    public Map<String, Object> getCustomAttribute(String registrationId,
                                   String userNameAttributeName,
                                   Map<String, Object> attributes,
                                   UserProfile userProfile) {

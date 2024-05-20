@@ -36,6 +36,11 @@ class FavoriteServiceTest {
     @InjectMocks
     private FavoriteService favoriteService;
 
+    @SuppressWarnings("unchecked")
+    private <T> Page<T> mockPage() {
+        return mock(Page.class);
+    }
+
     @Test
     void toggleFavorite_AddFavorite() {
         // given
@@ -82,7 +87,7 @@ class FavoriteServiceTest {
         int page = 0;
         int pageSize = 10;
         Pageable pageable = PageRequest.of(page, pageSize);
-        Page<Favorite> expectedPage = mock(Page.class);
+        Page<Favorite> expectedPage = mockPage();
 
         when(favoriteRepository.findByMemberId(memberId, pageable)).thenReturn(expectedPage);
 

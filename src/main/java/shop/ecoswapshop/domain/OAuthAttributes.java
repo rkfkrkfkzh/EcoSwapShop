@@ -18,7 +18,8 @@ public enum OAuthAttributes {
     NAVER("naver", (attribute) -> {
         UserProfile userProfile = new UserProfile();
 
-        Map<String, String> responseValue = (Map)attribute.get("response");
+        @SuppressWarnings("unchecked")
+        Map<String, String> responseValue = (Map<String ,String>)attribute.get("response");
 
         userProfile.setUserName(responseValue.get("name"));
         userProfile.setEmail(responseValue.get("email"));
@@ -27,9 +28,10 @@ public enum OAuthAttributes {
     }),
 
     KAKAO("kakao", (attribute) -> {
-
-        Map<String, Object> account = (Map)attribute.get("kakao_account");
-        Map<String, String> profile = (Map)account.get("profile");
+        @SuppressWarnings("unchecked")
+        Map<String, Object> account = (Map<String, Object>)attribute.get("kakao_account");
+        @SuppressWarnings("unchecked")
+        Map<String, String> profile = (Map<String, String>)account.get("profile");
 
         UserProfile userProfile = new UserProfile();
         userProfile.setUserName(profile.get("nickname"));
@@ -50,7 +52,7 @@ public enum OAuthAttributes {
         return Arrays.stream(values())
                 .filter(value -> registrationId.equals(value.registrationId))
                 .findFirst()
-                .orElseThrow(IllegalArgumentException::new)
+                .orElseThrow(() -> new IllegalArgumentException("Unsupported registrationId: " + registrationId))
                 .of.apply(attributes);
     }
 }

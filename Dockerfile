@@ -1,6 +1,5 @@
-# Dockerfile
-FROM openjdk:17
-VOLUME /tmp
-ARG JAR_FILE=build/libs/*.jar
-COPY ${JAR_FILE} app.jar
-ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-jar","/app.jar"]
+FROM openjdk:11
+LABEL authors="USER_NAME"
+ARG JAR_FILE=build/libs/ecoswapshop-0.0.1-SNAPSHOT.jar
+ADD ${JAR_FILE} docker-springboot.jar
+ENTRYPOINT ["java", "-jar", "/docker-springboot.jar", ">", "app.log"]
