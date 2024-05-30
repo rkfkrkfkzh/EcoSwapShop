@@ -75,6 +75,7 @@ server:
   error:
     whitelabel:
       enabled: false
+  address: 0.0.0.0
 jobs:
   build:
     runs-on: ubuntu-latest
