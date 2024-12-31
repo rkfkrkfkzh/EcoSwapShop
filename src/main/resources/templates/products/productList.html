@@ -71,12 +71,17 @@
             <tr th:each="product : ${pagedProducts.content}">
                 <td th:text="${product.productName}"></td>
                 <td>
+                    <!-- 상품 설명이 null일 경우 처리 -->
                     <pre th:if="${product.productDescription != null}"
                          th:text="${product.productDescription.split('\n')[0]}" style="white-space: pre-wrap;"></pre>
+                    <span th:if="${product.productDescription == null}">설명 없음</span>
                 </td>
                 <td th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + '원'"></td>
                 <td th:text="${product.productCondition}"></td>
-                <td th:text="${product.category.name}"></td> <!-- 카테고리 표시 -->
+                <td>
+                    <!-- 카테고리가 null일 경우 처리 -->
+                    <span th:text="${product.category != null ? product.category.name : '카테고리 없음'}"></span>
+                </td>
 
                 <td>
                     <a th:href="@{/products/details/{id}(id=${product.id})}" class="btn btn-info">상세보기</a>

@@ -27,8 +27,7 @@ public class SecurityConfig {
         http
                 .authorizeRequests(authorizeRequests -> authorizeRequests
                         .antMatchers("/members/login").permitAll()
-                        .antMatchers("/members/new").permitAll() // 회원 가입 페이지 허용
-                        .antMatchers("/members/exists/**").permitAll()
+                        .antMatchers("/members/new","/members/exists/**").permitAll() // 회원 가입 페이지 허용
                         .antMatchers("/categories").permitAll()
                         .antMatchers("/error").permitAll()
                         .antMatchers("/categories/new").hasAnyRole(UserType.USER.getRole(),UserType.ADMIN.getRole())
@@ -37,6 +36,7 @@ public class SecurityConfig {
                         .antMatchers("/favorites/**").hasAnyRole(UserType.USER.getRole(),UserType.ADMIN.getRole()) // 수정 권한 설정
                         .antMatchers("/css/**").permitAll() // CSS 리소스 허용
                         .antMatchers("/ws/**").permitAll()
+                        .antMatchers("/upload/**").permitAll()
                         .anyRequest().authenticated()) // 나머지 경로는 인증
                 .formLogin(formLogin -> formLogin
                         .loginPage("/members/login")

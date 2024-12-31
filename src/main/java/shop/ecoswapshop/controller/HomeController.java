@@ -35,7 +35,6 @@ public class HomeController {
     // 로그인한 사용자의 정보를 가져와 모델에 추가, 로그인하지 않았을 경우 로그를 남김
     @GetMapping("/")
     public String home(@RequestParam(defaultValue = "0") int page, Model model) {
-
         Page<Product> pagedProducts = productService.getPagedProducts(page, 6);
         model.addAttribute("pagedProducts", pagedProducts);
 

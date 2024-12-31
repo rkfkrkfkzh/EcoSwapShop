@@ -9,8 +9,9 @@ import org.springframework.context.annotation.Bean;
 public class EcoswapshopApplication {
 
     public static void main(String[] args) {
+        // .env 파일 로드
+//        Dotenv dotenv = Dotenv.load();
         SpringApplication.run(EcoswapshopApplication.class, args);
-
     }
     @Bean
     public Hibernate5Module hibernate5Module() {

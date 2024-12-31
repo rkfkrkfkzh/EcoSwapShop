@@ -1,6 +1,5 @@
 package shop.ecoswapshop.domain;
 
-import com.fasterxml.jackson.databind.deser.impl.CreatorCandidate;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

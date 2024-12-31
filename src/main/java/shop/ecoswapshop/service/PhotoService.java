@@ -12,6 +12,9 @@ import shop.ecoswapshop.repository.PhotoRepository;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -41,8 +44,10 @@ public class PhotoService {
         Optional<Photo> photoOptional = photoRepository.findById(photoId);
         if (photoOptional.isPresent()) {
             Photo photo = photoOptional.get();
-            String fileName = photo.getUrl().replace("/uploads/", ""); // URL에서 파일명만 추출
-            File file = new File(uploadDir, fileName);
+            String encodedUrl = photo.getUrl().replace("/uploads/", ""); // URL에서 파일명만 추출
+            // URL 디코딩 처리
+            String decodedFileName = URLDecoder.decode(encodedUrl, StandardCharsets.UTF_8);
+            File file = new File(uploadDir, decodedFileName);
             if (file.exists()) {
                 file.delete(); // 파일 시스템에서 이미지 파일 삭제
             }
@@ -58,7 +63,8 @@ public class PhotoService {
 
     @Transactional
     public String storeFile(MultipartFile file) throws IOException {
-        String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
+        // 파일 이름을 URL 인코딩
+        String fileName = System.currentTimeMillis() + "_" + URLEncoder.encode(file.getOriginalFilename(), StandardCharsets.UTF_8);
         File directory = new File(uploadDir);
         if (!directory.exists()) {
             directory.mkdir();

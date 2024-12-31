@@ -19,6 +19,8 @@ import shop.ecoswapshop.service.ProductService;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
@@ -39,7 +41,9 @@ public class PhotoController {
     @GetMapping("/uploads/{filename:.+}")
     public ResponseEntity<Resource> serveFile(@PathVariable String filename) {
         try {
-            Path file = Paths.get(UPLOAD_DIR).resolve(filename);
+            // URL 디코딩 처리
+            String decodedFileName = URLDecoder.decode(filename, StandardCharsets.UTF_8);
+            Path file = Paths.get(UPLOAD_DIR).resolve(decodedFileName);
             Resource resource = new UrlResource(file.toUri());
             if (resource.exists() || resource.isReadable()) {
                 return ResponseEntity.ok()

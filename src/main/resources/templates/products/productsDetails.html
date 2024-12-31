@@ -36,15 +36,18 @@
                 </tr>
                 <tr>
                     <th>카테고리</th>
-                    <td th:text="${product.category.name}"></td>
+                    <td th:text="${product.category != null ? product.category.name : '없음'}"></td>
                 </tr>
                 </tbody>
             </table>
             <!-- 제품 이미지 -->
             <div class="product-images">
                 <th:block th:each="photo : ${product.photoList}">
+                    <!-- 이미 URL이 인코딩되어 있으므로, 그대로 사용 -->
                     <img th:src="${photo.url}" alt="Product Image" class="product-image"/>
                 </th:block>
+                <!-- photoList가 비어 있을 경우 대체 이미지 처리 -->
+                <p th:if="${#lists.isEmpty(product.photoList)}">이미지가 없습니다.</p>
             </div>
             <div class="text-center mt-4">
                 <!-- 수정 및 삭제 버튼 조건 추가 -->

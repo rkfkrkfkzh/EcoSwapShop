@@ -1,6 +1,6 @@
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '2.5.4' // 버전 수정
+    id 'org.springframework.boot' version '2.6.6' // 버전 수정
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
 }
 
@@ -18,7 +18,7 @@ configurations {
 }
 
 repositories {
-    mavenCentral()
+    mavenCentral()  // Maven Central을 사용하여 의존성 다운로드
 }
 
 dependencies {
@@ -30,8 +30,10 @@ dependencies {
     // OAuth2 클라이언트 및 리소스 서버 기능을 위한 의존성 추가
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
     // 필요한 경우 아래 주석을 해제하고 사용
-    implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
+//    implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
 
+    // dotenv-java의 안정적 버전으로 변경
+    implementation files('libs/dotenv-java-5.0.0.jar')  // 로컬 경로로 설정
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     implementation 'org.springframework.boot:spring-boot-starter-mail'
